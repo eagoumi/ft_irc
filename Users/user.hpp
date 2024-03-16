@@ -20,6 +20,7 @@ class User
     public:
         User(USER_ID &id);
         void joinChannel(Channel *channel);
+        Channel *createChannel();
         // void joinChannel(std::string const &name, std::map<std::string, class Channel> &serverChannels);
         ~User();
 };

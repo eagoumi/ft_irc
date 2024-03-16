@@ -9,6 +9,7 @@ class User;
 class Channel
 {
     private:
+        Channel();
         std::map<USER_ID, User *> joinedUsers;
         
         //since we have just two modes define one data type for operator
@@ -16,8 +17,8 @@ class Channel
 
         /*  */
     public:
-        Channel();
-        void addUser();
+        Channel(User *creator);
+        void addUser(User *member);
         ~Channel();
 };
 

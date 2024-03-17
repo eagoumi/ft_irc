@@ -41,6 +41,7 @@ void Server::ServerStarting()
 	srvpollfd.events = POLLIN;
 	srvpollfd.revents = 0;
 	_Storeusersfd.push_back(srvpollfd);
+	std::cout << _Socketsfd << std::endl;
 	while(1)
 	{
 		// Wait indefinitely for an event
@@ -97,7 +98,7 @@ void    Server::setSocketsopt()
 	// htons return a number of 16bits dans l'ordre octet utilise dans les reseau TCP/IP
 	//htons()  s = Short= La fonction htons peut être utilisée pour convertir 
 		// un numéro de port IP dans l’ordre d’octet hôte en numéro de port IP dans l’ordre d’octet réseau.
-	_Sockadd.sin_addr.s_addr =  INADDR_ANY; //or htonl(127.0.0.1)
+	_Sockadd.sin_addr.s_addr =  htonl(INADDR_ANY); //or htonl(127.0.0.1)
 	// htonl() = convert 32bits dans un ordre utiliser dans le reseau TCP/IP
 	// htonl() = l (long) utiliser pour connetre IP (localhost)
 	if (bind(_Socketsfd, (sockaddr *)&_Sockadd, sizeof(_Sockadd)))
@@ -125,8 +126,10 @@ void Server::accept_connection()
 {
 
 	//Accept Request Connection
+	std::cout << _Socketsfd << std::endl;
 	size_t lensockadd = sizeof(_Sockadd);
 	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockadd, (socklen_t *)lensockadd);
+	std::cout << newSocketfd << std::endl;
 	if (newSocketfd >= 0)
 	{
 		//inet_ntoa() only supports IPv4 addresses. 

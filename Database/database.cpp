@@ -16,12 +16,13 @@ Database* Database::GetInstance() {
     return database_;
 }
 
-User* Database::addNewUser(USER_ID, User* user) {
+User* Database::addNewUser(USER_ID Id, User* user) {
+    this->users[Id] = user;
     return user;
 }
 
 Channel* Database::addNewChannel(CHANNEL_NAME name, Channel* channel) {
-    channels[name] = channel;
+    this->channels[name] = channel;
     return channel;
 }
 

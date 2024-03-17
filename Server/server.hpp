@@ -3,17 +3,12 @@
 
 # include <map>
 # include <iostream>
-# include "../Users/user.hpp"
-# include "../Channels/channel.hpp"
+# include "../Database/database.hpp"
 
 class Server
 {
     private:
-        std::map<USER_ID, class User> users;
-        std::map<std::string, class Channel> channels;
-        // friend void User::getServerChannels();
-        // friend User;
-        // friend Channel;
+        Database *database;
 
     public:
         Server(const std::string &port, const std::string &password);

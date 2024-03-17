@@ -2,26 +2,22 @@
 #define __USER__HPP
 
 # include <map>
-# include "../Channels/channel.hpp"
-# include "../Server/server.hpp"
+// # include "../Channels/channel.hpp"
 
 # define USER_ID int
+# define CHANNEL_NAME std::string
 
 class Channel;
 
 class User
 {
     private:
-        User();
-        // std
         std::map<std::string, Channel *> joinedChannels;
-        // void getServerChannels();
 
     public:
-        User(USER_ID &id);
+        User();
         void joinChannel(Channel *channel);
-        Channel *createChannel();
-        // void joinChannel(std::string const &name, std::map<std::string, class Channel> &serverChannels);
+        Channel *createChannel(CHANNEL_NAME name);
         ~User();
 };
 

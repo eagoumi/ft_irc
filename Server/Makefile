@@ -2,7 +2,7 @@ NAME		=	ircserv
 
 CC			=	c++
 
-CFLAGS		=	-Wall -Werror -Wextra -std=c++98
+CFLAGS		=	-Wall -Wextra -std=c++98
 
 # directories
 SRC_DIR		=	./
@@ -19,10 +19,10 @@ UP			=	\033[A
 CUT			=	\033[K
 
 #source files
-SRC_FILES	=	[...].cpp \
+SRC_FILES	=	server.cpp \
                 main.cpp 
 
-INC_FILES	=	[...].hpp 
+INC_FILES	=	server.hpp 
 
 OBJ_FILES	=	$(SRC_FILES:.cpp=.o)
 

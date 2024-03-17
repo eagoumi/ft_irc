@@ -8,23 +8,29 @@
 /* Compile useing c++ ChannelUsersTestMain.cpp Database/database.cpp Channels/channel.cpp Users/user.cpp */
 
 int main(int argc, char **argv) {
-    Database *db = Database::GetInstance();
+    try {
 
-    int EliasUserId = 1337;
-    User *user = db->addNewUser(EliasUserId, new User());
+        Database *db = Database::GetInstance();
 
-    //when `/join #uWu` command sent
-    Channel* channel = db->getChannel("uWu");
-    if (channel == NOT_FOUND) {
-        std::cout << "channel not found, creating ...\n";
-        channel = user->createChannel("uWu");
-        if (db->getChannel("uWu") != NULL)
-            std::cout << "Channel uWu has been created\n";
+        int EliasUserId = 1337;
+        User *user = db->addNewUser(EliasUserId, new User());
+
+        //when `/join #uWu` command sent
+        Channel* channel = db->getChannel("uWu");
+        if (channel == NOT_FOUND) {
+            std::cout << "channel not found, creating ...\n";
+            channel = user->createChannel("uWu");
+            if (db->getChannel("uWu") != NULL)
+                std::cout << "Channel uWu has been created\n";
+        }
+        else {
+            //ila kanet channel already kayna 4ay5ess user joini liha
+            std::cout << "channel found, joining ...\n";
+            channel->addUser(user);
+        }
     }
-    else {
-        //ila kanet channel already kayna 4ay5ess user joini liha
-        std::cout << "channel found, joining ...\n";
-        channel->addUser(user);
+    catch (std::string errMsg) {
+        std::cout << errMsg << std::endl;
     }
     return (0);
 }

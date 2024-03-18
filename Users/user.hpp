@@ -12,12 +12,12 @@ class Channel;
 class User
 {
     private:
-        std::map<std::string, Channel *> joinedChannels;
+        std::map<std::string, Channel *> joinedChannels;//srsly I see no need for this, at least for now
 
     public:
         User();
-        void joinChannel(Channel *channel);
-        Channel *createChannel(CHANNEL_NAME name);
+        // void joinChannel(Channel *channel);
+        // Channel *createChannel(CHANNEL_NAME name);
         ~User();
 };
 

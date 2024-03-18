@@ -19,7 +19,8 @@ int main(int argc, char **argv) {
         Channel* channel = db->getChannel("uWu");
         if (channel == NOT_FOUND) {
             std::cout << "channel not found, creating ...\n";
-            channel = user->createChannel("uWu");
+            // channel = user->createChannel("uWu");
+            db->addNewChannel("uWu", user);
             if (db->getChannel("uWu") != NULL)
                 std::cout << "Channel uWu has been created\n";
         }

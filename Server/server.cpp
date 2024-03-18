@@ -37,9 +37,14 @@ void Server::HandleClientData(size_t index, const char *data)
 		{
 			std::cout << "here" << std::endl;
 		}
+		else if(Command == "msg")
+		{
+			std::string message;
+			GetCmd >> message;
+			send(_pollfds.fd, message.c_str(), message.length(), 0);
+		}
 		else
 		{
-
 			std::string ErrorMsg = "Unknown Command.\n";
 			send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
 		}
@@ -147,7 +152,7 @@ void Server::ServerStarting()
 	   {
 			// std::cout << "waaaa laaaaa" << std::endl;
 			CheckForConnectionClients();
-			puts("here");
+			// puts("here");
 			//check for if the connection was lost or some error for connection from the clients
 	   }
 	}
@@ -189,7 +194,7 @@ void    Server::setSocketsopt()
 	}
 	_Sockaddsrv.sin_family = AF_INET;
 	_Sockaddsrv.sin_port = htons(_Port);
-	//need for connetre le du serveur port
+	//need for connaitre le du serveur port
 	// htons return a number of 16bits dans l'ordre octet utilise dans les reseau TCP/IP
 	//htons()  s = Short= La fonction htons peut être utilisée pour convertir 
 		// un numéro de port IP dans l’ordre d’octet hôte en numéro de port IP dans l’ordre d’octet réseau.
@@ -213,9 +218,8 @@ void Server::listtenSock()
 }
 void Server::accept_connection()
 {
-
 	//Accept Request Connection
-	std::cout << _Socketsfd << std::endl;
+	// std::cout << _Socketsfd << std::endl;
 	size_t lensockadd = sizeof(_Sockaddclient);
 	// memset(&_Sockaddclient, 0, lensockadd);
 	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
@@ -226,13 +230,12 @@ void Server::accept_connection()
 		// For software that needs to be compatible with IPv6, inet_ntop() is the preferred alternative.
 		std::string convertlocalhost(inet_ntoa(_Sockaddclient.sin_addr)); //It converts an Internet host address, given in network byte order (which is typically a numeric IP address in binary form), 
 								// into a standard dot-decimal notation string (the familiar IPv4 address format, such as "192.168.1.1").
-		struct pollfd pollfds;
 
-		pollfds.fd = newSocketfd; // File descriptor to monitor (fd li ghanra9bo)
-		pollfds.events = POLLIN; // Events to monitor for this fd (Les events li khasna nra9boha l had fd)
+		_pollfds.fd = newSocketfd; // File descriptor to monitor (fd li ghanra9bo)
+		_pollfds.events = POLLIN; // Events to monitor for this fd (Les events li khasna nra9boha l had fd)
 		// POLLIN = That There's data to read.
-		pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
-		_Storeusersfd.push_back(pollfds);
+		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
+		_Storeusersfd.push_back(_pollfds);
 		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
 	}
 	else if (newSocketfd < 0)

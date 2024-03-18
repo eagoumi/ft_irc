@@ -10,6 +10,11 @@
 
 int main(int ac, char **av)
 {
+    if (ac != 3)
+    {
+        std::cout << "Too few Arguments" << std::endl;
+        return 1;
+    }
     Server sr(std::atoi(av[1]), av[2]);
     sr.ServerStarting();
 }

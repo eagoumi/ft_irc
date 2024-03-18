@@ -24,14 +24,15 @@ class USER
 class Server 
 {
     private:
-        int                         _Port;
-        std::string                 _Password;
-        std::string                 _IPHostAdress;
-        int                         _Socketsfd;
-        sockaddr_in                 _Sockaddsrv;
-        sockaddr_in                 _Sockaddclient;
-        std::vector<struct pollfd>    _Storeusersfd; //Storing used fds to monitor multiple file descriptors all in one
-        std::map<int, USER>          _ConnectedUser;
+        int                             _Port;
+        std::string                     _Password;
+        std::string                     _IPHostAdress;
+        int                             _Socketsfd;
+        sockaddr_in                     _Sockaddsrv;
+        sockaddr_in                     _Sockaddclient;
+        std::vector<struct pollfd>      _Storeusersfd; //Storing used fds to monitor multiple file descriptors all in one
+		struct pollfd                   _pollfds;
+        // std::map<int, USER>          _ConnectedUser;
     public:
         Server(const int &port, const std::string &password);
         ~Server();

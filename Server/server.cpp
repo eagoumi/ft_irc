@@ -104,6 +104,7 @@ Server::Server(const int &port, const std::string &password) : _Port(port), _Pas
 	// std::cout << _Sockadd.sin_port << std::endl;
 	// std::cout << "ip : " << INADDR_ANY << std::endl;
 	// std::cout << "Here is Agoumi" << std::endl;
+	_db = Database::GetInstance();
 	CommandMapinit();
 }
 

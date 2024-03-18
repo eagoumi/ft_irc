@@ -22,6 +22,7 @@
 class Server 
 {
     private:
+        Database*                       _db;
         int                             _Port;
         std::string                     _Password;
         std::string                     _IPHostAdress;

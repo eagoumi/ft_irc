@@ -2,6 +2,7 @@
 #define __SERVER__HPP
 
 #include <i386/types.h>
+#include <string>
 #include <iostream>
 #include <sys/poll.h>
 #include <sys/socket.h>
@@ -10,6 +11,9 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <vector>
+#include <sstream>
+#include <fstream>
+#include <istream>
 #include <map>
 
 class USER
@@ -24,9 +28,10 @@ class Server
         std::string                 _Password;
         std::string                 _IPHostAdress;
         int                         _Socketsfd;
-        sockaddr_in                 _Sockadd;
+        sockaddr_in                 _Sockaddsrv;
+        sockaddr_in                 _Sockaddclient;
         std::vector<struct pollfd>    _Storeusersfd; //Storing used fds to monitor multiple file descriptors all in one
-        // std::map<int, USER>          _ConnectedUser;
+        std::map<int, USER>          _ConnectedUser;
     public:
         Server(const int &port, const std::string &password);
         ~Server();
@@ -42,6 +47,12 @@ class Server
         void accept_connection();
         //Call and initial Commands and store it on map
         void CommandMapinit();
+
+        void CheckForConnectionClients();
+        void HandleClientData(size_t index, const char *data);
+        void SetClientNickName(int fd, std::string& nickname);
+
+        std::string HostIPADress();
 };
 
 #endif

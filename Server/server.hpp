@@ -1,6 +1,8 @@
 #ifndef __SERVER__HPP
 #define __SERVER__HPP
 
+
+# include "../Database/database.hpp"
 #include <i386/types.h>
 #include <string>
 #include <iostream>
@@ -16,10 +18,6 @@
 #include <istream>
 #include <map>
 
-class USER
-{
-    public:
-};
 
 class Server 
 {
@@ -57,3 +55,5 @@ class Server
 };
 
 #endif
+
+//add to server `Command` Class with `execute` method

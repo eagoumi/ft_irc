@@ -13,13 +13,13 @@ class Database
         Database();
         static Database* database_;
 
-        std::map<USER_ID, User*> users;
-        std::map<CHANNEL_NAME, Channel*> channels;
+        std::map<USER_ID, User*> _users;
+        std::map<CHANNEL_NAME, Channel*> _channels;
 
     public:
         static Database *GetInstance();
-        User* addNewUser(USER_ID, User* user);
-        Channel* addNewChannel(CHANNEL_NAME name, User* user);
+        User* addNewUser(User*);
+        Channel* addNewChannel(CHANNEL_NAME, User*);
         User* getUser(USER_ID);
         Channel* getChannel(CHANNEL_NAME);
         void deleteUser(USER_ID);

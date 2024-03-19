@@ -1,22 +1,28 @@
 # include "./user.hpp"
-# include "../Channels/channel.hpp"
-# include "../Database/database.hpp"
 
-// void User::joinChannel(Channel *channel) {
-    
-// }
-
-User::User() {
-    
+User::User(USER_ID const& Id) : _Id(Id) {
 }
 
-// Channel* User::createChannel(CHANNEL_NAME name) {
+USER_ID const& User::getUserId() {
+    return (this->_Id);
+}
 
-//     Database *database = Database::GetInstance();
-//     Channel *createdChannel = new Channel(this);
-//     return database->addNewChannel(name, createdChannel);
-// }
+void User::setUserName(USER_NAME const& name) {
+    _username = name;
+}
+
+USER_NAME const & User::getUserName() {
+    return (_username);
+}
+
+void User::setNickName(NICK_NAME const& name) {
+    _nickname = name;
+}
+
+NICK_NAME const & User::getNickName() {
+    return (_nickname);
+}
 
 User::~User() {
-    //here I think I'll have to ...
+    //here I think I'll have to ... nothing srsly
 }

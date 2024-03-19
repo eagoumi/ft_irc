@@ -13,7 +13,10 @@ int main(int argc, char **argv) {
         Database *db = Database::GetInstance();
 
         int EliasUserId = 1337;
-        User *user = db->addNewUser(EliasUserId, new User());
+        User *user = db->addNewUser(new User(EliasUserId));
+        user->setUserName("ilias");
+        std::cout << db->getUser(EliasUserId)->getUserName() << std::endl;
+
 
         //when `/join #uWu` command sent
         Channel* channel = db->getChannel("uWu");
@@ -27,7 +30,7 @@ int main(int argc, char **argv) {
         else {
             //ila kanet channel already kayna 4ay5ess user joini liha
             std::cout << "channel found, joining ...\n";
-            channel->addUser(user);
+            channel->addMember(user);
         }
     }
     catch (std::string errMsg) {

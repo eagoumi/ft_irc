@@ -19,10 +19,16 @@ UP			=	\033[A
 CUT			=	\033[K
 
 #source files
-SRC_FILES	=	server.cpp \
-                main.cpp 
+SRC_FILES	=	Server/server.cpp \
+                Server/main.cpp \
+				Database/database.cpp \
+				Channels/channel.cpp \
+				Users/user.cpp 
 
-INC_FILES	=	server.hpp 
+INC_FILES	=	Server/server.hpp \
+				Database/database.hpp \
+				Channels/channel.hpp \
+				Users/user.hpp
 
 OBJ_FILES	=	$(SRC_FILES:.cpp=.o)
 
@@ -50,7 +56,7 @@ $(NAME): $(OBJ) $(INC_FILES)
 
 #compile objects
 $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC_FILES)
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	@echo "$(YELLOW)Compiling [$@]...$(RESET)"
 	@$(CC) $(CFLAGS) -I $(INC_DIR) -o $@ -c $<
 	@printf "$(UP)$(CUT)"

@@ -42,6 +42,14 @@ bool Channel::isUserInvited(USER_ID Id) {
     return false;
 }
 
+bool Channel::isUserOperator(USER_ID Id) {
+
+    UserIter it = this->_operators.find(Id);
+    if (it != this->_operators.end())
+        return true;
+    return false;
+}
+
 User* Channel::getMember(USER_ID Id) {
 
     UserIter it = this->_members.find(Id);

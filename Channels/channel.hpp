@@ -26,6 +26,7 @@ class Channel
         void addMember(User *);
         void inviteUser(User *);
         bool isUserInvited(USER_ID);
+        bool isUserOperator(USER_ID);
         User *getMember(USER_ID);
         //getChannelUsers operators etc ..
         ~Channel();

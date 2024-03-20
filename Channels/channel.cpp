@@ -24,6 +24,24 @@ void Channel::addMember(User *member) {
     this->_members[memberId] = member;
 }
 
+void Channel::inviteUser(User *user) {
+
+    USER_ID userId = user->getUserId();
+    
+    user == NULL ? throw std::string("Channel::inviteUser() -> user cannot be NULL") : NULL;
+    isUserInvited(userId) == true ? throw std::string("Channel::inviteUser() -> user already invited") : NULL;
+
+    this->_invited[userId] = user;
+}
+
+bool Channel::isUserInvited(USER_ID Id) {
+
+    UserIter it = this->_invited.find(Id);
+    if (it != this->_invited.end())
+        return true;
+    return false;
+}
+
 User* Channel::getMember(USER_ID Id) {
 
     UserIter it = this->_members.find(Id);

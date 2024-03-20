@@ -2,6 +2,7 @@
 #include "./Users/user.hpp"
 #include "Database/database.hpp"
 #include <sys/signal.h>
+# include <iostream>
 
 # define NOT_FOUND NULL
 

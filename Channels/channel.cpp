@@ -24,7 +24,7 @@ void Channel::addMember(User *member) {
     this->_members[memberId] = member;
 }
 
-User * Channel::getMember(USER_ID Id) {
+User* Channel::getMember(USER_ID Id) {
 
     UserIter it = this->_members.find(Id);
     if (it != this->_members.end())

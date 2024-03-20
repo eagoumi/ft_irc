@@ -2,8 +2,6 @@
 #define __DATABASE__HPP
 
 # include <map>
-# include <iostream>
-#include <string>
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
 

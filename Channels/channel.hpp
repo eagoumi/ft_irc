@@ -14,15 +14,14 @@ class Channel
 {
     private:
         Channel();
-        CHANNEL_NAME                _name;
-        std::map<USER_ID, User *>   _members;
-        std::map<USER_ID, User *>   _operators;
-        std::map<USER_ID, User *>   _invited;
-        
-        //since we have just two modes define one data type for operator
-        /* map or set of operators */
+        CHANNEL_NAME					_name;
+        std::map<USER_ID, User *>		_members;
+        std::map<USER_ID, User *>		_operators;
+        std::map<USER_ID, User *>		_invited;
+        std::pair<bool, size_t>			_limit; //hmmm not sure if we have to implement another limit for how much channel a user could join to
+        std::pair<bool, std::string>	_topic;
+        std::pair<bool, std::string>	_key;
 
-        /*  */
     public:
         Channel(CHANNEL_NAME, User *);
         void addMember(User *);

@@ -25,29 +25,55 @@ void Server::HandleClientData(size_t index, const char *data)
 		std::string cmd = dataStr.substr(0, CmdNewLine);
 		std::istringstream GetCmd(cmd);
 		GetCmd >> Command;
-		if (Command == "nick")
-		{
-			std::string nickname;
-			GetCmd >> nickname;
-			// SetClientNickName(_Storeusersfd[index].fd, nickname);
-			std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
-			send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
-		}
-		else if (Command == "pass")
-		{
-			std::cout << "here" << std::endl;
-		}
-		else if(Command == "msg")
-		{
-			std::string message;
-			GetCmd >> message;
-			send(_pollfds.fd, message.c_str(), message.length(), 0);
-		}
-		else
-		{
-			std::string ErrorMsg = "Unknown Command.\n";
-			send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
-		}
+		// if (!Command.empty() && (Command == "pass" || Command == "PASS"))
+		// {
+		// 	std::string pass;
+		// 	GetCmd >> pass;
+		// 	std::cout << Command << " " << pass << std::endl;
+		// }
+		// else if (!Command.empty() && (Command == "nick" || Command == "NICK"))
+		// {
+		// 	std::string nickname;
+		// 	GetCmd >> nickname;
+		// 	std::cout << Command << " " << nickname << std::endl;
+		// }
+		// else
+		// {
+			std::string other;
+			GetCmd >> other;
+			std::cout << Command << " " << other;
+			GetCmd >> other;
+			std::cout << " | " << other;
+			GetCmd >> other;
+			std::cout << " | " << other;
+			GetCmd >> other;
+			std::cout << " | " << other << std::endl;
+		// }
+
+
+		// if (Command == "nick")
+		// {
+		// 	std::string nickname;
+		// 	GetCmd >> nickname;
+		// 	// SetClientNickName(_Storeusersfd[index].fd, nickname);
+		// 	std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
+		// 	send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
+		// }
+		// else if (Command == "pass")
+		// {
+		// 	std::cout << "here" << std::endl;
+		// }
+		// else if(Command == "msg")
+		// {
+		// 	std::string message;
+		// 	GetCmd >> message;
+		// 	send(_pollfds.fd, message.c_str(), message.length(), 0);
+		// }
+		// else
+		// {
+		// 	std::string ErrorMsg = "Unknown Command.\n";
+		// 	send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
+		// }
 
 	}
 }

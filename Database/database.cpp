@@ -1,21 +1,18 @@
 #include "database.hpp"
 
+Database Database::database_;
+
 typedef std::map<std::string, Channel*>::iterator ChannelIter;
 typedef std::map<USER_ID, User*>::iterator UserIter;
 # define NOT_FOUND NULL
 
 
-Database* Database::database_ = NULL;
-
 Database::Database() {
     
 }
 
-Database* Database::GetInstance() {
+Database& Database::GetInstance() {
 
-    if(database_ == NULL) {
-        database_ = new Database();
-    }
     return database_;
 }
 

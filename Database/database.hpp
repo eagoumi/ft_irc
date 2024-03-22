@@ -9,13 +9,13 @@ class Database
 {
     private:
         Database();
-        static Database* database_;
+        static Database database_;
 
         std::map<USER_ID, User*> _users;
         std::map<CHANNEL_NAME, Channel*> _channels;
 
     public:
-        static Database *GetInstance();
+        static Database& GetInstance();
         User* addNewUser(User*);
         Channel* addNewChannel(CHANNEL_NAME, User*);
         User* getUser(USER_ID);

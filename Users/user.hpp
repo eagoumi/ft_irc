@@ -9,16 +9,18 @@
 # define CHANNEL_NAME std::string
 # define USER_NAME std::string
 # define NICK_NAME std::string
+# define USER_AUTH bool
 
 class Channel;
 
 class   User
 {
     private:
-        USER_ID     _Id;
-        std::string _nickname;
-        std::string _username;
-        std::map<std::string, Channel *> joinedChannels;//srsly I see no need for this, at least for now
+        USER_ID								_Id;
+        std::string							_nickname;
+        std::string							_username;
+        std::map<std::string, Channel *>	_joinedChannels;//srsly I see no need for this, at least for now
+        // bool								_isAuthenticated;
 
     public:
         User(USER_ID const&);

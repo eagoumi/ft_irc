@@ -2,26 +2,20 @@
 
 void Commands:: kick()
 {
-    // User uObj(fd);
-    // Channel cObj;
-    // uObj.getNickName();
-    // cObj.addMember();
+    // User *Uobj;
     db = Database::GetInstance();
     // int flag  = -1;
+
     if (command.size() < 3)
     {
         sendResponse(":" + getClient() + " " + getCommand() +  " :Not enough parameters");
         return ;
     }
+    // db.addNewUser(Uobj)->setUserName("DOOOOB");
+    // std::cout << "USER'S NICKNAME " << db.addNewUser(Uobj)->getNickName() << std::endl;
+    std::cout << "USER'S NICKNAME " << db.getUser(fd)->getUserId() << std::endl;
 
-    // range = channels.equal_range(getChannel());
-    // if(range.first == range.second)
-    // {
-    //     // std::cout << ":" << getClient() << " " << getChannel() << " :No such channel" << std::endl;
-    //     return ;
-    // }
-
-    if(db->getChannel(this->getChannel()) == NULL)
+    if(db.getChannel(this->getChannel()) == NULL)
     {
         sendResponse(":" + getClient() + " " + getChannel() + " :No such channel\n");
     }

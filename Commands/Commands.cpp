@@ -1,7 +1,7 @@
 #include "Commands.hpp"
 
 
-Commands::Commands()
+Commands::Commands() : db(Database::GetInstance())
 {
 }
 
@@ -9,7 +9,7 @@ Commands::~Commands()
 {
 }
 
-Commands::Commands(const Commands &obj)
+Commands::Commands(const Commands &obj) : db(Database::GetInstance())
 {
     *this = obj;
 }
@@ -23,12 +23,11 @@ Commands &Commands::operator=(const Commands &obj)
 
 void Commands::CommandMapinit(cmdData dataCmd)
 {
-    Channel cObj;
+    // Channel cObj;
 
     // std::cout << line << std::endl;
-    db = Database::GetInstance();
+    // db = Database::GetInstance();
     
-    // _db->displayChannels();
     std::string token;
     std::istringstream iss(dataCmd.line);
     client = dataCmd.nick;

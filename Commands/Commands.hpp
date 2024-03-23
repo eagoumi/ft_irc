@@ -29,7 +29,7 @@ typedef struct s_comData{
 
 class Commands{
 private:
-    Database* db;
+    Database db;
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;

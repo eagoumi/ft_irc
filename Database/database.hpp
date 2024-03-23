@@ -4,6 +4,7 @@
 # include <map>
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
+#include <iostream>
 
 /* Meyers' Singleton */
 class Database
@@ -25,6 +26,7 @@ class Database
         void deleteChannel(CHANNEL_NAME);
 
         // ~Database();
+
 };
 
 #endif

@@ -2,10 +2,10 @@
 #define __USER__HPP
 
 #include <cstddef>
-# include <map>
+# include <map> 
 # include <string>
 
-# define USER_ID size_t
+# define USER_ID size_t  
 # define CHANNEL_NAME std::string
 # define USER_NAME std::string
 # define NICK_NAME std::string
@@ -13,7 +13,7 @@
 
 class Channel;
 
-class User
+class   User
 {
     private:
         USER_ID								_Id;

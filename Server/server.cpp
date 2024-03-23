@@ -1,12 +1,13 @@
 #include "server.hpp"
+#include "../Commands/Commands.hpp"
 #include <unistd.h>
 
 
-void Server::CommandMapinit()
-{
+// void Server::CommandMapinit()
+// {
 	//commands 
 	//than loop to insert commands on the map
-}
+// }
 
 // void Server::SetClientNickName(int fd, std::string &nickname)
 // {
@@ -15,6 +16,9 @@ void Server::CommandMapinit()
 
 void Server::HandleClientData(size_t index, const char *data)
 {
+	// std::string line;
+	cmdData dataCmd;
+	Commands obj;
 	std::string dataStr(data);
 
 	//check fo the /n when applaying command
@@ -23,6 +27,8 @@ void Server::HandleClientData(size_t index, const char *data)
 	{
 		std::string Command;
 		std::string cmd = dataStr.substr(0, CmdNewLine);
+		dataCmd.line = cmd;
+		dataCmd.fd = _pollfds.fd;
 		std::istringstream GetCmd(cmd);
 		GetCmd >> Command;
 		if (Command == "nick")
@@ -32,6 +38,7 @@ void Server::HandleClientData(size_t index, const char *data)
 			// SetClientNickName(_Storeusersfd[index].fd, nickname);
 			std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
 			send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
+			dataCmd.nick = nickname;
 		}
 		else if (Command == "pass")
 		{
@@ -43,13 +50,13 @@ void Server::HandleClientData(size_t index, const char *data)
 			GetCmd >> message;
 			send(_pollfds.fd, message.c_str(), message.length(), 0);
 		}
-		else
-		{
-			std::string ErrorMsg = "Unknown Command.\n";
-			send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
-		}
-
+		// else
+		// {
+		// 	std::string ErrorMsg = "Unknown Command.\n";
+		// 	send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
+		// }
 	}
+	obj.CommandMapinit(dataCmd);
 }
 
 
@@ -104,7 +111,7 @@ Server::Server(const int &port, const std::string &password) : _db(Database::Get
 	// std::cout << _Sockadd.sin_port << std::endl;
 	// std::cout << "ip : " << INADDR_ANY << std::endl;
 	// std::cout << "Here is Agoumi" << std::endl;
-	CommandMapinit();
+	// CommandMapinit();
 }
 
 #define MAX_CLIENTS _Storeusersfd.size() // Assume MAX_CLIENTS + 1 for the server socket

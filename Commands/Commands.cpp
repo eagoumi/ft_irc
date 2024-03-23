@@ -1,5 +1,5 @@
 #include "Commands.hpp"
-#include "../Database/database.hpp"
+
 
 Commands::Commands()
 {
@@ -21,12 +21,19 @@ Commands &Commands::operator=(const Commands &obj)
     return *this;
 }
 
-void Commands::CommandMapinit(std::string &line)
+void Commands::CommandMapinit(cmdData dataCmd)
 {
+    Channel cObj;
+
     // std::cout << line << std::endl;
+    db = Database::GetInstance();
+    
+    // _db->displayChannels();
     std::string token;
-    std::istringstream iss(line);
-     while(iss >> token)
+    std::istringstream iss(dataCmd.line);
+    client = dataCmd.nick;
+    fd = dataCmd.fd;
+    while(iss >> token)
     {
         command.push_back(token);
     }
@@ -34,10 +41,12 @@ void Commands::CommandMapinit(std::string &line)
     for (itV = command.begin(); itV != command.end(); itV++)
         std::cout << *itV << " ";
     std::cout << std::endl;
-    std::cout << "channel = " << getChannel() << std::endl;
-    // if(getCommand() == "JOIN")
-    //     join();
-    if(getCommand() == "KICK")
+
+
+    // channels.insert(std::make_pair(fd, getChannel()));
+    if(getCommand() == "JOIN")
+        join();
+    else if(getCommand() == "KICK")
         kick();
     // else if(getCommand() == "INVITE")
     //     invite();
@@ -47,7 +56,7 @@ void Commands::CommandMapinit(std::string &line)
     //     topic();
     else
         // std::cout << ":" << get_nickName() << " " << getCommand() << " :Unknown command" << std::endl;
-        std::cout << ":" << " " << getCommand() << " :Unknown command" << std::endl;
+        sendResponse(":" + getClient() + " " + getCommand() + " :Unknown command\n");
 }
 
 
@@ -93,12 +102,26 @@ void Commands::CommandMapinit(std::string &line)
 
 // }
 
-// std::string Commands::get_hostName() const{
-//     return "tmp_host_name";
-// }
-// std::string Commands::get_nickName() const{
-//     return command[2];
-// }
+void Commands::sendResponse(std::string message)
+{
+	send(fd, message.c_str(), message.length(), 0);
+}
+
+
+std::string Commands::getNick() {
+     for(itV = command.begin() ; itV != command.end(); itV++)
+    {
+        if(itV->find('#', 0) != std::string::npos)
+        {
+            itV++;
+            return *itV;
+        }
+    }
+    return "";
+}
+std::string Commands::getClient() const{
+    return client;
+}
 std::string Commands::getCommand() const{
     if(command[1] == "KICK")
         return command[1];
@@ -113,9 +136,21 @@ std::string Commands::getChannel() {
             return *itV;
         }
     }
-    std::cerr << "enter a channel name" << std::endl;
-    return 0;
+    return "";
 }
+
+std::string Commands::getHostName()
+{
+    char hostName[256];
+    if (gethostname(hostName, sizeof(hostName)) != 0) 
+        return "";
+    return hostName;
+}
+
+// std::string Commands::getKey(){
+
+// }
+
 // std::string Commands::get_comment() const{
 //     if(command[3] != "\0")
 //         return command[3];

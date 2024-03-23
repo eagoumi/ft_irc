@@ -70,3 +70,11 @@ void Database::deleteChannel(CHANNEL_NAME name) {
     free(it->second);
     this->_channels.erase(it);
 }
+
+// std::vector<std::string> getChannelsName
+//added from me 
+void Database::displayChannels(){
+    std::map<CHANNEL_NAME, Channel*>::iterator it;
+   for(it = _channels.begin(); it != _channels.end(); it++)
+    std::cout << "FIRST = " << it->first << " SECOND = " << it->second << std::endl;
+}

@@ -10,15 +10,33 @@
 #include <algorithm>
 #include <unistd.h>
 #include <cstring>
+#include <unistd.h>
+#include <sys/socket.h>
+#include "../Database/database.hpp"
+#include "../Channels/channel.hpp"
+#include "../Users/user.hpp"
+
+
+
+//USER ID == FD
+
+typedef struct s_comData{
+    std::string line;
+    std::string nick;
+    int fd;
+}cmdData;
+
 
 class Commands{
 private:
+    Database* db;
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;
     std::string::iterator it;
-    std::multimap<std::string, std::string> channels;
-    std::multimap<std::string, std::string>::iterator itCh;
+    // std::multimap<std::string, std::string> channels;
+    // std::map<std::string, std::string> channels;
+    // std::map<std::string, std::string>::iterator itCh;
     int fd;
     std::string owner;
     std::string topicMsg;
@@ -29,6 +47,7 @@ private:
         range;
 
     std::string line;
+    std::string client;
 
 public:
     Commands();
@@ -57,16 +76,22 @@ public:
     void join();
 
 
-    void CommandMapinit(std::string &line);
+    void CommandMapinit(cmdData dataCmd);
+    // void CommandMapinit(std::string &line);
 
 
-    std::string get_hostName();
-    std::string get_nickName();
+    std::string getNick();
+    std::string getClient() const;
     std::string getCommand() const;
     std::string getChannel();
     std::string get_comment();
     int get_fd();
     std::string get_owner();
+    std::string getHostName();
+    std::string getKey();
+
+    void sendResponse( std::string msg );
+
 
 
 };

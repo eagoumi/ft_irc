@@ -4,6 +4,7 @@
 # include <map>
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
+#include <iostream>
 
 class Database
 {
@@ -24,6 +25,11 @@ class Database
         void deleteChannel(CHANNEL_NAME);
 
         // ~Database();
+
+
+
+        //remove it later
+    void displayChannels();
 };
 
 #endif

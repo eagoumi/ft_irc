@@ -4,6 +4,11 @@
 # define NOT_FOUND NULL
 typedef std::map<USER_ID, User*>::iterator UserIter;
 
+//to remove later
+Channel::Channel(){
+    
+}
+
 Channel::Channel(User *creator) {
 
     creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;

@@ -1,21 +1,18 @@
 #include "database.hpp"
 
+Database Database::database_;
+
 typedef std::map<std::string, Channel*>::iterator ChannelIter;
 typedef std::map<USER_ID, User*>::iterator UserIter;
 # define NOT_FOUND NULL
 
 
-Database* Database::database_ = NULL;
-
 Database::Database() {
     
 }
 
-Database* Database::GetInstance() {
+Database& Database::GetInstance() {
 
-    if(database_ == NULL) {
-        database_ = new Database();
-    }
     return database_;
 }
 
@@ -35,7 +32,7 @@ Channel* Database::addNewChannel(CHANNEL_NAME name, User* user) {
     user == NULL ? throw std::string("db.addNewChannel() -> user cannot be NULL") : NULL;
     getChannel(name) != NOT_FOUND ?  throw std::string("db.addNewChannel() -> Channel already exist") : NULL;
     // since the channel take a user in its constructor, it has to assign that user as its operator
-    Channel* createdChannel = new Channel(user);
+    Channel* createdChannel = new Channel(name, user);
     this->_channels[name] = createdChannel;
 
     // user->joinChannel(createdChannel);//srsly I see no need for this, at least for now

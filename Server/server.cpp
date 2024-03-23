@@ -87,7 +87,7 @@ void Server::CheckForConnectionClients()
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)
+Server::Server(const int &port, const std::string &password) : _db(Database::GetInstance()), _Port(port), _Password(password)
 {
 	// std::cout << "Here is Agoumi Before :" << std::endl;
 	// std::cout << _Port << std::endl;
@@ -104,7 +104,6 @@ Server::Server(const int &port, const std::string &password) : _Port(port), _Pas
 	// std::cout << _Sockadd.sin_port << std::endl;
 	// std::cout << "ip : " << INADDR_ANY << std::endl;
 	// std::cout << "Here is Agoumi" << std::endl;
-	_db = Database::GetInstance();
 	CommandMapinit();
 }
 

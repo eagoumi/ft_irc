@@ -5,6 +5,7 @@
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
 
+/* Meyers' Singleton */
 class Database
 {
     private:

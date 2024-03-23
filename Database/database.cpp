@@ -40,7 +40,7 @@ Channel* Database::addNewChannel(CHANNEL_NAME name, User* user) {
     return createdChannel;
 }
 
-User* Database::getUser(USER_ID Id) {
+User*   Database::getUser(USER_ID Id) {
 
     puts("hehe");
     UserIter it = this->_users.find(Id);

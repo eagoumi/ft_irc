@@ -75,6 +75,12 @@ public:
 
     void join();
 
+    void parsKick();
+
+    std::map<std::string, std::string> parsJoin();
+
+    void parsCommands();
+
 
     void CommandMapinit(cmdData dataCmd);
     // void CommandMapinit(std::string &line);
@@ -88,7 +94,6 @@ public:
     int get_fd();
     std::string get_owner();
     std::string getHostName();
-    std::string getKey();
 
     void sendResponse( std::string msg );
 

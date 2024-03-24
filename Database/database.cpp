@@ -20,14 +20,11 @@ Database* Database::GetInstance() {
 }
 
 User* Database::addNewUser(User* user) {
-puts("start");
     USER_ID userId = user->getUserId();
 
     user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
-puts("mid");
     getUser(userId) != NOT_FOUND ?  throw std::string("db->addNewUser() -> user already exist") : NULL;
     this->_users[userId] = user;
-puts("end");
     return user;
 }
 
@@ -46,7 +43,6 @@ Channel* Database::addNewChannel(CHANNEL_NAME name, User* user) {
 
 User*   Database::getUser(USER_ID Id) {
 
-    std::cout << "SIZE = " << _users.size() << std::endl;
     UserIter it = this->_users.find(Id);
     if (it != this->_users.end())
         return it->second;

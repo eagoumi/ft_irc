@@ -24,12 +24,15 @@ SRC_FILES	=	Server/server.cpp \
                 Server/main.cpp \
 				Database/database.cpp \
 				Channels/channel.cpp \
-				Users/user.cpp 
+				Users/user.cpp \
+				Commands/Commands.cpp Commands/kick.cpp Commands/join.cpp
 
 INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \
 				Channels/channel.hpp \
-				Users/user.hpp
+				Users/user.hpp \
+				Commands/Commands.hpp
+
 
 OBJ_FILES	=	$(SRC_FILES:.cpp=.o)
 

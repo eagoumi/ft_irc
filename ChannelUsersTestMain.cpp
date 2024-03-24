@@ -2,18 +2,22 @@
 #include "./Users/user.hpp"
 #include "Database/database.hpp"
 #include <sys/signal.h>
+# include <iostream>
 
 # define NOT_FOUND NULL
 
-/* Compile useing c++ ChannelUsersTestMain.cpp Database/database.cpp Channels/channel.cpp Users/user.cpp */
+/* Compile using c++ ChannelUsersTestMain.cpp Database/database.cpp Channels/channel.cpp Users/user.cpp */
 
 int main(int argc, char **argv) {
     try {
 
-        Database *db = Database::GetInstance();
+        Database db = Database::GetInstance();
 
         int EliasUserId = 1337;
-        User *user = db->addNewUser(EliasUserId, new User());
+        User *user = db->addNewUser(new User(EliasUserId));
+        user->setUserName("ilias");
+        std::cout << db->getUser(EliasUserId)->getUserName() << std::endl;
+
 
         //when `/join #uWu` command sent
         Channel* channel = db->getChannel("uWu");
@@ -27,7 +31,7 @@ int main(int argc, char **argv) {
         else {
             //ila kanet channel already kayna 4ay5ess user joini liha
             std::cout << "channel found, joining ...\n";
-            channel->addUser(user);
+            channel->addMember(user);
         }
     }
     catch (std::string errMsg) {

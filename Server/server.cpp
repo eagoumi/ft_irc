@@ -1,12 +1,13 @@
 #include "server.hpp"
+#include "../Commands/Commands.hpp"
 #include <unistd.h>
 
 
-void Server::CommandMapinit()
-{
+// void Server::CommandMapinit()
+// {
 	//commands 
 	//than loop to insert commands on the map
-}
+// }
 
 // void Server::SetClientNickName(int fd, std::string &nickname)
 // {
@@ -67,8 +68,8 @@ Server::Server(const int &port, const std::string &password) : _Port(port), _Pas
 	// std::cout << _Sockadd.sin_port << std::endl;
 	// std::cout << "ip : " << INADDR_ANY << std::endl;
 	// std::cout << "Here is Agoumi" << std::endl;
+	// CommandMapinit();
 	_db = Database::GetInstance();
-	CommandMapinit();
 }
 
 #define MAX_CLIENTS _Storeusersfd.size() // Assume MAX_CLIENTS + 1 for the server socket
@@ -203,6 +204,13 @@ void Server::accept_connection()
 		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
 		_Storeusersfd.push_back(_pollfds);
 		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
+		User *user = new User(_pollfds.fd);
+		_db->addNewUser(user);
+		// _db->getUser(_pollfds.fd);
+		// std::cout << _db << std::endl;
+
+		// _db = Database::GetInstance();
+		// std::cout << &_db << std::endl;
 	}
 	else if (newSocketfd < 0)
 	{

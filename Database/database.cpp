@@ -1,64 +1,72 @@
 #include "database.hpp"
 
-typedef std::map<std::string, Channel*>::iterator ChannelsIter;
-typedef std::map<USER_ID, User*>::iterator UserIter;
-
-
 Database* Database::database_ = NULL;
+
+typedef std::map<std::string, Channel*>::iterator ChannelIter;
+typedef std::map<USER_ID, User*>::iterator UserIter;
+# define NOT_FOUND NULL
+
 
 Database::Database() {
     
 }
 
 Database* Database::GetInstance() {
-
-    if(database_ == NULL) {
+    if (database_ == NULL)
+    {
         database_ = new Database();
     }
     return database_;
 }
 
-User* Database::addNewUser(USER_ID Id, User* user) {
+User* Database::addNewUser(User* user) {
+    USER_ID userId = user->getUserId();
 
-    user == NULL ? throw std::string("db.addNewUser() -> user cannot be NULL") : NULL;
-    this->users[Id] = user;
+    user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
+    getUser(userId) != NOT_FOUND ?  throw std::string("db->addNewUser() -> user already exist") : NULL;
+    this->_users[userId] = user;
     return user;
 }
 
 Channel* Database::addNewChannel(CHANNEL_NAME name, User* user) {
 
-    user == NULL ? throw std::string("db.addNewChannel() -> user cannot be NULL") : NULL;
+    user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
     // since the channel take a user in its constructor, it has to assign that user as its operator
-    Channel* createdChannel = new Channel(user);
-    this->channels[name] = createdChannel;
+    Channel* createdChannel = new Channel(name, user);
+    this->_channels[name] = createdChannel;
 
     // user->joinChannel(createdChannel);//srsly I see no need for this, at least for now
 
     return createdChannel;
 }
 
-User* Database::getUser(USER_ID Id) {
+User*   Database::getUser(USER_ID Id) {
 
-    UserIter it = this->users.find(Id);
-    if (it != this->users.end())
+    UserIter it = this->_users.find(Id);
+    if (it != this->_users.end())
         return it->second;
     return NULL;
 }
 
 Channel* Database::getChannel(CHANNEL_NAME name) {
 
-    ChannelsIter it = this->channels.find(name);
-    if (it != this->channels.end())
+    ChannelIter it = this->_channels.find(name);
+    if (it != this->_channels.end())
         return it->second;
     return NULL;
 }
 
 void Database::deleteUser(USER_ID Id) {
-    this->users.erase(Id);
-    //don't forget to delete the user* entirely
+    UserIter it = this->_users.find(Id);
+    free(it->second);
+    this->_users.erase(it);
 }
 
 void Database::deleteChannel(CHANNEL_NAME name) {
-    this->channels.erase(name);
-    //don't forget to delete the channel* entirely
+    ChannelIter it = this->_channels.find(name);
+    free(it->second);
+    this->_channels.erase(it);
 }
+
+// std::vector<std::string> getChannelsName
+//added from me 

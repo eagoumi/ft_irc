@@ -1,10 +1,11 @@
 #ifndef __CHANNEL__HPP
 #define __CHANNEL__HPP
 
+#include <cstddef>
 #include <map>
-// # include "../Users/user.hpp"
+#include <string>
 
-# define USER_ID int
+# define USER_ID size_t
 # define CHANNEL_NAME std::string
 
 class User;
@@ -13,17 +14,22 @@ class Channel
 {
     private:
         Channel();
-        std::map<USER_ID, User *> joinedUsers;
-        std::map<USER_ID, User *> operators;
-        std::map<USER_ID, User *> invited;
-        
-        //since we have just two modes define one data type for operator
-        /* map or set of operators */
+        CHANNEL_NAME					_name;
+        std::map<USER_ID, User *>		_members;
+        std::map<USER_ID, User *>		_operators;
+        std::map<USER_ID, User *>		_invited;
+        std::pair<bool, size_t>			_limit; //hmmm not sure if we have to implement another limit for how much channel a user could join to
+        std::pair<bool, std::string>	_topic;
+        std::pair<bool, std::string>	_key;
 
-        /*  */
     public:
-        Channel(User *creator);
-        void addUser(User *member);
+        Channel(CHANNEL_NAME, User *);
+        void addMember(User *);
+        void inviteUser(User *);
+        bool isUserInvited(USER_ID);
+        bool isUserOperator(USER_ID);
+        User *getMember(USER_ID);
+        //getChannelUsers operators etc ..
         ~Channel();
 };
 

@@ -52,7 +52,7 @@ class Server
         void listtenSock();
         void accept_connection();
         //Call and initial Commands and store it on map
-        void CommandMapinit();
+        // void CommandMapinit();
 
         void CheckForConnectionClients();
         void HandleClientData(size_t index, const char *data);

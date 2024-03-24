@@ -2,30 +2,33 @@
 #define __DATABASE__HPP
 
 # include <map>
-# include <iostream>
-#include <string>
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
+#include <iostream>
 
+/* Meyers' Singleton */
 class Database
 {
     private:
         Database();
+        Database(Database const&);
+        void operator=(Database const&);
         static Database* database_;
 
-        std::map<USER_ID, User*> users;
-        std::map<CHANNEL_NAME, Channel*> channels;
+        std::map<USER_ID, User*> _users;
+        std::map<CHANNEL_NAME, Channel*> _channels;
 
     public:
-        static Database *GetInstance();
-        User* addNewUser(USER_ID, User* user);
-        Channel* addNewChannel(CHANNEL_NAME name, User* user);
+        static Database* GetInstance();
+        User* addNewUser(User*);
+        Channel* addNewChannel(CHANNEL_NAME, User*);
         User* getUser(USER_ID);
         Channel* getChannel(CHANNEL_NAME);
         void deleteUser(USER_ID);
         void deleteChannel(CHANNEL_NAME);
 
         // ~Database();
+
 };
 
 #endif

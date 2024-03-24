@@ -57,7 +57,6 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "iostream": "cpp",
     "__bit_reference": "cpp",
     "__config": "cpp",
     "__debug": "cpp",
@@ -99,6 +98,7 @@
     "iomanip": "cpp",
     "ios": "cpp",
     "iosfwd": "cpp",
+    "iostream": "cpp",
     "istream": "cpp",
     "iterator": "cpp",
     "limits": "cpp",

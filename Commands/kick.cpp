@@ -21,6 +21,8 @@ void Commands:: kick()
         sendResponse(":" + getClient() + " " + getChannel() + " :No such channel\n");
     }
 
+    // if(db->ge)
+
     // for (itCh = range.first; itCh != range.second; itCh++)
     // {
     //     if (itCh->second == getClient() && itCh->second[0] == '@')

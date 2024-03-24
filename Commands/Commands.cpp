@@ -41,10 +41,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
         std::cout << *itV << " ";
     std::cout << std::endl;
 
-    // std::cout << "FD = " << fd << std::endl;
-    // std::cout << db << std::endl;
     parsCommands();
-    // channels.insert(std::make_pair(fd, getChannel()));
     if (getCommand() == "JOIN")
         join();
     else if (getCommand() == "KICK")
@@ -60,22 +57,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // std::cout << db << std::endl;
 }
 
-// void Commands::fillMultimap(){
-//     // channels.insert(std::make_pair("friend", "@yousra"));
-//     // channels.insert(std::make_pair("friend", "meryem"));
-//     // channels.insert(std::make_pair("friend", "asmaa"));
-//     // channels.insert(std::make_pair("friend", "hiba"));
-
-//     channels.insert(std::make_pair("#family", "@amine"));
-//     channels.insert(std::make_pair("#family", "sara"));
-//     channels.insert(std::make_pair("#family", "anas"));
-//     channels.insert(std::make_pair("#family", "yousra"));
-
-//     // channels.insert(std::make_pair("parents", "@latifa"));
-//     // channels.insert(std::make_pair("parents", "mehdi"));
-//     // channels.insert(std::make_pair("parents", "yousra"));
-
-// }
 
 void Commands::sendResponse(std::string message)
 {
@@ -127,10 +108,10 @@ std::map<std::string, std::string> Commands::parsJoin()
             it++;
         }
     }
-    for(it = sChannels.begin(); it != sChannels.end(); it++)
-    {
-        std::cout << it->first << "      " << it->second << std::endl;
-    }
+    // for(it = sChannels.begin(); it != sChannels.end(); it++)
+    // {
+    //     std::cout << it->first << "      " << it->second << std::endl;
+    // }
     return sChannels;
 }
 
@@ -140,8 +121,6 @@ void Commands::parsCommands()
         parsJoin();
     // else if(getCommand() == "KICK")
     //     parsKick();
-    else
-        std::cout << "faiiiiler" << std::endl;
 }
 
 std::string Commands::getChannel()

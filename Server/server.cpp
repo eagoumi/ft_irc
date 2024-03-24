@@ -58,7 +58,7 @@ void Server::HandleClientData(size_t index, const char *data)
 	}
 	// std::cout << _db << std::endl;
 	User *user = new User(_pollfds.fd);
-	_db->addNewUser(user);
+	// _db->addNewUser(user);
 	obj.CommandMapinit(dataCmd);
 }
 

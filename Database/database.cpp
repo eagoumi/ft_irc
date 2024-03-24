@@ -1,6 +1,6 @@
 #include "database.hpp"
 
-Database Database::database_;
+Database* Database::database_ = NULL;
 
 typedef std::map<std::string, Channel*>::iterator ChannelIter;
 typedef std::map<USER_ID, User*>::iterator UserIter;
@@ -11,26 +11,30 @@ Database::Database() {
     
 }
 
-Database& Database::GetInstance() {
-
+Database* Database::GetInstance() {
+    if (database_ == NULL)
+    {
+        database_ = new Database();
+    }
     return database_;
 }
 
 User* Database::addNewUser(User* user) {
-
+puts("start");
     USER_ID userId = user->getUserId();
 
-    user == NULL ? throw std::string("db.addNewUser() -> user cannot be NULL") : NULL;
-    getUser(userId) != NOT_FOUND ?  throw std::string("db.addNewUser() -> user already exist") : NULL;
-
+    user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
+puts("mid");
+    getUser(userId) != NOT_FOUND ?  throw std::string("db->addNewUser() -> user already exist") : NULL;
     this->_users[userId] = user;
+puts("end");
     return user;
 }
 
 Channel* Database::addNewChannel(CHANNEL_NAME name, User* user) {
 
-    user == NULL ? throw std::string("db.addNewChannel() -> user cannot be NULL") : NULL;
-    getChannel(name) != NOT_FOUND ?  throw std::string("db.addNewChannel() -> Channel already exist") : NULL;
+    user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
+    getChannel(name) != NOT_FOUND ?  throw std::string("db->addNewChannel() -> Channel already exist") : NULL;
     // since the channel take a user in its constructor, it has to assign that user as its operator
     Channel* createdChannel = new Channel(name, user);
     this->_channels[name] = createdChannel;
@@ -42,7 +46,7 @@ Channel* Database::addNewChannel(CHANNEL_NAME name, User* user) {
 
 User*   Database::getUser(USER_ID Id) {
 
-    puts("hehe");
+    std::cout << "SIZE = " << _users.size() << std::endl;
     UserIter it = this->_users.find(Id);
     if (it != this->_users.end())
         return it->second;

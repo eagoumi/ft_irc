@@ -56,6 +56,7 @@ void Server::HandleClientData(size_t index, const char *data)
 		// 	send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
 		// }
 	}
+	std::cout << _db << std::endl;
 	obj.CommandMapinit(dataCmd);
 }
 
@@ -94,7 +95,7 @@ void Server::CheckForConnectionClients()
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _db(Database::GetInstance()), _Port(port), _Password(password)
+Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)
 {
 	// std::cout << "Here is Agoumi Before :" << std::endl;
 	// std::cout << _Port << std::endl;
@@ -112,6 +113,7 @@ Server::Server(const int &port, const std::string &password) : _db(Database::Get
 	// std::cout << "ip : " << INADDR_ANY << std::endl;
 	// std::cout << "Here is Agoumi" << std::endl;
 	// CommandMapinit();
+	_db = Database::GetInstance();
 }
 
 #define MAX_CLIENTS _Storeusersfd.size() // Assume MAX_CLIENTS + 1 for the server socket
@@ -244,6 +246,13 @@ void Server::accept_connection()
 		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
 		_Storeusersfd.push_back(_pollfds);
 		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
+		User *user = new User(_pollfds.fd);
+		_db->addNewUser(user);
+		// _db->getUser(_pollfds.fd);
+		// std::cout << _db << std::endl;
+
+		// _db = Database::GetInstance();
+		// std::cout << &_db << std::endl;
 	}
 	else if (newSocketfd < 0)
 	{

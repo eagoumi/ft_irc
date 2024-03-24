@@ -13,71 +13,6 @@ void Server::CommandMapinit()
 
 // }
 
-void Server::HandleClientData(size_t index, const char *data)
-{
-	std::string dataStr(data);
-
-	//check fo the /n when applaying command
-	size_t CmdNewLine = dataStr.find('\n');
-	if (CmdNewLine != std::string::npos)
-	{
-		std::string Command;
-		std::string cmd = dataStr.substr(0, CmdNewLine);
-		std::istringstream GetCmd(cmd);
-		GetCmd >> Command;
-		// if (!Command.empty() && (Command == "pass" || Command == "PASS"))
-		// {
-		// 	std::string pass;
-		// 	GetCmd >> pass;
-		// 	std::cout << Command << " " << pass << std::endl;
-		// }
-		// else if (!Command.empty() && (Command == "nick" || Command == "NICK"))
-		// {
-		// 	std::string nickname;
-		// 	GetCmd >> nickname;
-		// 	std::cout << Command << " " << nickname << std::endl;
-		// }
-		// else
-		// {
-			std::string other;
-			GetCmd >> other;
-			std::cout << Command << " " << other;
-			GetCmd >> other;
-			std::cout << " | " << other;
-			GetCmd >> other;
-			std::cout << " | " << other;
-			GetCmd >> other;
-			std::cout << " | " << other << std::endl;
-		// }
-
-
-		// if (Command == "nick")
-		// {
-		// 	std::string nickname;
-		// 	GetCmd >> nickname;
-		// 	// SetClientNickName(_Storeusersfd[index].fd, nickname);
-		// 	std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
-		// 	send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
-		// }
-		// else if (Command == "pass")
-		// {
-		// 	std::cout << "here" << std::endl;
-		// }
-		// else if(Command == "msg")
-		// {
-		// 	std::string message;
-		// 	GetCmd >> message;
-		// 	send(_pollfds.fd, message.c_str(), message.length(), 0);
-		// }
-		// else
-		// {
-		// 	std::string ErrorMsg = "Unknown Command.\n";
-		// 	send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
-		// }
-
-	}
-}
-
 
 void Server::CheckForConnectionClients()
 {
@@ -89,7 +24,14 @@ void Server::CheckForConnectionClients()
 		{
 			bzero(buffer, sizeof(buffer));
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
-			if (recive <= 0)
+			if (recive > 0)
+			{
+				//data Received
+				// std::cout << "goooo gooo gooo" << std::endl;
+				Authentication(i, buffer);
+					// std::cout << "Wrong Password" << std::endl;
+			}
+			else
 			{
 				if (recive == 0)
 				{
@@ -102,13 +44,7 @@ void Server::CheckForConnectionClients()
 				close(_Storeusersfd.at(i).fd); // Close Socket
 				_Storeusersfd.erase(_Storeusersfd.begin() + i); // Remove Poll Set on Vector
 				i--; //Cerrection index ater Removal
-			}
-			else
-			{
-				//data Received
-				// std::cout << "goooo gooo gooo" << std::endl;
-				Authentication(i, buffer);
-					// std::cout << "Wrong Password" << std::endl;
+				puts("jj");
 			}
 		}
 	}
@@ -167,7 +103,7 @@ void Server::ServerStarting()
 	{
 		// std::cout << _Storeusersfd[0].fd << std::endl;
 		// Wait indefinitely for an event
-	   int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), -1); // Assume MAX_CLIENTS + 1 for the server socket
+		int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), -1); // Assume MAX_CLIENTS + 1 for the server socket
 	   if (ret < 0)
 	   {
 			std::cerr << "Error: Poll() Failed to Call System!!!!!!!!" << std::endl;

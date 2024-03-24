@@ -1,15 +1,16 @@
 #include "Commands.hpp"
 
 
-Commands::Commands() : db(Database::GetInstance())
+Commands::Commands()
 {
+    db = Database::GetInstance();
 }
 
 Commands::~Commands()
 {
 }
 
-Commands::Commands(const Commands &obj) : db(Database::GetInstance())
+Commands::Commands(const Commands &obj)
 {
     *this = obj;
 }
@@ -26,12 +27,14 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // Channel cObj;
 
     // std::cout << line << std::endl;
-    // db = Database::GetInstance();
     
     std::string token;
     std::istringstream iss(dataCmd.line);
     client = dataCmd.nick;
     fd = dataCmd.fd;
+    std::cout << "FD = " << fd << std::endl;
+	std::cout << db << std::endl;
+
     while(iss >> token)
     {
         command.push_back(token);
@@ -56,6 +59,8 @@ void Commands::CommandMapinit(cmdData dataCmd)
     else
         // std::cout << ":" << get_nickName() << " " << getCommand() << " :Unknown command" << std::endl;
         sendResponse(":" + getClient() + " " + getCommand() + " :Unknown command\n");
+	std::cout << db << std::endl;
+    
 }
 
 

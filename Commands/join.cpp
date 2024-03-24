@@ -2,8 +2,7 @@
 
 void Commands::join(){
     User *user;
-    db = Database::GetInstance();
-    
+    // db = Database::GetInstance();
     std::string key = command[2];
-    db.addNewChannel(getChannel(), user);
+    db->addNewChannel(getChannel(), user);
 }

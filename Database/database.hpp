@@ -11,6 +11,8 @@ class Database
 {
     private:
         Database();
+        Database(Database const&);
+        void operator=(Database const&);
         static Database* database_;
 
         std::map<USER_ID, User*> _users;
@@ -24,8 +26,6 @@ class Database
         Channel* getChannel(CHANNEL_NAME);
         void deleteUser(USER_ID);
         void deleteChannel(CHANNEL_NAME);
-        Database(Database const&)               = delete;
-        void operator=(Database const&)  = delete;
 
         // ~Database();
 

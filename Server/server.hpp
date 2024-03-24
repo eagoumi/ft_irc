@@ -3,6 +3,7 @@
 
 
 # include "../Database/database.hpp"
+# include "../error_request.hpp"
 #include <i386/types.h>
 #include <string>
 #include <iostream>
@@ -31,6 +32,11 @@ class Server
         sockaddr_in                     _Sockaddclient;
         std::vector<struct pollfd>      _Storeusersfd; //Storing used fds to monitor multiple file descriptors all in one
 		struct pollfd                   _pollfds;
+        std::string                     _pass;
+        bool                            _IsAuth;
+        bool                            _correct_pass;
+        bool                            _NickCheck;
+        bool                            _UserCheck;
         // std::map<int, USER>          _ConnectedUser;
     public:
         Server(const int &port, const std::string &password);
@@ -51,6 +57,12 @@ class Server
         void CheckForConnectionClients();
         void HandleClientData(size_t index, const char *data);
         void SetClientNickName(int fd, std::string& nickname);
+        std::string getUsername();
+        std::string getNickname();
+        
+        // Authentication
+        void Authentication(int index, const char * data);
+        void getregestred(int index, std::string data);
 
         std::string HostIPADress();
 };

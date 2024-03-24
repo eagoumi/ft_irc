@@ -83,12 +83,12 @@ void Server::CheckForConnectionClients()
 {
 	char buffer[1024];
 
-	for (size_t i = 1; i < _Storeusersfd.size(); ++i)
+	for (size_t i = 1; i < _Storeusersfd.size(); i++)
 	{
-		if (_Storeusersfd[i].revents == POLLIN)
+		if (_Storeusersfd.at(i).revents == POLLIN)
 		{
 			bzero(buffer, sizeof(buffer));
-			int recive = recv(_Storeusersfd[i].fd, buffer, sizeof(buffer), 0);
+			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
 			if (recive <= 0)
 			{
 				if (recive == 0)
@@ -99,21 +99,22 @@ void Server::CheckForConnectionClients()
 				{
 					std::cout << "Unexpected Error Of losing connection." << std::endl;
 				}
-				close(_Storeusersfd[i].fd); // Close Socket
+				close(_Storeusersfd.at(i).fd); // Close Socket
 				_Storeusersfd.erase(_Storeusersfd.begin() + i); // Remove Poll Set on Vector
-				--i; //Cerrection index ater Removal
+				i--; //Cerrection index ater Removal
 			}
 			else
 			{
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
-				HandleClientData(i, buffer);
+				Authentication(i, buffer);
+					// std::cout << "Wrong Password" << std::endl;
 			}
 		}
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)
+Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password), _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {
 	// std::cout << "Here is Agoumi Before :" << std::endl;
 	// std::cout << _Port << std::endl;
@@ -161,8 +162,10 @@ void Server::ServerStarting()
 	srvpollfd.revents = 0;
 	_Storeusersfd.push_back(srvpollfd);
 	// std::cout << &_Socketsfd << std::endl;
+	
 	while(1)
 	{
+		// std::cout << _Storeusersfd[0].fd << std::endl;
 		// Wait indefinitely for an event
 	   int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), -1); // Assume MAX_CLIENTS + 1 for the server socket
 	   if (ret < 0)
@@ -175,7 +178,7 @@ void Server::ServerStarting()
 			std::cout << "Enjoy Dear New Client You just Now Connected, Welcome aboard!" << std::endl;
 			accept_connection();
 	   }
-	   else
+	   else if (_IsAuth == false)
 	   {
 			// std::cout << "waaaa laaaaa" << std::endl;
 			CheckForConnectionClients();
@@ -271,8 +274,6 @@ void Server::accept_connection()
 		exit(EXIT_FAILURE);
 	}
 }
-
-
 
 
 Server::~Server()

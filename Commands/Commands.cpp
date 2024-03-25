@@ -59,23 +59,23 @@ type    determineToken(char sep, type cmdType, size_t paramCounter) {
     return (tokenType);
 }
 
-std::vector<std::string> getNextParam(std::list<token>& tokensList) {
+std::vector<std::string> Commands::getNextParam(/*std::list<token>& tokensList*/) {
 
     static type tokenType;
     static bool firstTime = true;
-    static std::list<token>* tokensListAddr = NULL; 
+    /*static std::list<token>* tokensListAddr = NULL;*/
     static std::list<token>::iterator it;
     std::vector<std::string> paramData;
 
-    if (firstTime == true || tokensListAddr != &tokensList) {
-        it = tokensList.begin();
+    if (firstTime == true /*|| tokensListAddr != &tokensList*/) {
+        it = _tokensList.begin();
         tokenType = (*it).type;
-        tokensListAddr = &tokensList;
+        /*tokensListAddr = &tokensList;*/
         firstTime = false;
     }
-    if (it == tokensList.end()) firstTime = true;
+    if (it == _tokensList.end()) firstTime = true;
 
-    while (it != tokensList.end()) {
+    while (it != _tokensList.end()) {
         if ((*it).type != tokenType && (*it).type != COMMA) { tokenType = (*it).type; break; }
         if ((it)->type != COMMA) paramData.push_back((*it).data);
         it++;

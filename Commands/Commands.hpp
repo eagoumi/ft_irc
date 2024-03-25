@@ -39,6 +39,7 @@ private:
     Database* db;
     std::list<token> _tokensList;
     void tokenize(std::string const&);
+    std::vector<std::string> getNextParam();
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;

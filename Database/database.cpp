@@ -24,6 +24,7 @@ User* Database::addNewUser(User* user) {
 
     user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
     getUser(userId) != NOT_FOUND ?  throw std::string("db->addNewUser() -> user already exist") : NULL;
+
     this->_users[userId] = user;
     return user;
 }

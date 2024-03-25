@@ -20,6 +20,7 @@ CUT			=	\033[K
 
 #source files
 SRC_FILES	=	Server/server.cpp \
+                Server/authentication.cpp \
                 Server/main.cpp \
 				Database/database.cpp \
 				Channels/channel.cpp \

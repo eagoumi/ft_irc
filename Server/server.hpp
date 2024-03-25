@@ -61,7 +61,7 @@ class Server
         std::string getNickname();
         
         // Authentication
-        void Authentication(int index, const char * data);
+        void Authentication(int index, const char* data, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck);
         void getregestred(int index, std::string data);
 
         std::string HostIPADress();

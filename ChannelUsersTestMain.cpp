@@ -11,7 +11,7 @@
 int main(int argc, char **argv) {
     try {
 
-        Database db = Database::GetInstance();
+        Database* db = Database::GetInstance();
 
         int EliasUserId = 1337;
         User *user = db->addNewUser(new User(EliasUserId));

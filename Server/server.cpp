@@ -15,21 +15,30 @@
 // }
 
 
+
 void Server::CheckForConnectionClients()
 {
 	char buffer[1024];
 
 	for (size_t i = 1; i < _Storeusersfd.size(); i++)
 	{
-		if (_Storeusersfd.at(i).revents == POLLIN)
+		// bool                            _IsAuth        =     false;
+		// bool                            _correct_pass  =     false;
+		// bool                            _NickCheck     =     false;
+		// bool                            _UserCheck     =     false;
+		// std::cout << "i = " << i << std::endl;
+		if (_Storeusersfd.at(i).revents & POLLIN)
 		{
 			bzero(buffer, sizeof(buffer));
+			std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
+			std::cout << recive << std::endl;
 			if (recive > 0)
 			{
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
-				Authentication(i, buffer);
+				Authentication(i, buffer, _IsAuth, _correct_pass, _NickCheck, _UserCheck);
+				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}
 			else
@@ -45,7 +54,7 @@ void Server::CheckForConnectionClients()
 				close(_Storeusersfd.at(i).fd); // Close Socket
 				_Storeusersfd.erase(_Storeusersfd.begin() + i); // Remove Poll Set on Vector
 				i--; //Cerrection index ater Removal
-				puts("jj");
+				// puts("jj");
 			}
 		}
 	}
@@ -115,7 +124,7 @@ void Server::ServerStarting()
 			std::cout << "Enjoy Dear New Client You just Now Connected, Welcome aboard!" << std::endl;
 			accept_connection();
 	   }
-	   else if (_IsAuth == false)
+	   else
 	   {
 			// std::cout << "waaaa laaaaa" << std::endl;
 			CheckForConnectionClients();
@@ -193,6 +202,10 @@ void Server::accept_connection()
 	std::cout << newSocketfd << std::endl;
 	if (newSocketfd >= 0)
 	{
+		_IsAuth = false;
+		_correct_pass = false;
+		_NickCheck = false;
+		_UserCheck = false;
 		//inet_ntoa() only supports IPv4 addresses. 
 		// For software that needs to be compatible with IPv6, inet_ntop() is the preferred alternative.
 		std::string convertlocalhost(inet_ntoa(_Sockaddclient.sin_addr)); //It converts an Internet host address, given in network byte order (which is typically a numeric IP address in binary form), 

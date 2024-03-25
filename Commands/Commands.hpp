@@ -1,6 +1,7 @@
 #ifndef COMMANDS_HPP
 #define COMMANDS_HPP
 
+#include <list>
 #include <iostream>
 #include <vector>
 #include <cctype>
@@ -17,6 +18,12 @@
 #include "../Users/user.hpp"
 
 
+enum type { NONE, COMMA , JOIN_CMD, KICK_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, MODE_ARG };
+struct token
+{
+	type		type;
+	std::string	data;
+};
 
 //USER ID == FD
 
@@ -30,6 +37,8 @@ typedef struct s_comData{
 class Commands{
 private:
     Database* db;
+    std::list<token> _tokensList;
+    void tokenize(std::string const&);
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;

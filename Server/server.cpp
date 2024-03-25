@@ -28,7 +28,7 @@ void Server::HandleClientData(size_t index, const char *data)
 		std::string Command;
 		std::string cmd = dataStr.substr(0, CmdNewLine);
 		dataCmd.line = cmd;
-		dataCmd.fd = _pollfds.fd;
+		dataCmd.fd = _Storeusersfd[index].fd;
 		std::istringstream GetCmd(cmd);
 		GetCmd >> Command;
 		if (Command == "nick")
@@ -57,7 +57,7 @@ void Server::HandleClientData(size_t index, const char *data)
 		// }
 	}
 	// std::cout << _db << std::endl;
-	User *user = new User(_pollfds.fd);
+	// User *user = new User(_pollfds.fd);
 	// _db->addNewUser(user);
 	obj.CommandMapinit(dataCmd);
 }

@@ -6,6 +6,7 @@ void Commands:: kick()
     // db = Database::GetInstance();
     // int flag  = -1;
 // std::cout << db << std::endl;
+
     if (command.size() < 3)
     {
         sendResponse(":" + getClient() + " " + getCommand() +  " :Not enough parameters");

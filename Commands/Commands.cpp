@@ -26,6 +26,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // Channel cObj;
 
     // std::cout << line << std::endl;
+    std::cout << getHostName() << std::endl;
 
     std::string token;
     std::istringstream iss(dataCmd.line);
@@ -41,7 +42,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
         std::cout << *itV << " ";
     std::cout << std::endl;
 
-    parsCommands();
     if (getCommand() == "JOIN")
         join();
     else if (getCommand() == "KICK")
@@ -56,7 +56,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
         sendResponse(":" + getClient() + " " + getCommand() + " :Unknown command\n");
     // std::cout << db << std::endl;
 }
-
 
 void Commands::sendResponse(std::string message)
 {
@@ -87,38 +86,42 @@ std::string Commands::getCommand() const
     return command[0];
 }
 
-std::map<std::string, std::string> Commands::parsJoin()
+std::map<std::string, std::string> Commands::splitInput(std::string input)
 {
+
     std::map<std::string, std::string> sChannels;
     std::map<std::string, std::string>::iterator it;
-    
-    std::istringstream str(getChannel());
+
+    std::istringstream str(input);
     std::string token;
     while (getline(str, token, ','))
     {
         sChannels.insert(std::make_pair(token, ""));
     }
-    if(command[2] != "")
-    {   
+    if (command[0] == "JOIN" && command[2] != "")
+    {
         it = sChannels.begin();
         std::istringstream str2(command[2]);
-        while(getline(str2, token, ','))
+        while (getline(str2, token, ','))
         {
             it->second = token;
             it++;
         }
     }
-    // for(it = sChannels.begin(); it != sChannels.end(); it++)
-    // {
-    //     std::cout << it->first << "      " << it->second << std::endl;
-    // }
+    for (it = sChannels.begin(); it != sChannels.end(); it++)
+    {
+        std::cout << it->first << "      " << it->second << std::endl;
+    }
+
     return sChannels;
 }
 
 void Commands::parsCommands()
 {
-    if (getCommand() == "JOIN")
-        parsJoin();
+    //    if(getChannel().find(',') != std::string::npos)
+    //     puts("it's here");
+    //     else
+    //     puts("nothere");
     // else if(getCommand() == "KICK")
     //     parsKick();
 }

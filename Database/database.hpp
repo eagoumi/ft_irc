@@ -5,6 +5,8 @@
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
 #include <iostream>
+#include <sys/socket.h>
+
 
 /* Meyers' Singleton */
 class Database
@@ -26,6 +28,9 @@ class Database
         Channel* getChannel(CHANNEL_NAME);
         void deleteUser(USER_ID);
         void deleteChannel(CHANNEL_NAME);
+
+
+        void sendResponse(int fd, std::string massage);
 
         // ~Database();
 

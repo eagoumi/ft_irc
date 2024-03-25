@@ -18,7 +18,11 @@
 
 
 
-//USER ID == FD
+// :yousra!~a@127.0.0.1 JOIN #HD
+// :Pentagone.chat MODE #HD +t
+// :Pentagone.chat 353 yousra @ #HD : @yousra
+// :Pentagone.chat 366 yousra #HD :End of /NAMES list.
+// :Pentagone.chat 332 yousra #HD :TOPIC Not set
 
 typedef struct s_comData{
     std::string line;
@@ -77,7 +81,7 @@ public:
 
     void parsKick();
 
-    std::map<std::string, std::string> parsJoin();
+    std::map<std::string, std::string> splitInput(std::string input);
 
     void parsCommands();
 

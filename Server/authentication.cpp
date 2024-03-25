@@ -3,10 +3,6 @@
 void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck)
 {
     std::string dataStr(data);
-        // bool                            _IsAuth        =     false;
-		bool                            _correct_pass  =     false;
-		bool                            _NickCheck     =     false;
-		bool                            _UserCheck     =     false;
 
     //check for the newline when applying command
     size_t CmdNewLine = dataStr.find('\n');

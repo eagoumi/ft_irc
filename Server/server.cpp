@@ -22,11 +22,6 @@ void Server::CheckForConnectionClients()
 
 	for (size_t i = 1; i < _Storeusersfd.size(); i++)
 	{
-		// bool                            _IsAuth        =     false;
-		// bool                            _correct_pass  =     false;
-		// bool                            _NickCheck     =     false;
-		// bool                            _UserCheck     =     false;
-		// std::cout << "i = " << i << std::endl;
 		if (_Storeusersfd.at(i).revents & POLLIN)
 		{
 			bzero(buffer, sizeof(buffer));

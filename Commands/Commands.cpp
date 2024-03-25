@@ -26,11 +26,10 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // Channel cObj;
 
     // std::cout << line << std::endl;
-    std::cout << getHostName() << std::endl;
 
     std::string token;
     std::istringstream iss(dataCmd.line);
-    client = dataCmd.nick;
+    // client = dataCmd.nick;
     fd = dataCmd.fd;
 
     while (iss >> token)
@@ -38,9 +37,9 @@ void Commands::CommandMapinit(cmdData dataCmd)
         command.push_back(token);
     }
 
-    for (itV = command.begin(); itV != command.end(); itV++)
-        std::cout << *itV << " ";
-    std::cout << std::endl;
+    // for (itV = command.begin(); itV != command.end(); itV++)
+    //     std::cout << *itV << " ";
+    // std::cout << std::endl;
 
     if (getCommand() == "JOIN")
         join();
@@ -108,10 +107,10 @@ std::map<std::string, std::string> Commands::splitInput(std::string input)
             it++;
         }
     }
-    for (it = sChannels.begin(); it != sChannels.end(); it++)
-    {
-        std::cout << it->first << "      " << it->second << std::endl;
-    }
+    // for (it = sChannels.begin(); it != sChannels.end(); it++)
+    // {
+    //     std::cout << it->first << "      " << it->second << std::endl;
+    // }
 
     return sChannels;
 }
@@ -138,31 +137,6 @@ std::string Commands::getChannel()
     return "";
 }
 
-// std::string Commands::getChannel() {
-//     // return command[0];
-//     std::string token;
-//     std::string keey;
-//     for(itV = command.begin() ; itV != command.end(); itV++)
-//     {
-//         if(itV->find('#', 0) != std::string::npos)
-//         {
-//             std::istringstream str(*itV);
-//             while(getline(str, token, ','))
-//             {
-//                 std::cout << "TOKEN = " << token << std::endl;
-//             }
-//             break;
-//             // return *itV;
-//         }
-//     }
-//     itV++;
-//     std::istringstream key(*itV);
-//     while(getline(key, keey, ','))
-//     {
-//         std::cout << "TOKEN = " << keey << std::endl;
-//     }
-//     return "";
-// }
 
 std::string Commands::getHostName()
 {

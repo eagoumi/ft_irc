@@ -39,13 +39,8 @@ Channel *Database::addNewChannel(CHANNEL_NAME name, User *user)
     Channel *createdChannel;
     user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
     // since the channel take a user in its constructor, it has to assign that user as its operator
-    if (getChannel(name) != NOT_FOUND)
-        sendResponse(user->getUserId(), "Channel already exists");
-    else
-    {
-        createdChannel = new Channel(name, user);
-        this->_channels[name] = createdChannel;
-    }
+    createdChannel = new Channel(name, user);
+    this->_channels[name] = createdChannel;
 
     // user->joinChannel(createdChannel);//srsly I see no need for this, at least for now
     return createdChannel;

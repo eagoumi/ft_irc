@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "../Commands/Commands.hpp"
 
 void Server::getregestred(int index, std::string data)
 {
@@ -8,21 +9,24 @@ void Server::getregestred(int index, std::string data)
 void Server::Authentication(int index, const char* data)
 {
     std::string dataStr(data);
-
+    cmdData dataCmd;
+    Commands obj;
 	//check fo the /n when applaying command
 	size_t CmdNewLine = dataStr.find('\n');
 	if (CmdNewLine != std::string::npos)
 	{
 		std::string Command;
 		std::string cmd = dataStr.substr(0, CmdNewLine);
-        std::cout << cmd << std::endl;
+        dataCmd.line = cmd;
+        // std::cout << cmd << std::endl;
         size_t cmddoubledot = cmd.find(':');
         if (cmddoubledot != std::string::npos)
             cmd.erase(cmd.begin() + cmddoubledot);
 		std::istringstream GetCmd(cmd);
 		GetCmd >> Command;
         
-        std::cout << Command << std::endl;
+        // std::cout << Command << std::endl;
+        dataCmd.fd = _Storeusersfd[index].fd;
         if (!Command.empty() && _IsAuth == false && (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
         {
             if (_correct_pass == false && (Command == "pass" || Command == "PASS"))
@@ -50,6 +54,7 @@ void Server::Authentication(int index, const char* data)
             	std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
             	send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
                 _NickCheck = true;
+                dataCmd.nick = nickname;
             }
             else if (_UserCheck == false && _correct_pass == true && (Command == "user" || Command == "USER"))
             {
@@ -65,6 +70,7 @@ void Server::Authentication(int index, const char* data)
             }
             else if (_UserCheck == true && _NickCheck == true && _correct_pass == true)
             {
+                _IsAuth = true;
             	std::string ErrorMsg = "Your are already Registed.\n";
                 send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
             }
@@ -74,5 +80,10 @@ void Server::Authentication(int index, const char* data)
                 send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
             }
         }
+        // else if(_IsAuth == true)
+        // {
+            obj.CommandMapinit(dataCmd);
+        // }
+
     }
 }

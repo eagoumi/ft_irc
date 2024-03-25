@@ -2,7 +2,6 @@
 
 void Commands::join(){
     User *user = new User(fd);
-    Channel *Chan;
     std::map<std::string, std::string> channel;
     std::map<std::string, std::string>::iterator it;
     std::vector<Channel*> listChan;
@@ -19,6 +18,7 @@ void Commands::join(){
     }
     else
     {
+        std::cout << "fd2 = " << fd << std::endl;
         db->addNewChannel(getChannel(), user);
         sendResponse(": Clinet joind seccefully\n");
     }

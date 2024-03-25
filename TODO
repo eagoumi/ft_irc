@@ -1,0 +1,3 @@
+Problem line 166
+
+while infinit loop server (check for each connection not just for server fd)

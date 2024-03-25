@@ -37,7 +37,10 @@ void Server::CheckForConnectionClients()
 			{
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
-				Authentication(i, buffer, _IsAuth, _correct_pass, _NickCheck, _UserCheck);
+				std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
+        		User *User = _db->getUser(_Storeusersfd[i].fd);
+				if (User->isAuthenticated() == false)
+					Authentication(i, buffer);
 				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}
@@ -51,6 +54,7 @@ void Server::CheckForConnectionClients()
 				{
 					std::cout << "Unexpected Error Of losing connection." << std::endl;
 				}
+				_db->deleteUser(_Storeusersfd.at(i).fd);
 				close(_Storeusersfd.at(i).fd); // Close Socket
 				_Storeusersfd.erase(_Storeusersfd.begin() + i); // Remove Poll Set on Vector
 				i--; //Cerrection index ater Removal
@@ -60,7 +64,7 @@ void Server::CheckForConnectionClients()
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password), _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
+Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {
 	// std::cout << "Here is Agoumi Before :" << std::endl;
 	// std::cout << _Port << std::endl;
@@ -202,10 +206,6 @@ void Server::accept_connection()
 	std::cout << newSocketfd << std::endl;
 	if (newSocketfd >= 0)
 	{
-		_IsAuth = false;
-		_correct_pass = false;
-		_NickCheck = false;
-		_UserCheck = false;
 		//inet_ntoa() only supports IPv4 addresses. 
 		// For software that needs to be compatible with IPv6, inet_ntop() is the preferred alternative.
 		std::string convertlocalhost(inet_ntoa(_Sockaddclient.sin_addr)); //It converts an Internet host address, given in network byte order (which is typically a numeric IP address in binary form), 

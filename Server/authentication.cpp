@@ -1,95 +1,19 @@
 #include "server.hpp"
 
-// void Server::getregestred(int index, std::string data)
-// {
-
-// }
-
-// void Server::Authentication(int index, const char* data, bool _IsAuth, bool _correct_pass, bool _NickCheck, bool _UserCheck)
-// {
-//     bool                            _IsAuth        =     false;
-//     bool                            _correct_pass  =     false;
-//     bool                            _NickCheck     =     false;
-//     bool                            _UserCheck     =     false;
-//     std::string dataStr(data);
-
-// 	//check fo the /n when applaying command
-// 	size_t CmdNewLine = dataStr.find('\n');
-// 	if (CmdNewLine != std::string::npos)
-// 	{
-// 		std::string Command;
-// 		std::string cmd = dataStr.substr(0, CmdNewLine);
-//         std::cout << cmd << std::endl;
-//         size_t cmddoubledot = cmd.find(':');
-//         if (cmddoubledot != std::string::npos)
-//             cmd.erase(cmd.begin() + cmddoubledot);
-// 		std::istringstream GetCmd(cmd);
-// 		GetCmd >> Command;
-        
-//         std::cout << _correct_pass << std::endl;
-//         if (!Command.empty() && _IsAuth == false && (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
-//         {
-//             if (_correct_pass == false && (Command == "pass" || Command == "PASS"))
-//             {
-//                 std::string pass;
-// 		        GetCmd >> pass;
-//                 std::cout << pass << std::endl;
-//                 if (pass == _Password)
-//                 {
-//                     puts("ss");
-//                     _correct_pass = true;
-//                     std::string PassMsg = "Your password are correct, You can Register Now!\n";
-//                     send(_Storeusersfd[index].fd, PassMsg.c_str(), PassMsg.length(), 0);
-//                 }
-                
-//             }
-//             else if (_NickCheck == false && _correct_pass == true && (Command == "nick" || Command == "NICK"))
-//             {
-//                 std::string nickname;
-//             	GetCmd >> nickname;
-//                 // puts ("sss");
-//                 std::cout << cmd << std::endl;
-//                 std::cout << nickname << std::endl;
-//             	// SetClientNickName(_Storeusersfd[index].fd, nickname);
-//             	std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
-//             	send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
-//                 _NickCheck = true;
-//             }
-//             else if (_UserCheck == false && _correct_pass == true && (Command == "user" || Command == "USER"))
-//             {
-//                 std::string user;
-// 		        GetCmd >> user;
-//                 std::cout << user << std::endl;
-//                 std::cout << cmd << std::endl;
-//                 // setUserName(user);
-//             	std::string UserMsg = "Your User are " + user + "!\n";
-//                 send(_Storeusersfd[index].fd, UserMsg.c_str(), UserMsg.length(), 0);
-//                 _UserCheck = true;
-//                 //limechat
-//             }
-//             else if (_UserCheck == true && _NickCheck == true && _correct_pass == true)
-//             {
-//                 _IsAuth = true;
-//             	std::string ErrorMsg = "Your are already Registed.\n";
-//                 send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
-//             }
-//             else
-//             {
-//             	std::string ErrorMsg = "Your Should to Register.\n";
-//                 send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
-//             }
-//         }
-//     }
-// }
-
-void Server::Authentication(int index, const char* data, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck)
+void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck)
 {
     std::string dataStr(data);
+        // bool                            _IsAuth        =     false;
+		bool                            _correct_pass  =     false;
+		bool                            _NickCheck     =     false;
+		bool                            _UserCheck     =     false;
 
     //check for the newline when applying command
     size_t CmdNewLine = dataStr.find('\n');
     if (CmdNewLine != std::string::npos)
     {
+        std::cout << "user to create : " << _Storeusersfd[index].fd << std::endl;
+        User *Add_User = _db->getUser(_Storeusersfd[index].fd);
         std::string Command;
         std::string cmd = dataStr.substr(0, CmdNewLine);
         // std::cout << cmd << std::endl;
@@ -100,18 +24,18 @@ void Server::Authentication(int index, const char* data, bool& _IsAuth, bool& _c
         GetCmd >> Command;
 
         // std::cout << _correct_pass << std::endl;
-        if (!Command.empty() && _IsAuth == false) //&& (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
+        if (!Command.empty()) //&& Add_User->isAuthenticated() == false) // && (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
         {
             if (Command == "pass" || Command == "PASS")
             {
-                if (_correct_pass == false)
+                if (Add_User->isCorrect_Password() == false)
                 {
                     std::string pass;
                     GetCmd >> pass;
                     // std::cout << pass << std::endl;
                     if (pass == _Password)
                     {
-                        _correct_pass = true;
+                        Add_User->Correct_Password();
                         std::string PassMsg = "Your password is correct. Please enter your nickname.\n";
                         send(_Storeusersfd[index].fd, PassMsg.c_str(), PassMsg.length(), 0);
                     }
@@ -125,24 +49,26 @@ void Server::Authentication(int index, const char* data, bool& _IsAuth, bool& _c
                 {
                     std::string PassErrMsg = "You have already entered the password.\n";
                     send(_Storeusersfd[index].fd, PassErrMsg.c_str(), PassErrMsg.length(), 0);
+
                 }
             }
             else if (Command == "nick" || Command == "NICK")
             {
-                if (!_correct_pass)
+                if (!Add_User->isCorrect_Password())
                 {
                     std::string NickErrMsg = "Please enter the password to connect to the server first.\n";
                     send(_Storeusersfd[index].fd, NickErrMsg.c_str(), NickErrMsg.length(), 0);
                 }
-                else if (_NickCheck == false)
+                else if (Add_User->isNickCheck() == false)
                 {
                     std::string nickname;
                     GetCmd >> nickname;
+                    Add_User->setNickName(nickname);
                     // std::cout << cmd << std::endl;
                     // std::cout << nickname << std::endl;
                     std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
                     send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
-                    _NickCheck = true;
+                    Add_User->NickCheck();
                 }
                 else
                 {
@@ -152,31 +78,33 @@ void Server::Authentication(int index, const char* data, bool& _IsAuth, bool& _c
             }
             else if (Command == "user" || Command == "USER")
             {
-                if (!_correct_pass)
+                if (!Add_User->isCorrect_Password())
                 {
                     std::string UserErrMsg = "Please enter the password to connect to the server first.\n";
                     send(_Storeusersfd[index].fd, UserErrMsg.c_str(), UserErrMsg.length(), 0);
                 }
-                else if (!_NickCheck)
+                else if (!Add_User->isNickCheck())
                 {
                     std::string UserErrMsg = "Please enter your nickname first.\n";
                     send(_Storeusersfd[index].fd, UserErrMsg.c_str(), UserErrMsg.length(), 0);
                 }
-                else if (_UserCheck == false)
+                else if (Add_User->isUserCheck() == false)
                 {
                     std::string user;
                     GetCmd >> user;
+                    Add_User->setUserName(user);
                     // std::cout << user << std::endl;
                     // std::cout << cmd << std::endl;
                     std::string UserMsg = "Your username is " + user + ". You are now registered.\n";
                     send(_Storeusersfd[index].fd, UserMsg.c_str(), UserMsg.length(), 0);
-                    _UserCheck = true;
+                    Add_User->UserCheck();
                 }
                 else
                 {
                     std::string UserErrMsg = "You are already registered.\n";
                     send(_Storeusersfd[index].fd, UserErrMsg.c_str(), UserErrMsg.length(), 0);
                 }
+                Add_User->SetAuthenticated();
             }
             else
             {

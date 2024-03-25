@@ -15,6 +15,10 @@ static bool isStrStartWith(std::string const& str, std::string const& charSet) {
 }
 
 User::User(USER_ID const& Id) : _Id(Id) {
+    _isAuthenticated = false;
+    _Correct_Password = false;
+    _UserCheck = false;
+    _NickCheck = false;
 }
 
 USER_ID const& User::getUserId() {
@@ -39,6 +43,53 @@ void User::setNickName(NICK_NAME const& name) {
 NICK_NAME const & User::getNickName() {
     return (_nickname);
 }
+
+
+//by agoumi
+void User::SetAuthenticated()
+{
+    if (_UserCheck == true && _NickCheck == true && _Correct_Password == true)
+        _isAuthenticated = true;
+}
+
+bool User::isAuthenticated()
+{
+    return (_isAuthenticated);
+}
+
+//checking if the pass word are entred and correct
+void User::Correct_Password()
+{
+    _Correct_Password = true;
+}
+
+bool User::isCorrect_Password()
+{
+    return (_Correct_Password);
+}
+
+//checking fo entring NickName
+void User::NickCheck()
+{
+    _NickCheck = true;
+}
+
+bool User::isNickCheck()
+{
+    return (_NickCheck);
+}
+
+//checking fo entring NickName
+void User::UserCheck()
+{
+    _UserCheck = true;
+}
+
+bool User::isUserCheck()
+{
+    return (_UserCheck);
+}
+
 
 User::~User() {
     //here I think I'll have to ... nothing srsly

@@ -17,13 +17,13 @@ class   User
 {
     private:
         USER_ID								_Id;
-        std::string							_nickname;
-        std::string							_username;
+        NICK_NAME							_nickname;
+        USER_NAME						    _username;
         std::map<std::string, Channel *>	_joinedChannels;//srsly I see no need for this, at least for now
-        bool								_isAuthenticated;
-        bool                                _Correct_Password;
-        bool                                _NickCheck;
-        bool                                _UserCheck;
+        // bool								_isAuthenticated;
+        bool                                _isPasswordInserted;
+        bool                                _isNickInserted;
+        bool                                _isUserNameInserted;
 
     public:
         User(USER_ID const&);
@@ -34,15 +34,16 @@ class   User
         NICK_NAME const& getNickName();
         
         //by agoumi
-        void SetAuthenticated();
+        // void SetAuthenticated();
         bool isAuthenticated();
         //by agoumi checking password authen
-        void Correct_Password();
-        bool isCorrect_Password();
-        void NickCheck();
-        bool isNickCheck();
-        void UserCheck();
-        bool isUserCheck();
+        // void Correct_Password();
+        bool hasInsertedPass();
+        // void NickCheck();
+        bool hasInsertedNick();
+        // void UserCheck();
+        bool hasInsertedUsername();
+        void insertedPassSuccessfully();
 
         // void joinChannel(Channel *channel);
         // Channel *createChannel(CHANNEL_NAME name);

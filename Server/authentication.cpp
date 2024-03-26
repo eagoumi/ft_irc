@@ -5,7 +5,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
     std::string dataStr(data);
 
     //check for the newline when applying command
-    size_t CmdNewLine = dataStr.find('\n');
+    size_t CmdNewLine = dataStr.find("\r\n");
     if (CmdNewLine != std::string::npos)
     {
         std::cout << "user to create : " << _Storeusersfd[index].fd << std::endl;

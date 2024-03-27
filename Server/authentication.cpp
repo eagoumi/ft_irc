@@ -1,25 +1,47 @@
 #include "server.hpp"
+#include <sstream>
+
+std::string skipSpace(std::string string)
+{
+    std::string skiip;
+    int i= 0;
+    while (string[i] == ' ')
+        i++;
+    skiip = string.substr(i, string.length());
+    return skiip;
+}
+
+size_t Parameter_number(std::string data)
+{
+    size_t len = 0;
+    std::string param;
+    std::istringstream string(data);
+
+    while (string >> param)
+        len++;
+    return len;
+}
 
 void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck)
 {
     std::string dataStr(data);
 
     //check for the newline when applying command
-    size_t CmdNewLine = dataStr.find('\n');
+    size_t CmdNewLine = dataStr.find_first_of("\r\n");
     if (CmdNewLine != std::string::npos)
     {
-        std::cout << "user to create : " << _Storeusersfd[index].fd << std::endl;
         User *currUser = _db->getUser(_Storeusersfd[index].fd);
         std::string Command;
         std::string cmd = dataStr.substr(0, CmdNewLine);
-        // std::cout << cmd << std::endl;
+        size_t len_param_command = Parameter_number(cmd);
+        // std::cout << "param len: " << len_param_command << std::endl;
         size_t cmddoubledot = cmd.find(':');
         if (cmddoubledot != std::string::npos)
             cmd.erase(cmd.begin() + cmddoubledot);
         std::istringstream GetCmd(cmd);
         GetCmd >> Command;
 
-        // std::cout << _correct_pass << std::endl;
+        std::cout << Command << std::endl;
         if (!Command.empty()) //&& currUser->isAuthenticated() == false) // && (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
         {
             if (Command == "pass" || Command == "PASS")
@@ -27,44 +49,46 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                 if (currUser->hasInsertedPass() == false)
                 {
                     std::string pass;
-                    GetCmd >> pass;
-                    // std::cout << pass << std::endl;
-                    if (pass == _Password)
+                    pass = skipSpace(cmd.substr(Command.length(), CmdNewLine));
+                    // GetCmd >> pass;
+                    std::cout << "here'" << _Password << "'here" << std::endl;
+                    std::cout << "here'" << pass << "'here" << std::endl;
+                    // std::cout << _Password << std::endl;
+                    if (pass == skipSpace(_Password)) //&& len_param_command == 2)
                     {
                         currUser->insertedPassSuccessfully();
-                        std::string PassMsg = "Your password is correct. Please enter your nickname.\n";
-                        send(_Storeusersfd[index].fd, PassMsg.c_str(), PassMsg.length(), 0);
+                        currUser->ServertoClients(ERR_CORRECTPASS(std::string("*")));
+                        // std::string PassMsg = "Your password is correct. Please enter your nickname.\n";
+                        // send(_Storeusersfd[index].fd, PassMsg.c_str(), PassMsg.length(), 0);
                     }
-                    else
-                    {
-                        std::string PassErrMsg = "Incorrect password. Please try again.\n";
-                        send(_Storeusersfd[index].fd, PassErrMsg.c_str(), PassErrMsg.length(), 0);
-                    }
+                    else if (pass.empty() || len_param_command == 1)
+                        currUser->ServertoClients(ERR_NEEDMOREPARAMS(std::string("*"), Command));
+                    else 
+                        currUser->ServertoClients(ERR_PASSWDMISMATCH(std::string("*")));
                 }
                 else
                 {
-                    std::string PassErrMsg = "You have already entered the password.\n";
-                    send(_Storeusersfd[index].fd, PassErrMsg.c_str(), PassErrMsg.length(), 0);
-
+                    currUser->ServertoClients(ERR_NOTREGISTERED(std::string("*")));
+                    // std::string PassErrMsg = "You have already entered the password.\n";
+                    // send(_Storeusersfd[index].fd, PassErrMsg.c_str(), PassErrMsg.length(), 0);
                 }
             }
             else if (Command == "nick" || Command == "NICK")
             {
                 if (!currUser->hasInsertedPass())
-                {
-                    std::string NickErrMsg = "Please enter the password to connect to the server first.\n";
-                    send(_Storeusersfd[index].fd, NickErrMsg.c_str(), NickErrMsg.length(), 0);
-                }
+                    currUser->ServertoClients(ERR_ALLREADYENTERPASS(std::string("*")));
                 else if (currUser->hasInsertedNick() == false)
                 {
                     std::string nickname;
                     GetCmd >> nickname;
-                    currUser->setNickName(nickname);
-                    // std::cout << cmd << std::endl;
-                    // std::cout << nickname << std::endl;
-                    std::string WlcmClientMsg = "Welcome " + nickname + "!\n";
-                    send(_Storeusersfd[index].fd, WlcmClientMsg.c_str(), WlcmClientMsg.length(), 0);
-                    // currUser->NickCheck();
+                    std::cout << nickname << std::endl;
+                    if (!nickname.empty() && !currUser->isStrContains(nickname, " ,*?!@.") \
+                            && !currUser->isStrStartWith(nickname, "$:#&+~%") && len_param_command == 2)
+                        currUser->setNickName(nickname);
+                    else if (nickname.empty() || len_param_command == 1)
+                        currUser->ServertoClients(ERR_NONICKNAMEGIVEN(std::string("*")));
+                    else
+                        currUser->ServertoClients(ERR_ERRONEUSNICKNAME(nickname));
                 }
                 else
                 {
@@ -75,19 +99,17 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
             else if (Command == "user" || Command == "USER")
             {
                 if (!currUser->hasInsertedPass())
-                {
-                    std::string UserErrMsg = "Please enter the password to connect to the server first.\n";
-                    send(_Storeusersfd[index].fd, UserErrMsg.c_str(), UserErrMsg.length(), 0);
-                }
+                    currUser->ServertoClients(ERR_ALLREADYENTERPASS(std::string("*")));
                 else if (!currUser->hasInsertedNick())
                 {
                     std::string UserErrMsg = "Please enter your nickname first.\n";
                     send(_Storeusersfd[index].fd, UserErrMsg.c_str(), UserErrMsg.length(), 0);
                 }
-                else if (currUser->hasInsertedUsername() == false)
+                else if (currUser->hasInsertedUsername() == false && (len_param_command == 5 || len_param_command == 2))
                 {
                     std::string user;
                     GetCmd >> user;
+                    std::cout << user << std::endl;
                     currUser->setUserName(user);
                     // std::cout << user << std::endl;
                     // std::cout << cmd << std::endl;
@@ -100,13 +122,33 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                     std::string UserErrMsg = "You are already registered.\n";
                     send(_Storeusersfd[index].fd, UserErrMsg.c_str(), UserErrMsg.length(), 0);
                 }
-                // currUser->SetAuthenticated();
+                WelcomeClient(currUser);
             }
             else
-            {
-                std::string ErrorMsg = "Invalid command or sequence.\n";
-                send(_Storeusersfd[index].fd, ErrorMsg.c_str(), ErrorMsg.length(), 0);
-            }
+                currUser->ServertoClients(ERR_UNKNOWNCOMMAND(std::string("*"), Command));
         }
+    }
+}
+
+void Server::WelcomeClient(User *currUser)
+{
+
+    // User *currUser = _db->getUser(fd);
+    if (!currUser->getNickName().empty() && !currUser->getUserName().empty())
+    {
+        std::cout << currUser->getNickName() << " Is Logged in!" << std::endl;
+        // currUser->ServertoClients(RPL_WELCOME(currUser->getNickName(), currUser->getUserName(), currUser->getServerIP()));
+        currUser->ServertoClients(RPL_WELCOME(currUser->getNickName(), "IRC",currUser->getUserName(), _IPHostAdress));
+        currUser->ServertoClients(RPL_YOURHOST(currUser->getNickName(), _IPHostAdress, "IBA7LAWN N IRC"));
+        currUser->ServertoClients(RPL_MOTDSTART(currUser->getNickName()));
+        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), "    ______         _______                                 _          "));
+        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), "   /  _/ /_  ____ /__  / /___ __      ______     ____     (_)_________"));
+        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), "   / // __ \\/ __ `/ / / / __ `/ | /| / / __ \\   / __ \\   / / ___/ ___/"));
+        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " _/ // /_/ / /_/ / / / / /_/ /| |/ |/ / / / /  / / / /  / / /  / /__  "));
+        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), "/___/_.___/\\__,_/ /_/_/\\__,_/ |__/|__/_/ /_/  /_/ /_/  /_/_/   \\___/  "));
+        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " "));
+        currUser->ServertoClients(RPL_ENDOFMOTD(currUser->getNickName()));
+        currUser->ServertoClients(RPL_UMODEIS(currUser->getNickName(), "+w"));
+
     }
 }

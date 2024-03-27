@@ -28,6 +28,7 @@ void Server::CheckForConnectionClients()
 			std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
 			std::cout << recive << std::endl;
+			// puts(buffer);
 			if (recive > 0)
 			{
 				//data Received
@@ -59,30 +60,17 @@ void Server::CheckForConnectionClients()
 	}
 }
 
+
+
 Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {
-	// std::cout << "Here is Agoumi Before :" << std::endl;
-	// std::cout << _Port << std::endl;
-	// std::cout << _Password << std::endl;
-	// std::cout << _Sockadd.sin_addr.s_addr << std::endl;
-	// std::cout << _Sockadd.sin_port << std::endl;
-	// std::cout << "ip : " << INADDR_ANY << std::endl;
-	// createSockets();
-	// setSocketsopt();
-	// listtenSock();
-	// std::cout << _Port << std::endl;
-	// std::cout << _Password << std::endl;
-	// std::cout << _Sockadd.sin_addr.s_addr << std::endl;
-	// std::cout << _Sockadd.sin_port << std::endl;
-	// std::cout << "ip : " << INADDR_ANY << std::endl;
-	// std::cout << "Here is Agoumi" << std::endl;
-	// CommandMapinit();
 	_db = Database::GetInstance();
 }
 
-#define MAX_CLIENTS _Storeusersfd.size() // Assume MAX_CLIENTS + 1 for the server socket
+// #define MAX_CLIENTS _Storeusersfd.size() // Assume MAX_CLIENTS + 1 for the server socket
 std::string Server::HostIPADress()
 {
+
 	std::string iphost;
 	// std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
 	std::fstream ipfile;

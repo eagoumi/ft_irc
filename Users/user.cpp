@@ -1,18 +1,21 @@
 # include "./user.hpp"
+#include <sys/socket.h>
 
-static bool isStrContains(std::string const& str, std::string const& charSet) {
+bool User::isStrContains(std::string const& str, std::string const& charSet) {
 
     for (int i = 0; charSet[i]; i++)
         if (str.find(charSet[i]) != std::string::npos) return true;
     return false;
 }
 
-static bool isStrStartWith(std::string const& str, std::string const& charSet) {
+bool User::isStrStartWith(std::string const& str, std::string const& charSet) {
 
     for (int i = 0; charSet[i]; i++)
         if (str.at(0) == charSet[i]) return true;
     return false;
 }
+
+User::User(){}
 
 User::User(USER_ID const& Id) : _Id(Id) {
     // _isAuthenticated = false;
@@ -92,6 +95,34 @@ bool User::hasInsertedUsername()
     return (_isUserNameInserted);
 }
 
+
+void User::setServerIP(std::string const &ServerIP)
+{
+    std::cout << _IPServer << std::endl;
+    _IPServer = ServerIP;
+}
+
+std::string const &User::getServerIP()
+{
+    std::cout << _IPServer << std::endl;
+    return (_IPServer);
+}
+
+
+void User::IRCPrint(std::string string)
+{
+    std::string buffer = string + "\n";
+    //catch erro
+    if (send(_Id, buffer.c_str(), buffer.length(), 0) < 0)
+        throw std::runtime_error("Error On Sending a Message to the Client.\n");
+}
+
+void User::ServertoClients(std::string string)
+{
+    std::cout << _IPServer << std::endl;
+    std::string ipserv = getServerIP();
+    IRCPrint(":" + ipserv + " " + string);
+}
 
 User::~User() {
     //here I think I'll have to ... nothing srsly

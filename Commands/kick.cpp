@@ -1,68 +1,71 @@
 #include "Commands.hpp"
 
-void Commands:: kick()
+void Commands::displayMember()
 {
-    // User *Uobj;
-    // db = Database::GetInstance();
-    // int flag  = -1;
-// std::cout << db << std::endl;
+    std::map<size_t, User *> members;
+    members = db->getChannel(this->getChannel())->getMembers();
+    for (std::map<size_t, User *>::iterator it = members.begin(); it != members.end(); it++)
+    {
+        std::cout << it->first << " nickname = " << it->second->getNickName() << std::endl;
+    }
+}
+
+bool Commands::existMemberChannel(std::string member)
+{
+    std::map<size_t, User *> members;
+    members = db->getChannel(this->getChannel())->getMembers();
+    for (std::map<size_t, User *>::iterator it = members.begin(); it != members.end(); it++)
+    {
+        if (member == it->second->getNickName())
+            return true;
+    }
+    return false;
+}
+bool Commands::existOperatorChannel(std::string nick)
+{
+    std::map<size_t, User *> operators;
+    // int flag;
+    operators = db->getChannel(this->getChannel())->getOperators();
+    for (std::map<size_t, User *>::iterator it = operators.begin(); it != operators.end(); it++)
+    {
+        if (nick == it->second->getNickName())
+            return true;
+    }
+    return false;
+}
+
+void Commands::kick()
+{
 
     if (command.size() < 3)
     {
-        sendResponse(":" + getClient() + " " + getCommand() +  " :Not enough parameters");
-        return ;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
+        return;
     }
-    if(db->getUser(fd) != NULL)
+
+    if (db->getChannel(this->getChannel()) == NULL)
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :No such channel\n");
+
+    else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not on that channel\n");
+
+    else if (existOperatorChannel(db->getUser(fd)->getNickName()) == false)
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not channel operator\n");
+
+    else if (existMemberChannel(this->getNick()) == false)
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getNick() /*client*/ + " " + getChannel() + " :They aren't on that channel\n");
+
+    else if (existOperatorChannel(getNick()) == true)
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getNick() /*client*/ + " " + getChannel() + " :You can't KICK the operator\n");
+
+    else
     {
-        std::cout << "USER'S NICKNAME " << db->getUser(fd)->getUserName() << std::endl;
+        // displayMember();
+        db->getChannel(this->getChannel())->deleteMember(getNick());
+        // displayMember();
+        if (getCommentTopic() != "") 
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getCommentTopic() + "\n");
+        else
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + "\n");
     }
-
-    if(db->getChannel(this->getChannel()) == NULL)
-    {
-        sendResponse(":" + getClient() + " " + getChannel() + " :No such channel\n");
-    }
-
-    // if(db->ge)
-
-    // for (itCh = range.first; itCh != range.second; itCh++)
-    // {
-    //     if (itCh->second == getClient() && itCh->second[0] == '@')
-    //     {
-    //         flag = 1;
-    //         break;
-    //     }
-    //     // else if(itCh->second == getClient() && itCh->second[0] != '@')
-    //         flag = 0;
-    //     // else
-    //     //     flag  = 3;
-    // }
-    // if (flag == 0)
-    // {
-    //     // std::cout << ":" << getClient() << " " << getChannel() << " :You're not channel operator" << std::endl;
-    //     return;
-    // }
-    // else if(flag  == 3)
-    //     // std::cout << ":" << getClient() << " " << getChannel() << " :You're not on that channel" << std::endl;
-
-
-    // for (itCh = range.first; itCh != range.second; itCh++)
-    // {
-    //     if (itCh->second == get_nickName() && flag == 1)
-    //     {
-    //         channels.erase(itCh);
-    //         // write(get_fd(), getComment().c_str(), std::strlen(getComment().c_str()));
-    //         // write(get_fd(), "\n", 1);
-    //         flag  = -1;
-    //         return;
-    //     }
-    //     else
-    //     {
-    //         flag = 1;
-    //     }
-    // }
-    // if (flag == 1)
-    // {
-    //     // std::cout << ":" << getClient() << " " << get_nickName() << " " << getChannel() << " :They aren't on that channel" << std::endl;
-    //     return;
-    // }
 }

@@ -33,10 +33,11 @@ class Server
         std::vector<struct pollfd>      _Storeusersfd; //Storing used fds to monitor multiple file descriptors all in one
 		struct pollfd                   _pollfds;
         std::string                     _pass;
-        bool                            _IsAuth;
-        bool                            _correct_pass;
-        bool                            _NickCheck;
-        bool                            _UserCheck;
+        // bool                            _IsAuth;
+        // bool                            _correct_pass;
+        // bool                            _NickCheck;
+        // bool                            _UserCheck;
+
         // std::map<int, USER>          _ConnectedUser;
     public:
         Server(const int &port, const std::string &password);
@@ -61,7 +62,7 @@ class Server
         std::string getNickname();
         
         // Authentication
-        void Authentication(int index, const char* data, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck);
+        void Authentication(int index, const char* data);//, bool& _IsAuth, bool& _correct_pass, bool& _NickCheck, bool& _UserCheck);
         void getregestred(int index, std::string data);
 
         std::string HostIPADress();

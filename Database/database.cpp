@@ -6,10 +6,6 @@ typedef std::map<std::string, Channel *>::iterator ChannelIter;
 typedef std::map<USER_ID, User *>::iterator UserIter;
 #define NOT_FOUND NULL
 
-void Database::sendResponse(int fd, std::string message)
-{
-    send(fd, message.c_str(), message.length(), 0);
-}
 
 Database::Database()
 {
@@ -79,5 +75,6 @@ void Database::deleteChannel(CHANNEL_NAME name)
     this->_channels.erase(it);
 }
 
-// std::vector<std::string> getChannelsName
-// added from me
+std::__1::map<size_t, User *> Database::getUsers(){
+    return this->_users;
+}

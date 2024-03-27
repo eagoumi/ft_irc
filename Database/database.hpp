@@ -30,7 +30,9 @@ class Database
         void deleteChannel(CHANNEL_NAME);
 
 
-        void sendResponse(int fd, std::string massage);
+        // void sendResponse(int fd, std::string massage);
+        
+        std::__1::map<size_t, User *> getUsers();
 
         // ~Database();
 

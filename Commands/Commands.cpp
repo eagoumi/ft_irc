@@ -84,7 +84,7 @@ std::vector<std::string> Commands::getNextParam(/*std::list<token>& tokensList*/
     return (paramData);
 }
 
-void    Commands::tokenize(std::string const& cmdLine) {
+void   Commands::tokenize(std::string const& cmdLine) {
     
     token               tokenNode;
 	type                tokenType(NONE);
@@ -142,47 +142,55 @@ void    Commands::tokenize(std::string const& cmdLine) {
 
 void Commands::CommandMapinit(cmdData dataCmd)
 {
+    client = dataCmd.nick;
+    fd = dataCmd.fd;
+
+    // std::vector<std::string> tokenParam;
+    // std::vector<std::string>::iterator it;
+    // std::list<token> input = tokenize(dataCmd.line);
+    // tokenParam = getNextParam(input);
+    // for(it = tokenParam.begin(); it != tokenParam.end(); it++)
+    //     std::cout << "[" << *it << "]" << std::endl;
     // Channel cObj;
 
     // std::cout << line << std::endl;
 
     std::string token;
     std::istringstream iss(dataCmd.line);
-    // client = dataCmd.nick;
-    fd = dataCmd.fd;
 
     while (iss >> token)
     {
         command.push_back(token);
-        std::cout << "[" << token << "]" << std::endl;
+        // std::cout << "[" << token << "]" << std::endl;
     }
 
     // for (itV = command.begin(); itV != command.end(); itV++)
     //     std::cout << *itV << " ";
     // std::cout << std::endl;
 
-    if (getCommand() == "JOIN")
+    if (getCommand() == "JOIN" || getCommand() == "join") 
         join();
-    else if (getCommand() == "KICK")
+    else if (getCommand() == "KICK" || getCommand() == "kick")
         kick();
-    // else if(getCommand() == "INVITE")
-    //     invite();
-    // else if(getCommand() == "MODE")
-    //     mode();
-    // else if(getCommand() == "TOPIC")
-    //     topic();
+    else if(getCommand() == "INVITE" || getCommand() == "invite")
+        invite();
+    else if(getCommand() == "TOPIC" || getCommand() == "topic")
+        topic();
+    else if(getCommand() == "MODE" || getCommand() == "mode")
+        mode();
     else
-        sendResponse(":" + getClient() + " " + getCommand() + " :Unknown command\n");
-    // std::cout << db << std::endl;
+        sendResponse(fd, ":" + getClient() + " " + getCommand() + " :Unknown command\n");
 }
 
-void Commands::sendResponse(std::string message)
+void Commands::sendResponse(int userfd, std::string message)
 {
-    send(fd, message.c_str(), message.length(), 0);
+    send(userfd, message.c_str(), message.length(), 0);
 }
 
 std::string Commands::getNick()
 {
+    if(getCommand() == "invite" || getCommand() == "INVITE")
+        return command[1];
     for (itV = command.begin(); itV != command.end(); itV++)
     {
         if (itV->find('#', 0) != std::string::npos)
@@ -205,6 +213,23 @@ std::string Commands::getCommand() const
     return command[0];
 }
 
+std::string Commands::getCommentTopic(){
+    // std::cout << "WHY " <<command[2] << std::endl;
+    if(command[2] != "")
+        return command[2];
+    else
+        return "";
+}
+
+void Commands::seTopic(std::string newTopic)
+{
+    command[2] = newTopic;
+}
+
+// std::string Commands::geTopic()
+// {
+//     if(command[2])
+// }
 std::map<std::string, std::string> Commands::splitInput(std::string input)
 {
 
@@ -235,18 +260,11 @@ std::map<std::string, std::string> Commands::splitInput(std::string input)
     return sChannels;
 }
 
-void Commands::parsCommands()
-{
-    //    if(getChannel().find(',') != std::string::npos)
-    //     puts("it's here");
-    //     else
-    //     puts("nothere");
-    // else if(getCommand() == "KICK")
-    //     parsKick();
-}
 
 std::string Commands::getChannel()
 {
+    if(getCommand() == "mode" || getCommand() == "MODE")
+        return command[1];
     for (itV = command.begin(); itV != command.end(); itV++)
     {
         if (itV->find('#', 0) != std::string::npos)
@@ -265,20 +283,3 @@ std::string Commands::getHostName()
         return "";
     return hostName;
 }
-
-// std::string Commands::getKey(){
-
-// }
-
-// std::string Commands::get_comment() const{
-//     if(command[3] != "\0")
-//         return command[3];
-//     else
-//         return " ";
-// }
-// int Commands::get_fd() const{
-//     return fd;
-// }
-// std::string Commands::get_owner() const{
-//     return this->owner;
-// }

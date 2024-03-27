@@ -25,18 +25,27 @@ struct token
 	std::string	data;
 };
 
-//USER ID == FD
+// :yousra!~a@127.0.0.1 JOIN #HD
+// :Pentagone.chat MODE #HD +t
+// :Pentagone.chat 353 yousra @ #HD : @yousra
+// :Pentagone.chat 366 yousra #HD :End of /NAMES list.
+// :Pentagone.chat 332 yousra #HD :TOPIC Not set
 
 typedef struct s_comData{
     std::string line;
     std::string nick;
     int fd;
+
 }cmdData;
 
 
 class Commands{
 private:
+    static std::string newTopic;
+
     Database* db;
+
+    int flag;
     std::list<token> _tokensList;
     void tokenize(std::string const&);
     std::vector<std::string> getNextParam();
@@ -47,7 +56,7 @@ private:
     // std::multimap<std::string, std::string> channels;
     // std::map<std::string, std::string> channels;
     // std::map<std::string, std::string>::iterator itCh;
-    int fd;
+    unsigned long fd;
     std::string owner;
     std::string topicMsg;
 
@@ -58,6 +67,7 @@ private:
 
     std::string line;
     std::string client;
+
 
 public:
     Commands();
@@ -85,12 +95,12 @@ public:
 
     void join();
 
-    void parsKick();
 
-    std::map<std::string, std::string> parsJoin();
+    std::map<std::string, std::string> splitInput(std::string input);
 
-    void parsCommands();
-
+    bool existMemberChannel(std::string member);
+    bool existOperatorChannel(std::string nick);
+    size_t existUser(std::string nick);
 
     void CommandMapinit(cmdData dataCmd);
     // void CommandMapinit(std::string &line);
@@ -100,14 +110,14 @@ public:
     std::string getClient() const;
     std::string getCommand() const;
     std::string getChannel();
-    std::string get_comment();
-    int get_fd();
-    std::string get_owner();
+    std::string getCommentTopic();
     std::string getHostName();
+    void seTopic(std::string newTopic);
+    // std::string geTopic();
 
-    void sendResponse( std::string msg );
+    void sendResponse(int userfd, std::string msg);
 
-
+    void displayMember();
 
 };
 
@@ -116,3 +126,15 @@ public:
 // pass yous
 // nick yous
 // user s s s s
+
+
+
+// INVITE <nickname> <channel>
+// JOIN <channel>{,<channel>} [<key>{,<key>}]
+// KICK <channel> <user> *( "," <user> ) [<comment>]
+// TOPIC <channel> [<topic>]
+// MODE <target> [<modestring> [<mode arguments>...]]
+
+// topic #ch
+// topic #ch :
+// topic #ch :channel's topic

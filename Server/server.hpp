@@ -66,6 +66,7 @@ class Server
         void getregestred(int index, std::string data);
 
         std::string HostIPADress();
+        void WelcomeClient(User *currUser);
 };
 
 #endif

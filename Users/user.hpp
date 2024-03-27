@@ -2,7 +2,9 @@
 #define __USER__HPP
 
 #include <cstddef>
-# include <map> 
+#include <iostream>
+# include <map>
+#include <sys/socket.h>
 # include <string>
 
 # define USER_ID size_t  
@@ -24,14 +26,18 @@ class   User
         bool                                _isPasswordInserted;
         bool                                _isNickInserted;
         bool                                _isUserNameInserted;
+        std::string                         _IPServer;
 
     public:
+        User();
         User(USER_ID const&);
         USER_ID const& getUserId();
         void setUserName(USER_NAME const &);
         USER_NAME const& getUserName();
         void setNickName(NICK_NAME const &);
         NICK_NAME const& getNickName();
+        bool isStrContains(std::string const& str, std::string const& charSet);
+        bool isStrStartWith(std::string const& str, std::string const& charSet);
         
         //by agoumi
         // void SetAuthenticated();
@@ -44,6 +50,11 @@ class   User
         // void UserCheck();
         bool hasInsertedUsername();
         void insertedPassSuccessfully();
+        //Print Errors
+        void setServerIP(std::string const &ServerIP);
+        std::string const &getServerIP();
+        void IRCPrint(std::string   string);
+        void ServertoClients(std::string string);
 
         // void joinChannel(Channel *channel);
         // Channel *createChannel(CHANNEL_NAME name);

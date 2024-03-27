@@ -59,13 +59,13 @@ Channel* Database::getChannel(CHANNEL_NAME name) {
 
 void Database::deleteUser(USER_ID Id) {
     UserIter it = this->_users.find(Id);
-    free(it->second);
+    delete it->second;
     this->_users.erase(it);
 }
 
 void Database::deleteChannel(CHANNEL_NAME name) {
     ChannelIter it = this->_channels.find(name);
-    free(it->second);
+    delete it->second;
     this->_channels.erase(it);
 }
 

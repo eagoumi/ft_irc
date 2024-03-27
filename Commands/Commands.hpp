@@ -18,11 +18,11 @@
 #include "../Users/user.hpp"
 
 
-enum type { NONE, COMMA , JOIN_CMD, KICK_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, MODE_ARG };
+enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, MODE_ARG };
 struct token
 {
-	type		type;
-	std::string	data;
+	token_type		type;
+	std::string	    data;
 };
 
 //USER ID == FD
@@ -84,6 +84,8 @@ public:
     void mode();
 
     void join();
+
+    void logtime();
 
     void parsKick();
 

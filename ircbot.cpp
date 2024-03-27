@@ -1,28 +1,50 @@
-#include <iostream>
-#include <sstream>
 #include <string>
 #include <ctime>
-#include <iostream>
 #include <iterator>
 #include <locale>
 #include <iostream>
 #include <sstream>
+
+// std::string convertToTimeString(time_t unixTime) {
+//     std::ostringstream oss;
+//     std::tm* tm = localtime(&unixTime);
+//     oss << std::setw(2) << std::setfill('0') << tm->tm_hour << ":"
+//         << std::setw(2) << std::setfill('0') << tm->tm_min << ":"
+//         << std::setw(2) << std::setfill('0') << tm->tm_sec;
+//     return oss.str();
+// }
+
+// time_t convertToUnixTime(const std::string& timeStr) {
+//     std::tm tm = {};
+//     std::istringstream iss(timeStr);
+//     iss >> std::get_time(&tm, "%H:%M:%S");
+//     return mktime(&tm);
+// }
+
+#include <vector>
 #include <iomanip>
 
-std::string convertToTimeString(time_t unixTime) {
-    std::ostringstream oss;
-    std::tm* tm = localtime(&unixTime);
-    oss << std::setw(2) << std::setfill('0') << tm->tm_hour << ":"
-        << std::setw(2) << std::setfill('0') << tm->tm_min << ":"
-        << std::setw(2) << std::setfill('0') << tm->tm_sec;
-    return oss.str();
-}
+// Function to add multiple time durations represented as strings
+std::string addTimes(const std::vector<std::string>& times) {
+    int totalSeconds = 0;
+    for (size_t i = 0; i < times.size(); ++i) {
+        std::istringstream iss(times[i]);
+        int hours, minutes, seconds;
+        char colon;
+        iss >> hours >> colon >> minutes >> colon >> seconds;
+        totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    }
 
-time_t convertToUnixTime(const std::string& timeStr) {
-    std::tm tm = {};
-    std::istringstream iss(timeStr);
-    iss >> std::get_time(&tm, "%H:%M:%S");
-    return mktime(&tm);
+    int hours = totalSeconds / 3600;
+    int minutes = (totalSeconds % 3600) / 60;
+    int seconds = totalSeconds % 60;
+
+    std::ostringstream oss;
+    oss << std::setw(2) << std::setfill('0') << hours; //<< ":"
+        // << std::setw(2) << std::setfill('0') << minutes << ":"
+        // << std::setw(2) << std::setfill('0') << seconds;
+
+    return oss.str();
 }
 
 
@@ -37,16 +59,20 @@ int main()
 
     time_t t = time(NULL);
   struct tm tm = *localtime(&t);
-  printf("now: %d-%02d-%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+//   printf("now: %d-%02d-%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  char now[20];
+  sprintf(now, "%d-%02d-%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
   std::string begin_at = std::to_string(tm.tm_year + 1900) + "-" + std::to_string(tm.tm_mon + 1) + "-01";
-  std::cout << begin_at << std::endl;
+  std::string end_at = std::to_string(tm.tm_year + 1900) + "-" + std::to_string(tm.tm_mon + 1) + "-" + std::to_string(tm.tm_mday);
+//   std::cout << begin_at << std::endl;
 
 
-    std::string command = "curl  -sH \"Authorization: Bearer 2da25f5f7f4ddc8ca881650943f96e7a5e64cdb32c1a95458075db1e90e4fc7c\" https://api.intra.42.fr/v2/users/iltafah/locations_stats?begin_at=";//2024-03-01";
+    std::string command = "curl  -sH \"Authorization: Bearer 7e9338e97edf632650504cbb0c3c41f96f46938ff4d3a3363ab9b87531362a2c\" https://api.intra.42.fr/v2/users/iltafah/locations_stats?begin_at=";//2024-03-01";
+    command += begin_at;
+
     std::string jsonContent("");
     FILE *fp;
     
-    command += begin_at;
     fp = popen(command.c_str(), "r");
     if(fp == NULL)
     {
@@ -59,20 +85,25 @@ int main()
         jsonContent += myString;
     }
 
-    std::cout << jsonContent << std::endl;
+    // std::cout << jsonContent << std::endl;
 
     std::stringstream stream(jsonContent);
 
     std::string token;
-    time_t epoch = 0;
+    std::vector<std::string> tokens;
+    // time_t epoch = 0;
     while(std::getline(stream, token, ',')) {
         std::string time = token.substr(token.find(":\"")+2, 8);
+        tokens.push_back(time);
         // if ( strptime(time.c_str(), "%H:%M:%S", &tm) != NULL )
         //     epoch += mktime(&tm);
-        epoch += convertToUnixTime(time);
-        std::cout << epoch << std::endl;
+        // epoch += convertToUnixTime(time);
+        // std::cout << epoch << std::endl;
     }
-    std::cout << convertToTimeString(epoch);
+    std::string result = addTimes(tokens);
+    std::cout << "Logtime for iltafah from " + begin_at + " to " + end_at + " is :" << std::endl;
+    std::cout << "Result: " << result << " Hours \U0001F61C" << std::endl;
+    // std::cout << convertToTimeString(epoch);
 
     //     if(fp == NULL)
     //     {

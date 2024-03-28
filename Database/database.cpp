@@ -78,3 +78,13 @@ void Database::deleteChannel(CHANNEL_NAME name)
 std::__1::map<size_t, User *> Database::getUsers(){
     return this->_users;
 }
+
+bool Database::isNicknameUsed(NICK_NAME name) {
+
+    UserIter it = this->_users.begin();
+    while (it != this->_users.end()) {
+        if (it->second->getNickName() == name)
+            return true;
+    }
+    return false;
+}

@@ -51,6 +51,7 @@ private:
     std::list<token> _tokensList;
     void tokenize(std::string const&);
     std::vector<std::string> getNextParam(reset option = NANDA);
+    void checkTokensListSyntax();
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;

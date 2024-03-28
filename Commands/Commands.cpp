@@ -91,7 +91,7 @@ std::vector<std::string> Commands::getNextParam(reset option) {
 void   Commands::tokenize(std::string const& cmdLine) {
     
     token               tokenNode;
-	token_type                tokenType(NONE);
+	token_type          tokenType(NONE);
     std::string         word;
     size_t              tokenCounter = 0;
     size_t              parameterCounter = 0;
@@ -145,6 +145,24 @@ void   Commands::tokenize(std::string const& cmdLine) {
     getNextParam(RESET);
 }
 
+void Commands::checkTokensListSyntax()
+{
+	std::list<token>::iterator it = _tokensList.begin();
+    _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
+	while (it != _tokensList.end())
+	{
+		if ((*it).type == NONE)
+            throw std::string("token " + (*it).data + " type is NONE");
+        else if ((*it).type == CHANNEL)
+        {
+            std::cout << "channel name is : " << (*it).data << std::endl;
+            // (*it).data[0] != '#' ? (*it).data.insert(0, 1, '#') : NULL;
+            std::cout << "Nah not from here" << std::endl;
+        }
+        it++;
+	}
+}
+
 void Commands::CommandMapinit(cmdData dataCmd)
 {
     // std::cout << "command : " << getCommand() << std::endl;
@@ -154,6 +172,14 @@ void Commands::CommandMapinit(cmdData dataCmd)
 
     /***********************************************************************************/
     tokenize(dataCmd.line);
+    std::cout << "wtf wtf wtf" << std::endl;
+    try {
+        checkTokensListSyntax();
+    }
+    catch(std::string err) {
+        std::cout << err << std::endl;
+        return ;
+    }
     /* Here I need to verfiy of tokens List has a true sytnax, If not I'll print error */
     /* SO YOU WILL NEED TO ENTER COMMANDS THAT ARE WELL SYNTAXED FOR NOW */
     /***********************************************************************************/
@@ -184,7 +210,10 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // if (currUser == NULL)   
     //     std::cout << "user is null within commandMapINit()" << std::endl;
     // User *currUser = db->getUser(fd);
+    std::cout << "before getNextParam" << std::endl;
     std::string cmd = getNextParam()[0];
+    std::cout << "after getNextParam" << std::endl;
+    std::cout << "uwu" << std::endl;
     if (cmd == "JOIN") 
         join();
     else if (cmd == "KICK")

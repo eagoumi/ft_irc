@@ -28,6 +28,7 @@ class Database
         Channel* getChannel(CHANNEL_NAME);
         void deleteUser(USER_ID);
         void deleteChannel(CHANNEL_NAME);
+        bool isNicknameUsed(NICK_NAME);
 
 
         // void sendResponse(int fd, std::string massage);

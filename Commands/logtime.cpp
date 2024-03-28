@@ -34,10 +34,10 @@ static std::string addTimes(const std::vector<std::string>& times) {
 }
 
 void Commands::logtime() {
-
+// std::cout << "logtime start" << std::endl;
     getNextParam();
-
     std::string login = getNextParam()[0];
+// std::cout << "logtime login " << login << std::endl;
 
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -49,25 +49,26 @@ void Commands::logtime() {
     std::string month;
     std::string day;
 
-    ss << tm.tm_year + 1900;
+    ss << tm.tm_year + 1900 << " " << tm.tm_mon + 1 << " " << tm.tm_mday;
     ss >> year;
-    ss << tm.tm_mon + 1;
+    // ss << tm.tm_mon + 1;
     ss >> month;
-    ss << tm.tm_mon + 1;
+    // ss << tm.tm_mday;
     ss >> day;
 
   std::string begin_at = /*std::to_string(tm.tm_year + 1900)*/year + "-" + month + "-01";
   std::string end_at = year + "-" + month + "-" + day;
-//   std::cout << begin_at << std::endl;
+  std::cout << "begin at:" << begin_at << std::endl;
+  std::cout << "end at:" << end_at << std::endl;
 
 
-    std::string command = "curl  -sH \"Authorization: Bearer 7e9338e97edf632650504cbb0c3c41f96f46938ff4d3a3363ab9b87531362a2c\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats?begin_at=";//2024-03-01";
-    command += begin_at;
+    std::string curl = "curl  -sH \"Authorization: Bearer aaabb1045033df20e8a70476c65de346437b2f2b7386edc361281662a44ca08a\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats?begin_at=";//2024-03-01";
+    curl += begin_at;
 
     std::string jsonContent("");
     FILE *fp;
     
-    fp = popen(command.c_str(), "r");
+    fp = popen(curl.c_str(), "r");
     if(fp == NULL)
     {
         puts("Unable to open process");

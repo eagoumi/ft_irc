@@ -66,6 +66,20 @@ int main()
   std::string end_at = std::to_string(tm.tm_year + 1900) + "-" + std::to_string(tm.tm_mon + 1) + "-" + std::to_string(tm.tm_mday);
 //   std::cout << begin_at << std::endl;
 
+    std::stringstream ss;
+    std::string year;
+    std::string month;
+    std::string day;
+
+    ss << tm.tm_year + 1900 << " " << tm.tm_mon + 1 << " " << tm.tm_mday;
+    ss >> year;
+    // ss << tm.tm_mon + 1;
+    ss >> month;
+    // ss << tm.tm_mday;
+    ss >> day;
+
+    std::cout << "y-m-d : " << year << "-" << month << "-" << day << "\n";
+
 
     std::string command = "curl  -sH \"Authorization: Bearer 7e9338e97edf632650504cbb0c3c41f96f46938ff4d3a3363ab9b87531362a2c\" https://api.intra.42.fr/v2/users/iltafah/locations_stats?begin_at=";//2024-03-01";
     command += begin_at;

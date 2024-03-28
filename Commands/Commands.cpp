@@ -1,6 +1,7 @@
 #include "./Commands.hpp"
 #include <cctype>
 #include <cstddef>
+#include <vector>
 
 
 Commands::Commands()
@@ -62,18 +63,18 @@ token_type    determineToken(char sep, token_type cmdType, size_t paramCounter) 
     return (tokenType);
 }
 
-std::vector<std::string> Commands::getNextParam(/*std::list<token>& tokensList*/) {
+//call it when you are sure from the command syntax
+std::vector<std::string> Commands::getNextParam(reset option) {
 
     static token_type tokenType;
     static bool firstTime = true;
-    /*static std::list<token>* tokensListAddr = NULL;*/
     static std::list<token>::iterator it;
     std::vector<std::string> paramData;
 
-    if (firstTime == true /*|| tokensListAddr != &tokensList*/) {
+    if (option == RESET) { firstTime = true; return std::vector<std::string>(); }
+    if (firstTime == true) {
         it = _tokensList.begin();
         tokenType = (*it).type;
-        /*tokensListAddr = &tokensList;*/
         firstTime = false;
     }
     if (it == _tokensList.end()) firstTime = true;
@@ -114,6 +115,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
 				/*********************************************************************************/
                 if (!(word.empty()))
 				{
+                    std::transform(word.begin(), word.end(), word.begin(), ::toupper);
                     tokenCounter == 0 ? tokenType = determine_cmd(word) : 0;
 					tokenNode.data = word;
 					tokenNode.type = tokenType;
@@ -140,13 +142,21 @@ void   Commands::tokenize(std::string const& cmdLine) {
             word += cmdLine[i++];
         }
     }
-
+    getNextParam(RESET);
 }
 
 void Commands::CommandMapinit(cmdData dataCmd)
 {
+    // std::cout << "command : " << getCommand() << std::endl;
     client = dataCmd.nick;
     fd = dataCmd.fd;
+    currUser = db->getUser(fd);
+
+    /***********************************************************************************/
+    tokenize(dataCmd.line);
+    /* Here I need to verfiy of tokens List has a true sytnax, If not I'll print error */
+    /* SO YOU WILL NEED TO ENTER COMMANDS THAT ARE WELL SYNTAXED FOR NOW */
+    /***********************************************************************************/
 
     // std::vector<std::string> tokenParam;
     // std::vector<std::string>::iterator it;
@@ -158,33 +168,52 @@ void Commands::CommandMapinit(cmdData dataCmd)
 
     // std::cout << line << std::endl;
 
-    std::string token;
-    std::istringstream iss(dataCmd.line);
+// std::cout << "what" << std::endl;
+    // std::string token;
+    // std::istringstream iss(dataCmd.line);
 
-    while (iss >> token)
-    {
-        command.push_back(token);
-        // std::cout << "[" << token << "]" << std::endl;
-    }
+    // while (iss >> token)
+    // {
+    //     command.push_back(token);
+    //     // std::cout << "[" << token << "]" << std::endl;
+    // }
 
     // for (itV = command.begin(); itV != command.end(); itV++)
     //     std::cout << *itV << " ";
     // std::cout << std::endl;
-
-    if (getCommand() == "JOIN" || getCommand() == "join") 
+    // if (currUser == NULL)   
+    //     std::cout << "user is null within commandMapINit()" << std::endl;
+    // User *currUser = db->getUser(fd);
+    std::string cmd = getNextParam()[0];
+    if (cmd == "JOIN") 
         join();
-    else if (getCommand() == "KICK" || getCommand() == "kick")
+    else if (cmd == "KICK")
         kick();
-    else if (getCommand() == "LOGTIME")
+    else if (cmd == "LOGTIME")
         logtime();
-    else if(getCommand() == "INVITE" || getCommand() == "invite")
+    else if(cmd == "INVITE")
         invite();
-    else if(getCommand() == "TOPIC" || getCommand() == "topic")
+    else if(cmd == "TOPIC")
         topic();
-    else if(getCommand() == "MODE" || getCommand() == "mode")
+    else if(cmd == "MODE")
         mode();
     else
-        sendResponse(fd, ":" + getClient() + " " + getCommand() + " :Unknown command\n");
+        sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd));
+
+    // if (getCommand() == "JOIN" || getCommand() == "join") 
+    //     join();
+    // else if (getCommand() == "KICK" || getCommand() == "kick")
+    //     kick();
+    // else if (getCommand() == "LOGTIME")
+    //     logtime();
+    // else if(getCommand() == "INVITE" || getCommand() == "invite")
+    //     invite();
+    // else if(getCommand() == "TOPIC" || getCommand() == "topic")
+    //     topic();
+    // else if(getCommand() == "MODE" || getCommand() == "mode")
+    //     mode();
+    // else
+    //     sendResponse(fd, ":" + getClient() + " " + getCommand() + " :Unknown command\n");
 }
 
 void Commands::sendResponse(int userfd, std::string message)

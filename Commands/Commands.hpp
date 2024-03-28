@@ -16,7 +16,9 @@
 #include "../Database/database.hpp"
 #include "../Channels/channel.hpp"
 #include "../Users/user.hpp"
+#include "../error_request.hpp"
 
+enum reset { NANDA, RESET };
 
 enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, MODE_ARG };
 struct token
@@ -48,7 +50,7 @@ private:
     int flag;
     std::list<token> _tokensList;
     void tokenize(std::string const&);
-    std::vector<std::string> getNextParam();
+    std::vector<std::string> getNextParam(reset option = NANDA);
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;
@@ -57,6 +59,7 @@ private:
     // std::map<std::string, std::string> channels;
     // std::map<std::string, std::string>::iterator itCh;
     unsigned long fd;
+    User *currUser;
     std::string owner;
     std::string topicMsg;
 

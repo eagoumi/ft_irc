@@ -82,7 +82,7 @@ std::string Server::HostIPADress()
 {
 
 	std::string iphost;
-	std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
+	// std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
 	std::fstream ipfile;
 	ipfile.open(".log");
 	std::getline(ipfile, iphost);

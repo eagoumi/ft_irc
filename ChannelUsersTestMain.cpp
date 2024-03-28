@@ -3,59 +3,67 @@
 #include "Database/database.hpp"
 #include <sys/signal.h>
 # include <iostream>
+#include <vector>
 
 # define NOT_FOUND NULL
 
 /* Compile using c++ ChannelUsersTestMain.cpp Database/database.cpp Channels/channel.cpp Users/user.cpp */
+
+void join(std::string chanName, int userFd) {
+    
+    Database* db = Database::GetInstance();
+    User *currUser = db->getUser(userFd);
+
+    //when `/join #uWu` command sent
+    Channel* channel = db->getChannel(chanName);
+    if (channel == NOT_FOUND) {
+
+        std::cout << "channel not found, creating by " << currUser->getUserName() << " ...\n";
+        db->addNewChannel(chanName, currUser);
+        //Check if channel exists or not
+        if (db->getChannel(chanName) != NULL)
+            std::cout << "Channel " << chanName << " has been created\n\n";
+    }
+    else {
+        if (channel->getMember(userFd) != NULL)
+        {
+            std::cout << "user " << currUser->getUserName() << " already member in " << chanName << std::endl << std::endl;
+            return ;
+        }
+        //ila kanet channel already kayna 4ay5ess user joini liha
+        std::cout << "channel found, joining ...\n";
+        channel->addMember(currUser);
+
+        //jut debug msg to check if
+        std::cout << "user " << channel->getMember(userFd)->getUserName() << " has joined to " << chanName << std::endl << std::endl;
+    }
+}
+
 
 int main(int argc, char **argv) {
     try {
 
         Database* db = Database::GetInstance();
 
-        int EliasUserId = 1337;
-        User *user = db->addNewUser(new User(EliasUserId));
-        user->setUserName("ilias");
-        std::cout << db->getUser(EliasUserId)->getUserName() << std::endl;
+        User *elias = new User(3);
+        elias->setUserName("elias");
+        db->addNewUser(elias);
 
-        int yUserId = 42;
-        User *user2 = db->addNewUser(new User(yUserId));
-        user->setUserName("youssra");
-        std::cout << db->getUser(yUserId)->getUserName() << std::endl;
+        User *agoumi = new User(4); 
+        agoumi->setUserName("agoumi");
+        db->addNewUser(agoumi);
 
+        User *youssra = new User(5); 
+        youssra->setUserName("youssra");
+        db->addNewUser(youssra);
 
-        //when `/join #uWu` command sent
-        Channel* channel = db->getChannel("uWu");
-        if (channel == NOT_FOUND) {
-            std::cout << "channel not found, creating ...\n";
-            // channel = user->createChannel("uWu");
-            db->addNewChannel("uWu", user);
-            if (db->getChannel("uWu") != NULL)
-                std::cout << "Channel uWu has been created\n";
-        }
-        else {
-            //ila kanet channel already kayna 4ay5ess user joini liha
-            std::cout << "channel found, joining ...\n";
-            channel->addMember(user);
-        }
-
-        channel = db->getChannel("uWu");
-        if (channel == NOT_FOUND) {
-            std::cout << "channel not found, creating ...\n";
-            // channel = user->createChannel("uWu");
-            db->addNewChannel("uWu", user);
-            if (db->getChannel("uWu") != NULL)
-                std::cout << "Channel uWu has been created\n";
-        }
-        else {
-            //ila kanet channel already kayna 4ay5ess user joini liha
-            std::cout << "channel found, joining ...\n";
-            std::cout << user2->getUserName() << " joined the channel" << std::endl;
-            channel->addMember(user2);
-        }
+        join("irc", elias->getUserId());
+        join("irc", elias->getUserId());
+        join("42", agoumi->getUserId());
+        
     }
     catch (std::string errMsg) {
-        std::cout << errMsg << std::endl;
+        std::cout << "ERR EXCEPTION : " << errMsg << std::endl;
     }
     return (0);
 }

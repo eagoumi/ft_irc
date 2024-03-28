@@ -4,7 +4,7 @@
 
 # include "../Database/database.hpp"
 # include "../error_request.hpp"
-#include <i386/types.h>
+// #include <i386/types.h>
 #include <string>
 #include <iostream>
 #include <sys/poll.h>

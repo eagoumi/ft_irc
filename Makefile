@@ -2,7 +2,7 @@ NAME		=	ircserv
 
 CC			=	c++
 
-CFLAGS		=	-Wall -Wextra -std=c++98
+CFLAGS		=	-Wall -Wextra -std=c++98 -Wshadow
 
 # directories
 SRC_DIR		=	./
@@ -27,7 +27,8 @@ SRC_FILES	=	Server/server.cpp \
 				Users/user.cpp \
 				Commands/Commands.cpp Commands/kick.cpp \
 				Commands/join.cpp Commands/invite.cpp \
-				Commands/topic.cpp Commands/mode.cpp
+				Commands/topic.cpp Commands/mode.cpp \
+				Commands/logtime.cpp
 
 INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \

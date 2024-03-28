@@ -98,13 +98,13 @@ bool User::hasInsertedUsername()
 
 void User::setServerIP(std::string const &ServerIP)
 {
-    std::cout << _IPServer << std::endl;
+    // std::cout << _IPServer << std::endl;
     _IPServer = ServerIP;
 }
 
 std::string const &User::getServerIP()
 {
-    std::cout << _IPServer << std::endl;
+    // std::cout << _IPServer << std::endl;
     return (_IPServer);
 }
 
@@ -119,7 +119,7 @@ void User::IRCPrint(std::string string)
 
 void User::ServertoClients(std::string string)
 {
-    std::cout << _IPServer << std::endl;
+    // std::cout << _IPServer << std::endl;
     std::string ipserv = getServerIP();
     IRCPrint(":" + ipserv + " " + string);
 }

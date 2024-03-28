@@ -144,7 +144,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
 {
     client = dataCmd.nick;
     fd = dataCmd.fd;
-
     // std::vector<std::string> tokenParam;
     // std::vector<std::string>::iterator it;
     // std::list<token> input = tokenize(dataCmd.line);
@@ -153,7 +152,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     //     std::cout << "[" << *it << "]" << std::endl;
     // Channel cObj;
 
-    // std::cout << line << std::endl;
+    std::cout << line << dataCmd.line << std::endl;
 
     std::string token;
     std::istringstream iss(dataCmd.line);
@@ -265,6 +264,7 @@ std::string Commands::getChannel()
 {
     if(getCommand() == "mode" || getCommand() == "MODE")
         return command[1];
+
     for (itV = command.begin(); itV != command.end(); itV++)
     {
         if (itV->find('#', 0) != std::string::npos)

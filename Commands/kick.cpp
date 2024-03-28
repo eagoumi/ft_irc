@@ -1,4 +1,5 @@
 #include "Commands.hpp"
+#include "../error_request.hpp"
 
 void Commands::displayMember()
 {
@@ -39,7 +40,8 @@ void Commands::kick()
 
     if (command.size() < 3)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
+        sendResponse(fd, ERR_NEEDMOREPARAMS(db->getUser(fd)->getNickName(), getCommand()));
+        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
         return;
     }
 

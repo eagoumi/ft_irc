@@ -28,7 +28,7 @@ void Server::CheckForConnectionClients()
 			bzero(buffer, sizeof(buffer));
 			// std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
-			std::cout << recive << std::endl;
+			// std::cout << recive << std::endl;
 			// puts(buffer);
 			if (recive > 0)
 			{
@@ -40,9 +40,13 @@ void Server::CheckForConnectionClients()
 				data.line = buffer;
 				// data.nick = User->getNickName();
 				if (User->isAuthenticated() == false)
+				{
 					Authentication(i, buffer);
+				}	
 				else
+				{
 					cmdObj.CommandMapinit(data);
+				}	
 				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}
@@ -192,7 +196,7 @@ void Server::accept_connection()
 	size_t lensockadd = sizeof(_Sockaddclient);
 	// memset(&_Sockaddclient, 0, lensockadd);
 	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
-	std::cout << newSocketfd << std::endl;
+	// std::cout << newSocketfd << std::endl;
 	if (newSocketfd >= 0)
 	{
 		//inet_ntoa() only supports IPv4 addresses. 

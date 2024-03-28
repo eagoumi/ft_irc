@@ -41,7 +41,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
         std::istringstream GetCmd(cmd);
         GetCmd >> Command;
 
-        std::cout << Command << std::endl;
+        // std::cout << Command << std::endl;
         if (!Command.empty()) //&& currUser->isAuthenticated() == false) // && (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
         {
             if (Command == "pass" || Command == "PASS")
@@ -51,8 +51,8 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                     std::string pass;
                     pass = skipSpace(cmd.substr(Command.length(), CmdNewLine));
                     // GetCmd >> pass;
-                    std::cout << "here'" << _Password << "'here" << std::endl;
-                    std::cout << "here'" << pass << "'here" << std::endl;
+                    // std::cout << "here'" << _Password << "'here" << std::endl;
+                    // std::cout << "here'" << pass << "'here" << std::endl;
                     // std::cout << _Password << std::endl;
                     if (pass == skipSpace(_Password)) //&& len_param_command == 2)
                     {
@@ -81,7 +81,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                 {
                     std::string nickname;
                     GetCmd >> nickname;
-                    std::cout << nickname << std::endl;
+                    // std::cout << nickname << std::endl;
                     if (!nickname.empty() && !currUser->isStrContains(nickname, " ,*?!@.") \
                             && !currUser->isStrStartWith(nickname, "$:#&+~%") && len_param_command == 2)
                         currUser->setNickName(nickname);
@@ -109,7 +109,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                 {
                     std::string user;
                     GetCmd >> user;
-                    std::cout << user << std::endl;
+                    // std::cout << user << std::endl;
                     currUser->setUserName(user);
                     // std::cout << user << std::endl;
                     // std::cout << cmd << std::endl;

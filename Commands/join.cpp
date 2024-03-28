@@ -3,6 +3,7 @@
 void Commands::join()
 {
     flag = 0;
+    // getChannel();
     // User *user = new User(fd);
     User *user = db->getUser(fd);
     std::map<std::string, Channel *> listChan;

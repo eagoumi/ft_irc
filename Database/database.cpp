@@ -75,7 +75,7 @@ void Database::deleteChannel(CHANNEL_NAME name)
     this->_channels.erase(it);
 }
 
-std::__1::map<size_t, User *> Database::getUsers(){
+std::map<size_t, User *> Database::getUsers(){
     return this->_users;
 }
 

@@ -73,7 +73,7 @@ std::vector<std::string> Commands::getNextParam(reset option) {
 
     if (option == RESET) { firstTime = true; return std::vector<std::string>(); }
     if (firstTime == true) {
-        it = _tokensList.begin();
+        it = ++_tokensList.begin();
         tokenType = (*it).type;
         firstTime = false;
     }
@@ -147,19 +147,16 @@ void   Commands::tokenize(std::string const& cmdLine) {
 
 void Commands::checkTokensListSyntax()
 {
-	std::list<token>::iterator it = _tokensList.begin();
+	std::list<token>::iterator ListIt = _tokensList.begin();
+    token_type cmd = _tokensList.front().type;
+
     _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
-	while (it != _tokensList.end())
+    if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()));
+	while (ListIt != _tokensList.end())
 	{
-		if ((*it).type == NONE)
-            throw std::string("token " + (*it).data + " type is NONE");
-        else if ((*it).type == CHANNEL)
-        {
-            std::cout << "channel name is : " << (*it).data << std::endl;
-            // (*it).data[0] != '#' ? (*it).data.insert(0, 1, '#') : NULL;
-            std::cout << "Nah not from here" << std::endl;
-        }
-        it++;
+        if ((*ListIt).type == CHANNEL)
+            if ((*ListIt).data[0] != '#') (*ListIt).data.insert(0, 1, '#');
+        ListIt++;
 	}
 }
 
@@ -172,7 +169,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
 
     /***********************************************************************************/
     tokenize(dataCmd.line);
-    std::cout << "wtf wtf wtf" << std::endl;
     try {
         checkTokensListSyntax();
     }
@@ -210,11 +206,8 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // if (currUser == NULL)   
     //     std::cout << "user is null within commandMapINit()" << std::endl;
     // User *currUser = db->getUser(fd);
-    std::cout << "before getNextParam" << std::endl;
-    std::string cmd = getNextParam()[0];
-    std::cout << "after getNextParam" << std::endl;
-    std::cout << "uwu" << std::endl;
-    if (cmd == "JOIN") 
+    std::string cmd = getCommand();
+    if (cmd == "JOIN")
         join();
     else if (cmd == "KICK")
         kick();
@@ -226,8 +219,8 @@ void Commands::CommandMapinit(cmdData dataCmd)
         topic();
     else if(cmd == "MODE")
         mode();
-    else
-        sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd));
+    // else
+    //     sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd));
 
     // if (getCommand() == "JOIN" || getCommand() == "join") 
     //     join();
@@ -271,9 +264,10 @@ std::string Commands::getClient() const
 
 std::string Commands::getCommand() const
 {
-    if (command[1] == "KICK")
-        return command[1];
-    return command[0];
+    // if (command[1] == "KICK")
+    //     return command[1];
+    // return command[0];
+    return _tokensList.front().data;
 }
 
 std::string Commands::getCommentTopic(){

@@ -1,48 +1,50 @@
-#include "commands.hpp"
+#include "Commands.hpp"
+
+
+size_t Commands::existUser(std::string nick)
+{
+    std::map<size_t, User *> users;
+    users = db->getUsers();
+    for (std::map<size_t, User *>::iterator it = users.begin(); it != users.end(); it++)
+    {
+        if(nick == it->second->getNickName())
+            return it->first;
+    }
+    return 0;
+}
 
 void Commands::invite()
 {
-    bool owner = false;
-    bool onChannel = false;
+    // std::cout << "NICK = " << getNick() << std::endl;
     if (command.size() < 3)
     {
-        std::cout << ":" << getClient() << " " << getCommand() << " :Not enough parameters" << std::endl;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
         return;
     }
-    range = channels.equal_range(command[2]);
-    if(range.first == range.second)
+    else if (db->getChannel(this->getChannel()) == NULL)
     {
-        std::cout << ":" << getClient() << " " << getChannel() << " :No such channel" << std::endl;
-        return ;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :No such channel\n");
     }
-    for (itCh = range.first; itCh != range.second; itCh++)
+    else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
     {
-        //don't forget to add the set_only mode for joining the channel
-        if (getClient() == itCh->second)
-        {
-            owner = true;
-           
-        }
-        if(itCh->second == command[1])
-        {
-            onChannel = true;
-            
-        }
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not on that channel\n");
     }
-    if(owner == true && onChannel == false)
+    else if (existOperatorChannel(db->getUser(fd)->getNickName()) == false)
     {
-        channels.insert(std::pair<std::string, std::string>(command[2], command[1]));
-        return;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not channel operator\n");
     }
-    else if(owner == false)
+    else if(existMemberChannel(getNick()) == true)
     {
-        std::cout << ":" << getClient() << " " << getChannel() << " :You're not on that channel" << std::endl;
-        return;
-    } 
-    else if(onChannel == true)
-    {
-        std::cout << ":" << getClient() << " " << command[1] << " " << command[2] << " :is already on channel" << std::endl;
-        return ;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getNick() + " " + getChannel() + " :is already on channel\n");
     }
-
+    else{
+        size_t inviteFd = existUser(getNick());
+        if(inviteFd != 0)
+            sendResponse(inviteFd, ":" + db->getUser(fd)->getNickName() + " " + getNick() + " " + getChannel());
+        else
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :User does not exist");
+    }
 }
+
+
+

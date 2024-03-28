@@ -29,8 +29,18 @@ class Channel
         bool isUserInvited(USER_ID);
         bool isUserOperator(USER_ID);
         User *getMember(USER_ID);
+
+        //added
+        std::map<USER_ID, User *> getMembers();
+        std::map<USER_ID, User *> getOperators();
+        void deleteMember(std::string nickTarget);
+
         //getChannelUsers operators etc ..
         ~Channel();
 };
 
 #endif
+
+
+
+

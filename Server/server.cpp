@@ -19,13 +19,14 @@
 void Server::CheckForConnectionClients()
 {
 	char buffer[1024];
-
+	Commands cmdObj;
+	cmdData data;
 	for (size_t i = 1; i < _Storeusersfd.size(); i++)
 	{
 		if (_Storeusersfd.at(i).revents & POLLIN)
 		{
 			bzero(buffer, sizeof(buffer));
-			std::cout << _Storeusersfd.at(i).fd << std::endl;
+			// std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
 			std::cout << recive << std::endl;
 			// puts(buffer);
@@ -33,10 +34,15 @@ void Server::CheckForConnectionClients()
 			{
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
-				std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
+				// std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
         		User *User = _db->getUser(_Storeusersfd[i].fd);
+				data.fd = _Storeusersfd[i].fd;
+				data.line = buffer;
+				// data.nick = User->getNickName();
 				if (User->isAuthenticated() == false)
 					Authentication(i, buffer);
+				else
+					cmdObj.CommandMapinit(data);
 				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}
@@ -72,7 +78,7 @@ std::string Server::HostIPADress()
 {
 
 	std::string iphost;
-	std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
+	// std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
 	std::fstream ipfile;
 	ipfile.open(".log");
 	std::getline(ipfile, iphost);
@@ -86,7 +92,7 @@ void Server::ServerStarting()
 	struct pollfd srvpollfd;
 
 	_IPHostAdress = HostIPADress(); // take IP Host of Machine
-	std::cout << "dd: " << _IPHostAdress << std::endl;
+	// std::cout << "dd: " << _IPHostAdress << std::endl;
 	createSockets();
 	setSocketsopt();
 	listtenSock();

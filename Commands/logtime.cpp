@@ -14,6 +14,70 @@
 
 #define LEN_OF_TIME 8
 
+// static std::string incrementDate(const std::string& dateString) {
+//     // Parse the input date string
+//     std::tm date = {};
+//     std::istringstream iss(dateString);
+//     iss >> std::get_time(&date, "%Y-%m-%d");
+
+//     // Convert the date to a time_t value (seconds since epoch)
+//     std::time_t time = std::mktime(&date);
+
+//     // Increment the time by one day (86400 seconds)
+//     time += 86400;
+
+//     // Update the date struct using the modified time value
+//     std::tm* nextDayPtr = std::localtime(&time);
+//     std::tm nextDay = *nextDayPtr;
+
+//     // Convert the incremented date back to a string
+//     std::ostringstream oss;
+//     oss << std::put_time(&nextDay, "%Y-%m-%d");
+//     std::cout << "converted date : " << oss.str() << std::endl;
+//     return oss.str();
+// }
+
+std::string incrementDate(const std::string& dateString) {
+    // Parse the input date string
+    std::tm date = {};
+    std::istringstream iss(dateString);
+    iss >> std::get_time(&date, "%Y-%m-%d");
+
+    // Convert the date to a time_t value (seconds since epoch)
+    std::time_t time = std::mktime(&date);
+    if (time == -1) {
+        std::cerr << "Error: Unable to convert date string to time_t." << std::endl;
+        return "";
+    }
+
+    // Increment the time by one day (86400 seconds)
+    time += 86400;
+
+    // Update the date struct using the modified time value
+    std::tm* nextDayPtr = std::localtime(&time);
+    std::tm nextDay = *nextDayPtr;
+
+    // Convert the incremented date back to a string
+    std::ostringstream oss;
+    oss << std::put_time(&nextDay, "%Y-%m-%d");
+    return oss.str();
+}
+
+// static std::string incrementDate(std::string date) {
+//     std::tm t;
+//     std::istringstream ss(date);
+
+//     ss >> std::get_time(&t, "%Y-%m-%d");
+//     if (ss.fail()) {
+//         std::cout << "failed to parse time string" << std::endl;
+//     }   
+//     std::time_t time_stamp = mktime(&t);
+//     std::stringstream ssa;
+//     ssa << std::put_time(std::localtime(&time_stamp), "%Y-%m-%d");
+//     std::cout << "converted date : " << ssa.str() << std::endl;
+//     return date;
+// }
+
 static std::pair<std::string, std::string> getLogTimeDate() {
 // The start or end date format is invalid please use YYYY-MM-DD.
     time_t t = time(NULL);
@@ -114,6 +178,8 @@ void Commands::logtime() {
 
     if (_paramCounter >= 3) begin_at = getNextParam().first; else begin_at = defalutLogtimeDate.first;
     if (_paramCounter >= 4) end_at = getNextParam().first; else end_at = defalutLogtimeDate.second;
+
+std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;;
 
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
     locations_statsCmd += begin_at;

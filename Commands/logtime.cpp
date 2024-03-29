@@ -12,74 +12,65 @@
 #include <iomanip>
 #include <stdio.h>
 
-#define LEN_OF_TIME 8
+static bool checkDateFormat(const std::string& dateString) {
 
-// static std::string incrementDate(const std::string& dateString) {
-//     // Parse the input date string
-//     std::tm date = {};
-//     std::istringstream iss(dateString);
-//     iss >> std::get_time(&date, "%Y-%m-%d");
+    char dash;
+    std::stringstream ss(dateString);
 
-//     // Convert the date to a time_t value (seconds since epoch)
-//     std::time_t time = std::mktime(&date);
+    struct tm date;
+    struct tm newDate;
 
-//     // Increment the time by one day (86400 seconds)
-//     time += 86400;
+    ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
+    date.tm_year -= 1900; date.tm_mon -= 1;
+    date.tm_hour = 1;            // Hour
+    date.tm_min = 0;             // Minute
+    date.tm_sec = 0;             // Second    
 
-//     // Update the date struct using the modified time value
-//     std::tm* nextDayPtr = std::localtime(&time);
-//     std::tm nextDay = *nextDayPtr;
-
-//     // Convert the incremented date back to a string
-//     std::ostringstream oss;
-//     oss << std::put_time(&nextDay, "%Y-%m-%d");
-//     std::cout << "converted date : " << oss.str() << std::endl;
-//     return oss.str();
-// }
-
-std::string incrementDate(const std::string& dateString) {
-    // Parse the input date string
-    std::tm date = {};
-    std::istringstream iss(dateString);
-    iss >> std::get_time(&date, "%Y-%m-%d");
-
-    // Convert the date to a time_t value (seconds since epoch)
-    std::time_t time = std::mktime(&date);
-    if (time == -1) {
-        std::cerr << "Error: Unable to convert date string to time_t." << std::endl;
-        return "";
-    }
-
-    // Increment the time by one day (86400 seconds)
-    time += 86400;
-
-    // Update the date struct using the modified time value
-    std::tm* nextDayPtr = std::localtime(&time);
-    std::tm nextDay = *nextDayPtr;
-
-    // Convert the incremented date back to a string
-    std::ostringstream oss;
-    oss << std::put_time(&nextDay, "%Y-%m-%d");
-    return oss.str();
+    newDate = date;
+    mktime(&newDate);
+    if (
+        date.tm_year == newDate.tm_year &&
+        date.tm_mon == newDate.tm_mon   &&
+        date.tm_mday == newDate.tm_mday
+    )   
+        return true; 
+    return false;
 }
 
-// static std::string incrementDate(std::string date) {
-//     std::tm t;
-//     std::istringstream ss(date);
+static std::string incrementDate(const std::string& dateString, size_t daysToAdd) {
 
-//     ss >> std::get_time(&t, "%Y-%m-%d");
-//     if (ss.fail()) {
-//         std::cout << "failed to parse time string" << std::endl;
-//     }   
-//     std::time_t time_stamp = mktime(&t);
-//     std::stringstream ssa;
-//     ssa << std::put_time(std::localtime(&time_stamp), "%Y-%m-%d");
-//     std::cout << "converted date : " << ssa.str() << std::endl;
-//     return date;
-// }
+    char dash;
+    std::stringstream ss(dateString);
+
+    struct tm date;
+    ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
+    date.tm_year -= 1900; date.tm_mon -= 1;
+    date.tm_hour = 1;            // Hour
+    date.tm_min = 0;             // Minute
+    date.tm_sec = 0;             // Second
+
+    // Convert to unix time, the date will be fixed and rounded
+    time_t unix_time = mktime(&date);
+
+    // Increment the day
+    date.tm_mday += daysToAdd;
+
+    // Convert to unix time, the date will be fixed and rounded
+    unix_time = mktime(&date);
+
+    // Convert back to tm struct to extract date parts
+    struct tm* new_date = gmtime(&unix_time);
+
+    std::ostringstream incrementedDate;
+        incrementedDate << new_date->tm_year + 1900
+        << "-" << std::setw(2) << std::setfill('0') << new_date->tm_mon + 1 
+        << "-" << std::setw(2) << std::setfill('0') << new_date->tm_mday; 
+
+    return incrementedDate.str();
+}
 
 static std::pair<std::string, std::string> getLogTimeDate() {
-// The start or end date format is invalid please use YYYY-MM-DD.
+
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     std::stringstream ss;
@@ -88,10 +79,11 @@ static std::pair<std::string, std::string> getLogTimeDate() {
     ss << tm.tm_year + 1900 << " " << tm.tm_mon + 1 << " " << tm.tm_mday;
     ss >> year; ss >> month; ss >> day;
 
-    std::string begin_at = year + "-" + month + "-01";
-    std::string end_at = year + "-" + month + "-" + day;
+    std::ostringstream begin_at, end_at;
+    begin_at << year << "-" << std::setw(2) << std::setfill('0') << month << "-01";
+    end_at << year << "-" << std::setw(2) << std::setfill('0') << month << "-" << std::setw(2) << std::setfill('0') << day; 
 
-    return (std::make_pair(begin_at, end_at));
+    return (std::make_pair(begin_at.str(), end_at.str()));
 }
 
 static std::string getJsonValue(std::string const& property, std::string const& jsonContent) {
@@ -119,13 +111,14 @@ static std::string executeCmd(std::string const& cmd) {
 
     fp = popen(cmd.c_str(), "r");
     if(fp == NULL)
-        puts("Unable to open process");
+        puts("Go install curl CLI FOR GOD SAKE");
     while(fgets(content, 100, fp))
         jsonContent += content;
+    fclose(fp);
     return jsonContent;
 }
 
-static std::string get42Token() {
+std::string Commands::get42Token() {
 
     char *uid = NULL;
     char *secret = NULL;
@@ -146,15 +139,17 @@ static std::string get42Token() {
             token = getJsonValue("access_token", jsonContent);
             tokenValidUntil = atol(getJsonValue("secret_valid_until", jsonContent).c_str());
         }
+        else
+            sendResponse(fd, "Please export your UID & SECRET, Go Get it from Intra or Ask Tofa7a.\n");
     }
     return token;
 }
 
-static std::string addTimes(const std::vector<std::string>& times) {
+static std::string getHoursSum(const std::vector<std::string>& loggedHours) {
 
     int totalSeconds = 0;
-    for (size_t i = 0; i < times.size(); ++i) {
-        std::istringstream iss(times[i]);
+    for (size_t i = 0; i < loggedHours.size(); ++i) {
+        std::istringstream iss(loggedHours[i]);
         int hours, minutes, seconds;
         char colon;
         iss >> hours >> colon >> minutes >> colon >> seconds;
@@ -163,14 +158,14 @@ static std::string addTimes(const std::vector<std::string>& times) {
 
     int hours = totalSeconds / 3600;
 
-    std::ostringstream oss;
-    oss << /*std::setw(2) << std::setfill('0') <<*/ hours;
-    return oss.str();
+    std::ostringstream os;
+    os << hours;
+    return os.str();
 }
 
 void Commands::logtime() {
 
-    std::string token42 = get42Token();
+    std::string token42 = get42Token(); if (token42.empty()) return ;
 
     std::string login = getNextParam().first; std::transform(login.begin(), login.end(), login.begin(), ::tolower);
     std::pair<std::string, std::string> defalutLogtimeDate = getLogTimeDate();
@@ -179,26 +174,33 @@ void Commands::logtime() {
     if (_paramCounter >= 3) begin_at = getNextParam().first; else begin_at = defalutLogtimeDate.first;
     if (_paramCounter >= 4) end_at = getNextParam().first; else end_at = defalutLogtimeDate.second;
 
-std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;;
+    if (checkDateFormat(begin_at) == false || checkDateFormat(end_at) == false)
+        { sendResponse(fd, "The start or end date format is invalid please use YYYY-MM-DD.\n"); return; }
 
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
     locations_statsCmd += begin_at;
-    locations_statsCmd += "\\&end_at\\=" + end_at;
+    locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at, 1);
 
-    std::cout << locations_statsCmd << std::endl;
 
     std::string jsonContent = executeCmd(locations_statsCmd);
-    std::cout << jsonContent << std::endl;
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
     
+
+    /****************************************DEBUG****************************************/
+        std::cout << "converted date : " << incrementDate("2024-02-01", 1) << std::endl
+        std::cout << locations_statsCmd << std::endl;
+        std::cout << jsonContent << std::endl;
+    /*************************************************************************************/
+    
     std::string token;
-    std::vector<std::string> hours;
-    std::stringstream stream(jsonContent);
-    while(std::getline(stream, token, ',')) {
-        std::string time = token.substr(token.find(":\"")+2, LEN_OF_TIME);
-        hours.push_back(time);
+    std::vector<std::string> loggedHours;
+    std::string currDate = incrementDate(begin_at, 0);
+    while (currDate.compare(incrementDate(end_at, 1))) {
+        loggedHours.push_back(getJsonValue(currDate, jsonContent));
+        std::cout << "[currDate:"+currDate + "] = ["+getJsonValue(currDate, jsonContent)+"]" << std::endl;
+        currDate = incrementDate(currDate, 1);
     }
-    std::string result = addTimes(hours);
-    sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is :\n");
+    std::string result = getHoursSum(loggedHours);
+    sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");
     sendResponse(fd, "Result: " + result + " Hours \U0001F61C\n");
 }

@@ -117,12 +117,18 @@
 //     return 0;
 // }
 
-int main() {
+std::string incrementDate(const std::string& dateString) {
+
+    char dash;
+    std::stringstream ss(dateString);
+
     struct tm date;
-    date.tm_year = 2024 - 1900;  // Year minus 1900
-    date.tm_mon = 1;             // Month (0-11, so 1 represents February)
-    date.tm_mday = 1;            // Day of the month
-    date.tm_hour = 0;            // Hour
+    ss >> date.tm_year; date.tm_year -= 1900;  // Year minus 1900
+    ss >> dash;
+    ss >> date.tm_mon; date.tm_mon -= 1;             // Month (0-11, so 1 represents February)
+    ss >> dash;
+    ss >> date.tm_mday;
+    date.tm_hour = 1;            // Hour
     date.tm_min = 0;             // Minute
     date.tm_sec = 0;             // Second
 
@@ -130,20 +136,12 @@ int main() {
     time_t unix_time = mktime(&date);
 
     // Increment the day
-    date.tm_mday++;
+    std::cout << date.tm_mday << std::endl;
+    date.tm_mday += 1;
+    std::cout << date.tm_mday << std::endl;
 
     // Convert back to time_t
     unix_time = mktime(&date);
-
-    // Check for month and year rollovers
-    while (date.tm_mday == 1) {
-        date.tm_mon++;  // Increment month
-        if (date.tm_mon > 11) {
-            date.tm_mon = 0;    // Reset month to January
-            date.tm_year++;     // Increment year
-        }
-        unix_time = mktime(&date);
-    }
 
     // Convert back to real date
     struct tm* new_date = gmtime(&unix_time);
@@ -151,6 +149,85 @@ int main() {
     // Print the new date
     std::cout << "New Date: " << new_date->tm_year + 1900 << "-"
               << new_date->tm_mon + 1 << "-" << new_date->tm_mday << std::endl;
+
+    std::ostringstream oss;
+    oss << new_date->tm_year + 1900
+        << "-" << std::setw(2) << std::setfill('0') << new_date->tm_mon + 1 << "-" << std::setw(2) << std::setfill('0') << new_date->tm_mday; 
+
+    return oss.str();
+}
+
+bool checkDateFormat(const std::string& dateString) {
+
+    char dash;
+    std::stringstream ss(dateString);
+
+    struct tm date;
+    struct tm newDate;
+
+    ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
+    date.tm_year -= 1900; date.tm_mon -= 1;
+    date.tm_hour = 1;            // Hour
+    date.tm_min = 0;             // Minute
+    date.tm_sec = 0;             // Second    
+
+    newDate = date;
+    time_t unix_time = mktime(&newDate);
+    if (
+        date.tm_year == newDate.tm_year &&
+        date.tm_mon == newDate.tm_mon   &&
+        date.tm_mday == newDate.tm_mday
+    )   
+        return true; 
+    return false;
+}
+
+int main() {
+    // std::cout << incrementDate("2024-02-1") << std::endl;
+ 
+    if (checkDateFormat("2024/02/31") == true)
+        std::cout << "true" << std::endl;
+    else
+        std::cout << "false" << std::endl;
+    // struct tm date;
+    // date.tm_year = 2024 - 1900;  // Year minus 1900
+    // date.tm_mon = 1;             // Month (0-11, so 1 represents February)
+    // date.tm_mday = 28;            // Day of the month
+    // date.tm_hour = 0;            // Hour
+    // date.tm_min = 0;             // Minute
+    // date.tm_sec = 0;             // Second
+
+    // // Convert to time_t
+    // time_t unix_time = mktime(&date);
+
+    // // Increment the day
+    // std::cout << date.tm_mday << std::endl;
+    // date.tm_mday += 1;
+    // std::cout << date.tm_mday << std::endl;
+    // // date.tm_mday += 1;
+    // // std::cout << date.tm_mday << std::endl;
+    // // date.tm_mday += 1;
+    // // std::cout << date.tm_mday << std::endl;
+
+    // // Convert back to time_t
+    // unix_time = mktime(&date);
+
+    // // Check for month and year rollovers
+    // // while (date.tm_mday == 1) {
+    // //     date.tm_mon++;  // Increment month
+    // //     if (date.tm_mon > 11) {
+    // //         date.tm_mon = 0;    // Reset month to January
+    // //         date.tm_year++;     // Increment year
+    // //     }
+    // //     unix_time = mktime(&date);
+    // // }
+
+    // // Convert back to real date
+    // struct tm* new_date = gmtime(&unix_time);
+
+    // // Print the new date
+    // std::cout << "New Date: " << new_date->tm_year + 1900 << "-"
+    //           << new_date->tm_mon + 1 << "-" << new_date->tm_mday << std::endl;
 
     return 0;
 }

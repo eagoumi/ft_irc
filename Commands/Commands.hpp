@@ -54,6 +54,7 @@ private:
     std::pair<std::string, std::vector<std::string> > getNextParam(reset option = NANDA);
     void checkTokensListSyntax();
     token_type  determineToken(char sep, token_type cmdType);
+    std::string get42Token();
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;

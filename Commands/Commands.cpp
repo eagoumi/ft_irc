@@ -184,6 +184,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // if (currUser == NULL)   
     //     std::cout << "user is null within commandMapINit()" << std::endl;
     // User *currUser = db->getUser(fd);
+    std::cout << "command : " << dataCmd.line << std::endl;
     std::string cmd = getNextParam()[0];
     if (cmd == "JOIN") 
         join();

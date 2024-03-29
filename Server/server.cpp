@@ -14,6 +14,18 @@
 
 // }
 
+void Server::Quit(int i, std::string reason)
+{
+	if (_User->getNickName().empty())
+		_User->ServertoClients( "*@localhost.IRC QUIT : Quit : " + reason);
+	_User->ServertoClients( _User->getNickName() + "@" + "localhost.IRC " + "QUIT : Quit : " + reason);
+	_User->ServertoClients("ERROR: Quit : " + reason);
+	std::cout << "Client DISCONNECTED." << std::endl;
+	_db->deleteUser(_Storeusersfd.at(i).fd);
+	close(_Storeusersfd.at(i).fd);
+	_Storeusersfd.erase(_Storeusersfd.begin() + i);
+	i--;
+}
 
 
 void Server::CheckForConnectionClients()
@@ -35,11 +47,20 @@ void Server::CheckForConnectionClients()
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
 				// std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
-        		User *User = _db->getUser(_Storeusersfd[i].fd);
+        		User *getuser = _db->getUser(_Storeusersfd[i].fd);
 				data.fd = _Storeusersfd[i].fd;
 				data.line = buffer;
 				// data.nick = User->getNickName();
-				if (User->isAuthenticated() == false)
+				std::istringstream QUITCMD(data.line);
+				std::string cmdquit;
+				QUITCMD >> cmdquit;
+				if (cmdquit == "QUIT" || cmdquit == "quit")
+				{
+					std::string reason;
+					QUITCMD >> reason;
+					Quit(i, reason);
+				}
+				else if (getuser->isAuthenticated() == false)
 					Authentication(i, buffer);
 				else
 					cmdObj.CommandMapinit(data);
@@ -206,8 +227,8 @@ void Server::accept_connection()
 		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
 		_Storeusersfd.push_back(_pollfds);
 		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
-		User *user = new User(_pollfds.fd);
-		_db->addNewUser(user);
+		_User = new User(_pollfds.fd);
+		_db->addNewUser(_User);
 		// _db->getUser(_pollfds.fd);
 		// std::cout << _db << std::endl;
 

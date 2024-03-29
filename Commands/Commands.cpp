@@ -198,8 +198,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
         topic();
     else if(cmd == "MODE")
         mode();
-    else if(cmd == "QUIT")
-        mode();
     else
         sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd));
 

@@ -12,6 +12,37 @@
 #include <iomanip>
 #include <stdio.h>
 
+static struct tm getTimeStruct(std::string const& date) {
+
+    char dash;
+    std::stringstream ss(date);
+
+    struct tm dateData;
+
+    ss >> dateData.tm_year >> dash >> dateData.tm_mon >> dash >> dateData.tm_mday;
+    dateData.tm_year -= 1900; dateData.tm_mon -= 1;
+    dateData.tm_hour = 1;
+    dateData.tm_min = 0;
+    dateData.tm_sec = 0;
+
+    return dateData;
+}
+
+static bool checkDateOrder(const std::string& begin_at, const std::string& end_at) {
+
+    struct tm beginDate = getTimeStruct(begin_at);
+    struct tm endDate = getTimeStruct(end_at);
+
+    mktime(&beginDate); mktime(&endDate);
+    if (
+        beginDate.tm_year <= endDate.tm_year &&
+        beginDate.tm_mon <= endDate.tm_mon   &&
+        beginDate.tm_mday <= endDate.tm_mday
+    )
+        return true;
+    return false;
+}
+
 static bool checkDateFormat(const std::string& dateString) {
 
     char dash;
@@ -22,9 +53,9 @@ static bool checkDateFormat(const std::string& dateString) {
 
     ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
     date.tm_year -= 1900; date.tm_mon -= 1;
-    date.tm_hour = 1;            // Hour
-    date.tm_min = 0;             // Minute
-    date.tm_sec = 0;             // Second    
+    date.tm_hour = 1;
+    date.tm_min = 0;
+    date.tm_sec = 0;
 
     newDate = date;
     mktime(&newDate);
@@ -174,7 +205,7 @@ void Commands::logtime() {
     if (_paramCounter >= 3) begin_at = getNextParam().first; else begin_at = defalutLogtimeDate.first;
     if (_paramCounter >= 4) end_at = getNextParam().first; else end_at = defalutLogtimeDate.second;
 
-    if (checkDateFormat(begin_at) == false || checkDateFormat(end_at) == false)
+    if (checkDateFormat(begin_at) == false || checkDateFormat(end_at) == false || checkDateOrder(begin_at, end_at) == false)
         { sendResponse(fd, "The start or end date format is invalid please use YYYY-MM-DD.\n"); return; }
 
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";

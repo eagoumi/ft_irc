@@ -37,7 +37,7 @@ static bool checkDateFormat(const std::string& dateString) {
     return false;
 }
 
-static std::string incrementDate(const std::string& dateString, size_t daysToAdd) {
+static std::string incrementDate(const std::string& dateString, size_t daysToAdd = 1) {
 
     char dash;
     std::stringstream ss(dateString);
@@ -179,7 +179,7 @@ void Commands::logtime() {
 
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
     locations_statsCmd += begin_at;
-    locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at, 1);
+    locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at);
 
 
     std::string jsonContent = executeCmd(locations_statsCmd);
@@ -187,7 +187,7 @@ void Commands::logtime() {
     
 
     /****************************************DEBUG****************************************/
-        std::cout << "converted date : " << incrementDate("2024-02-01", 1) << std::endl
+        std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;
         std::cout << locations_statsCmd << std::endl;
         std::cout << jsonContent << std::endl;
     /*************************************************************************************/
@@ -195,10 +195,10 @@ void Commands::logtime() {
     std::string token;
     std::vector<std::string> loggedHours;
     std::string currDate = incrementDate(begin_at, 0);
-    while (currDate.compare(incrementDate(end_at, 1))) {
+    while (currDate.compare(incrementDate(end_at))) {
         loggedHours.push_back(getJsonValue(currDate, jsonContent));
         std::cout << "[currDate:"+currDate + "] = ["+getJsonValue(currDate, jsonContent)+"]" << std::endl;
-        currDate = incrementDate(currDate, 1);
+        currDate = incrementDate(currDate);
     }
     std::string result = getHoursSum(loggedHours);
     sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");

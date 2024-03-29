@@ -54,6 +54,7 @@ void Server::CheckForConnectionClients()
 				std::istringstream QUITCMD(data.line);
 				std::string cmdquit;
 				QUITCMD >> cmdquit;
+				std::cout << cmdquit << std::endl;
 				if (cmdquit == "QUIT" || cmdquit == "quit")
 				{
 					std::string reason;
@@ -99,12 +100,13 @@ std::string Server::HostIPADress()
 {
 
 	std::string iphost;
-	// std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
+	std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
 	std::fstream ipfile;
 	ipfile.open(".log");
 	std::getline(ipfile, iphost);
 	std::system("rm -rf .log");
 	// string >> iphost;
+	// std::cout << iphost << std::endl;
 	return iphost;
 }
 
@@ -113,7 +115,7 @@ void Server::ServerStarting()
 	struct pollfd srvpollfd;
 
 	_IPHostAdress = HostIPADress(); // take IP Host of Machine
-	// std::cout << "dd: " << _IPHostAdress << std::endl;
+	std::cout << "dd: " << _IPHostAdress << std::endl;
 	createSockets();
 	setSocketsopt();
 	listtenSock();

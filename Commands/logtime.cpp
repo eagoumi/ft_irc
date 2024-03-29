@@ -114,7 +114,7 @@ static std::string executeCmd(std::string const& cmd) {
         puts("Go install curl CLI FOR GOD SAKE");
     while(fgets(content, 100, fp))
         jsonContent += content;
-    fclose(fp);
+    pclose(fp);
     return jsonContent;
 }
 

@@ -123,7 +123,6 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
     }
 }
 
-
 void Server::WelcomeClient(User *currUser)
 {
 

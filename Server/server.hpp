@@ -33,6 +33,7 @@ class Server
         std::vector<struct pollfd>      _Storeusersfd; //Storing used fds to monitor multiple file descriptors all in one
 		struct pollfd                   _pollfds;
         std::string                     _pass;
+        User                            *_User;
         // bool                            _IsAuth;
         // bool                            _correct_pass;
         // bool                            _NickCheck;
@@ -67,6 +68,9 @@ class Server
 
         std::string HostIPADress();
         void WelcomeClient(User *currUser);
+
+        //Command Quit 
+        void Quit(int i, std::string reason);
 };
 
 #endif

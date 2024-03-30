@@ -104,6 +104,7 @@ public:
 
     void logtime();
 
+
     std::map<std::string, std::string> splitInput(std::string input);
 
     bool existMemberChannel(std::string member);

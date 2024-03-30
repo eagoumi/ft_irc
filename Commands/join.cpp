@@ -7,8 +7,8 @@ std::string Commands::invitedNick;
 
 void Commands::join()
 {
-    std::vector<std::string> channelNamesList = getNextParam();
-    std::vector<std::string> channelkeysList = getNextParam();
+    std::vector<std::string> channelNamesList = getNextParam().second;
+    std::vector<std::string> channelkeysList = getNextParam().second;
 
     for (size_t channelIndex = 0; channelIndex < channelNamesList.size(); channelIndex++)
     {

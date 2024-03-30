@@ -1,5 +1,7 @@
 # include "./user.hpp"
 #include <sys/socket.h>
+#include "../Channels/channel.hpp"
+#include <utility>
 
 bool User::isStrContains(std::string const& str, std::string const& charSet) {
 
@@ -93,6 +95,14 @@ bool User::hasInsertedNick()
 bool User::hasInsertedUsername()
 {
     return (_isUserNameInserted);
+}
+
+void User::hasJoinedChannel(Channel* channel) {
+    _joinedChannels.insert(std::make_pair(channel->getChannelName(), channel));
+}
+
+std::map<std::string, Channel *> const& User::getJoinedChannels() {
+    return this->_joinedChannels;
 }
 
 

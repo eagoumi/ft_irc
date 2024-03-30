@@ -39,7 +39,7 @@ Channel *Database::addNewChannel(CHANNEL_NAME name, User *user)
     createdChannel = new Channel(name, user);
     this->_channels[name] = createdChannel;
 
-    // user->joinChannel(createdChannel);//srsly I see no need for this, at least for now
+    user->hasJoinedChannel(createdChannel);//srsly I see no need for this, at least for now
     return createdChannel;
 }
 
@@ -75,6 +75,16 @@ void Database::deleteChannel(CHANNEL_NAME name)
     this->_channels.erase(it);
 }
 
-std::__1::map<size_t, User *> Database::getUsers(){
+std::map<size_t, User *> Database::getUsers(){
     return this->_users;
+}
+
+bool Database::isNicknameUsed(NICK_NAME name) {
+
+    UserIter it = this->_users.begin();
+    while (it != this->_users.end()) {
+        if (it->second->getNickName() == name)
+            return true;
+    }
+    return false;
 }

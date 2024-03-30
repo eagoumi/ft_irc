@@ -42,8 +42,7 @@ token_type determine_cmd(std::string token)
     return NONE;
 }
 
-token_type determineToken(char sep, token_type cmdType, size_t paramCounter)
-{
+token_type    Commands::determineToken(char sep, token_type cmdType) {
 
     /* Command: JOIN   Parameters: <channel>{,<channel>}    [<key>{,<key>}]                         */
     /* Command: KICK   Parameters: <channel>                <user> *( "," <user> ) [<comment>]      */
@@ -51,88 +50,62 @@ token_type determineToken(char sep, token_type cmdType, size_t paramCounter)
     /* Command: INVITE Parameters: <nickname>               <channel>                               */
     /* Command: MODE   Parameters: <target>                 [<modestring> [<mode arguments>...]]    */
     token_type tokenType(NONE);
-    if (sep == ',')
-    {
-        if (cmdType == JOIN_CMD)
-            paramCounter == 1 ? tokenType = CHANNEL : (paramCounter == 2 ? tokenType = KEY : tokenType = NONE);
-        else if (cmdType == KICK_CMD)
-            paramCounter == 1 ? tokenType = NONE : (paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
-        else if (cmdType == TOPIC_CMD)
-            tokenType = NONE;
-        else if (cmdType == INVITE_CMD)
-            tokenType = NONE;
-        else if (cmdType == MODE_CMD)
-            tokenType = NONE;
-        else if (cmdType == LOGTIME_CMD)
-            tokenType = NONE;
+    if (sep == ',') {
+        if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
+        else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = NONE    : (_paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
+        else if (cmdType == TOPIC_CMD)      tokenType = NONE;
+        else if (cmdType == INVITE_CMD)     tokenType = NONE;
+        else if (cmdType == MODE_CMD)       tokenType = NONE;
+        else if (cmdType == LOGTIME_CMD)    tokenType = NONE;
     }
-    else if (isspace(sep))
-    {
-        if (cmdType == JOIN_CMD)
-            paramCounter == 1 ? tokenType = CHANNEL : (paramCounter == 2 ? tokenType = KEY : tokenType = NONE);
-        else if (cmdType == KICK_CMD)
-            paramCounter == 1 ? tokenType = CHANNEL : (paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
-        else if (cmdType == TOPIC_CMD)
-            paramCounter == 1 ? tokenType = CHANNEL : (paramCounter == 2 ? tokenType = TOPIC_MSG : tokenType = NONE);
-        else if (cmdType == INVITE_CMD)
-            paramCounter == 1 ? tokenType = NICK : (paramCounter == 2 ? tokenType = CHANNEL : tokenType = NONE);
-        else if (cmdType == MODE_CMD)
-            paramCounter == 1 ? tokenType = CHANNEL : (paramCounter == 2 ? tokenType = MODE_STR : tokenType = NONE);
-        else if (cmdType == LOGTIME_CMD)
-            paramCounter == 1 ? tokenType = NICK : tokenType = NONE;
+    else if (isspace(sep)) {
+        if      (cmdType == JOIN_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY       : tokenType = NONE);
+        else if (cmdType == KICK_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = NICK      : tokenType = NONE);
+        else if (cmdType == TOPIC_CMD)   _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = TOPIC_MSG : tokenType = NONE);
+        else if (cmdType == INVITE_CMD)  _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = CHANNEL   : tokenType = NONE);
+        else if (cmdType == MODE_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = NONE);
+        else if (cmdType == LOGTIME_CMD) _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = LOG_BEG   : (_paramCounter == 3 ? tokenType = LOG_END  : tokenType = NONE));
     }
     return (tokenType);
 }
 
-// call it when you are sure from the command syntax
-std::vector<std::string> Commands::getNextParam(reset option)
-{
+//call it when you are sure from the command syntax
+std::pair<std::string, std::vector<std::string> > Commands::getNextParam(reset option) {
 
     static token_type tokenType;
     static bool firstTime = true;
     static std::list<token>::iterator it;
-    std::vector<std::string> paramData;
+    std::pair<std::string, std::vector<std::string> > paramData("", std::vector<std::string>());
 
-    if (option == RESET)
-    {
-        firstTime = true;
-        return std::vector<std::string>();
-    }
-    if (firstTime == true)
-    {
-        it = _tokensList.begin();
+    if (option == RESET) { firstTime = true; return paramData; }
+    if (firstTime == true) {
+        it = ++_tokensList.begin();
         tokenType = (*it).type;
         firstTime = false;
     }
     if (it == _tokensList.end())
         firstTime = true;
 
-    while (it != _tokensList.end())
-    {
-        if ((*it).type != tokenType && (*it).type != COMMA)
-        {
-            tokenType = (*it).type;
-            break;
-        }
-        if ((it)->type != COMMA)
-            paramData.push_back((*it).data);
+    while (it != _tokensList.end()) {
+        if ((*it).type != tokenType && (*it).type != COMMA) { tokenType = (*it).type; break; }
+        if ((it)->type != COMMA) paramData.second.push_back((*it).data);
         it++;
     }
+
+    if (!paramData.second.empty()) paramData.first = paramData.second[0];
 
     return (paramData);
 }
 
-void Commands::tokenize(std::string const &cmdLine)
-{
+void   Commands::tokenize(std::string const& cmdLine) {
+    
+    token               tokenNode;
+	token_type          tokenType(NONE);
+    std::string         word;
+    size_t              tokenCounter = 0;
 
-    token tokenNode;
-    token_type tokenType(NONE);
-    std::string word;
-    size_t tokenCounter = 0;
-    size_t parameterCounter = 0;
-
-    for (size_t i = 0; i < cmdLine.length(); i++)
-    {
+    this->_paramCounter = 0;
+    for (size_t i = 0; i < cmdLine.length(); i++) {
 
         /************************************/
         /*			skip spaces				*/
@@ -171,17 +144,32 @@ void Commands::tokenize(std::string const &cmdLine)
                     _tokensList.push_back(tokenNode);
                 }
                 else if (isspace(cmdLine[i]))
-                    parameterCounter++;
+                    _paramCounter++;
 
                 // determine next token type
-                if (isspace(cmdLine[i]) || cmdLine[i] == ',')
-                    tokenType = determineToken(cmdLine[i], _tokensList.front().type, parameterCounter);
-                break;
+				if (isspace(cmdLine[i]) || cmdLine[i] == ',')
+                    tokenType = determineToken(cmdLine[i], _tokensList.front().type);
+                break ;
             }
             word += cmdLine[i++];
         }
     }
     getNextParam(RESET);
+}
+
+void Commands::checkTokensListSyntax()
+{
+	std::list<token>::iterator ListIt = _tokensList.begin();
+    token_type cmd = _tokensList.front().type;
+
+    _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
+    if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()));
+	while (ListIt != _tokensList.end())
+	{
+        if ((*ListIt).type == CHANNEL)
+            if ((*ListIt).data[0] != '#') (*ListIt).data.insert(0, 1, '#');
+        ListIt++;
+	}
 }
 
 void Commands::CommandMapinit(cmdData dataCmd)
@@ -192,6 +180,13 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // std::cout << "LINE = " << dataCmd.line << std::endl;
     /***********************************************************************************/
     tokenize(dataCmd.line);
+    try {
+        checkTokensListSyntax();
+    }
+    catch(std::string err) {
+        std::cout << err << std::endl;
+        return ;
+    }
     /* Here I need to verfiy of tokens List has a true sytnax, If not I'll print error */
     /* SO YOU WILL NEED TO ENTER COMMANDS THAT ARE WELL SYNTAXED FOR NOW */
     /***********************************************************************************/
@@ -219,8 +214,10 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // for (itV = command.begin(); itV != command.end(); itV++)
     //     std::cout << *itV << " ";
     // std::cout << std::endl;
-    currUser = db->getUser(fd);
-    std::string cmd = getNextParam()[0];
+    // if (currUser == NULL)   
+    //     std::cout << "user is null within commandMapINit()" << std::endl;
+    // User *currUser = db->getUser(fd);
+    std::string cmd = getCommand();
     if (cmd == "JOIN")
         join();
     else if (cmd == "KICK")
@@ -259,9 +256,10 @@ std::string Commands::getNick()
 
 std::string Commands::getCommand() const
 {
-    if (command[1] == "KICK")
-        return command[1];
-    return command[0];
+    // if (command[1] == "KICK")
+    //     return command[1];
+    // return command[0];
+    return _tokensList.front().data;
 }
 
 std::string Commands::getModeString()

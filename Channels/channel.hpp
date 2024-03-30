@@ -38,6 +38,7 @@ class Channel
         bool isUserInvited(USER_ID);
         bool isUserOperator(USER_ID);
         User *getMember(USER_ID);
+        CHANNEL_NAME const & getChannelName();
 
         //added
         std::map<USER_ID, User *>   getMembers();

@@ -1,7 +1,7 @@
 #include "server.hpp"
 #include <sstream>
 
-std::string skipSpace(std::string string)
+std::string Server::skipSpace(std::string string)
 {
     std::string skiip;
     int i= 0;
@@ -57,20 +57,20 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                     if (pass == skipSpace(_Password)) //&& len_param_command == 2)
                     {
                         currUser->insertedPassSuccessfully();
-                        currUser->ServertoClients(ERR_CORRECTPASS(std::string("*")));
+                        _User->ServertoClients(ERR_CORRECTPASS(std::string("*")));
                     }
                     else if (pass.empty() || len_param_command == 1)
-                        currUser->ServertoClients(ERR_NEEDMOREPARAMS(std::string("*"), Command));
+                        _User->ServertoClients(ERR_NEEDMOREPARAMS(std::string("*"), Command));
                     else 
-                        currUser->ServertoClients(ERR_PASSWDMISMATCH(std::string("*")));
+                        _User->ServertoClients(ERR_PASSWDMISMATCH(std::string("*")));
                 }
                 else
-                    currUser->ServertoClients(ERR_NOTREGISTERED(std::string("*")));
+                    _User->ServertoClients(ERR_NOTREGISTERED(std::string("*")));
             }
             else if (Command == "nick" || Command == "NICK")
             {
                 if (!currUser->hasInsertedPass())
-                    currUser->ServertoClients(ERR_MISSPASS(std::string("*")));
+                    _User->ServertoClients(ERR_MISSPASS(std::string("*")));
                 else if (currUser->hasInsertedNick() == false)
                 {
                     std::string nickname;
@@ -80,9 +80,9 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                             && !currUser->isStrStartWith(nickname, "$:#&+~%") && len_param_command == 2)
                         currUser->setNickName(nickname);
                     else if (nickname.empty() || len_param_command == 1)
-                        currUser->ServertoClients(ERR_NONICKNAMEGIVEN(std::string("*")));
+                        _User->ServertoClients(ERR_NONICKNAMEGIVEN(std::string("*")));
                     else
-                        currUser->ServertoClients(ERR_ERRONEUSNICKNAME(nickname));
+                        _User->ServertoClients(ERR_ERRONEUSNICKNAME(nickname));
                 }
                 else
                 {
@@ -93,7 +93,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
             else if (Command == "user" || Command == "USER")
             {
                 if (!currUser->hasInsertedPass())
-                    currUser->ServertoClients(ERR_MISSPASS(std::string("*")));
+                    _User->ServertoClients(ERR_MISSPASS(std::string("*")));
                 else if (!currUser->hasInsertedNick())
                 {
                     std::string UserErrMsg = "Please enter your nickname first.\n";
@@ -118,7 +118,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                 WelcomeClient(currUser);
             }
             else
-                currUser->ServertoClients(ERR_UNKNOWNCOMMAND(std::string("*"), Command));
+                _User->ServertoClients(ERR_UNKNOWNCOMMAND(std::string("*"), Command));
         }
     }
 }
@@ -130,18 +130,18 @@ void Server::WelcomeClient(User *currUser)
     if (!currUser->getNickName().empty() && !currUser->getUserName().empty())
     {
         std::cout << currUser->getNickName() << " Is Logged in!" << std::endl;
-        currUser->ServertoClients(RPL_WELCOME(currUser->getNickName(), "IRC",currUser->getUserName(), _IPHostAdress));
-        currUser->ServertoClients(RPL_YOURHOST(currUser->getNickName(), _IPHostAdress, "IBA7LAWN N IRC"));
-        currUser->ServertoClients(RPL_MOTDSTART(currUser->getNickName()));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██╗██████╗  █████╗ ███████╗██╗      █████╗ ██╗    ██╗███╗   ██╗    ███╗   ██╗    ██╗██████╗  ██████╗  "));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██╔══██╗██╔══██╗╚════██║██║     ██╔══██╗██║    ██║████╗  ██║    ████╗  ██║    ██║██╔══██╗██╔════╝  "));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██████╔╝███████║    ██╔╝██║     ███████║██║ █╗ ██║██╔██╗ ██║    ██╔██╗ ██║    ██║██████╔╝██║       "));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██╔══██╗██╔══██║   ██╔╝ ██║     ██╔══██║██║███╗██║██║╚██╗██║    ██║╚██╗██║    ██║██╔══██╗██║       "));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██████╔╝██║  ██║   ██║  ███████╗██║  ██║╚███╔███╔╝██║ ╚████║    ██║ ╚████║    ██║██║  ██║╚██████╗  "));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " ╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝  ╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝    ╚═╝╚═╝  ╚═╝ ╚═════╝  "));
-        currUser->ServertoClients(RPL_MOTD(currUser->getNickName(), " "));
-        currUser->ServertoClients(RPL_ENDOFMOTD(currUser->getNickName()));
-        currUser->ServertoClients(RPL_UMODEIS(currUser->getNickName(), "+w"));
+        _User->ServertoClients(RPL_WELCOME(currUser->getNickName(), "IRC",currUser->getUserName(), _IPHostAdress));
+        _User->ServertoClients(RPL_YOURHOST(currUser->getNickName(), _IPHostAdress, "IBA7LAWN N IRC"));
+        _User->ServertoClients(RPL_MOTDSTART(currUser->getNickName()));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██╗██████╗  █████╗ ███████╗██╗      █████╗ ██╗    ██╗███╗   ██╗    ███╗   ██╗    ██╗██████╗  ██████╗  "));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██╔══██╗██╔══██╗╚════██║██║     ██╔══██╗██║    ██║████╗  ██║    ████╗  ██║    ██║██╔══██╗██╔════╝  "));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██████╔╝███████║    ██╔╝██║     ███████║██║ █╗ ██║██╔██╗ ██║    ██╔██╗ ██║    ██║██████╔╝██║       "));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██╔══██╗██╔══██║   ██╔╝ ██║     ██╔══██║██║███╗██║██║╚██╗██║    ██║╚██╗██║    ██║██╔══██╗██║       "));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " ██║██████╔╝██║  ██║   ██║  ███████╗██║  ██║╚███╔███╔╝██║ ╚████║    ██║ ╚████║    ██║██║  ██║╚██████╗  "));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " ╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝  ╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝    ╚═╝╚═╝  ╚═╝ ╚═════╝  "));
+        _User->ServertoClients(RPL_MOTD(currUser->getNickName(), " "));
+        _User->ServertoClients(RPL_ENDOFMOTD(currUser->getNickName()));
+        _User->ServertoClients(RPL_UMODEIS(currUser->getNickName(), "+w"));
 
     }
 }

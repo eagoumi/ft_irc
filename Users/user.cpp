@@ -108,20 +108,18 @@ std::string const &User::getServerIP()
     return (_IPServer);
 }
 
-
-void User::IRCPrint(std::string string)
+//Sending Message to clients
+void User::IRCPrint(size_t fd, std::string string)
 {
-    std::string buffer = string + "\n";
+    std::string buffer = string + "\r\n";
     //catch erro
-    if (send(_Id, buffer.c_str(), buffer.length(), 0) < 0)
+    if (send(fd, buffer.c_str(), buffer.length(), 0) < 0)
         throw std::runtime_error("Error On Sending a Message to the Client.\n");
 }
 
 void User::ServertoClients(std::string string)
 {
-    std::cout << _IPServer << std::endl;
-    std::string ipserv = getServerIP();
-    IRCPrint(":" + ipserv + " " + string);
+    IRCPrint(getUserId(), ":" + getServerIP() + " " + string);
 }
 
 User::~User() {

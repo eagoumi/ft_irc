@@ -199,7 +199,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     else if(cmd == "MODE")
         mode();
     else
-        sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd));
+        sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd) + "\r\n");
 
     // if (getCommand() == "JOIN" || getCommand() == "join") 
     //     join();

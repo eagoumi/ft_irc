@@ -40,9 +40,13 @@ void Commands::invite()
     else{
         size_t inviteFd = existUser(getNick());
         if(inviteFd != 0)
-            sendResponse(inviteFd, ":" + db->getUser(fd)->getNickName() + " " + getNick() + " " + getChannel());
+        {
+            sendResponse(inviteFd, ":" + db->getUser(fd)->getNickName() + " " + getNick() + " " + getChannel() + "\n");
+            invitedNick = getNick();
+            std::cout << "INVITEDNICK = " << invitedNick << std::endl;
+        }   
         else
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :User does not exist");
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :User does not exist\n");
     }
 }
 

@@ -23,7 +23,7 @@ static bool isStrContains(std::string const &str, std::string const &charSet)
 
 Channel::Channel(CHANNEL_NAME channelName, User *creator)
 {
-
+    // db = Database::GetInstance();
     creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;
     // welp I think I'll add some extra work for checking name syntax
     isStrContains(channelName, " ,\a");
@@ -81,6 +81,16 @@ User *Channel::getMember(USER_ID Id)
     if (it != this->_members.end())
         return it->second;
     return NULL;
+}
+
+std::string Channel::getTopic()
+{
+    return newTopic; 
+}
+
+void Channel::setTopic(std::string nTopic)
+{
+    this->newTopic = nTopic;
 }
 
 std::map<USER_ID, User *> Channel::getMembers()

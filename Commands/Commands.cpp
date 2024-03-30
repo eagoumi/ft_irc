@@ -106,13 +106,13 @@ void   Commands::tokenize(std::string const& cmdLine) {
 
     this->_paramCounter = 0;
     for (size_t i = 0; i < cmdLine.length(); i++) {
-
         /************************************/
         /*			skip spaces				*/
         /************************************/
-        while (isspace(cmdLine[i]) == true)
+        while (/*isspace(cmdLine[i]) == true*/ cmdLine[i] == ' ')
+        {
             i++;
-
+        }
         while (i <= cmdLine.length()) {
 
             /*********************************************************/
@@ -176,7 +176,9 @@ void Commands::checkTokensListSyntax()
 {
 	std::list<token>::iterator ListIt = _tokensList.begin();
     token_type cmd = _tokensList.front().type;
+    /**************************************************** THIS LINE WILL BE REMOVED ****************************************************/
     char justFordebug[42][42] = { "NONE", "COMMA ", "JOIN_CMD", "KICK_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "CHANNEL", "KEY", "NICK", "TOPIC_MSG", "COMMENT", "MODE_STR", "MODE_ARG", "LOG_BEG", "LOG_END"};
+    /***********************************************************************************************************************************/
     _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
     if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()));
 	while (ListIt != _tokensList.end())

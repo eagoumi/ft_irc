@@ -41,7 +41,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
         std::istringstream GetCmd(cmd);
         GetCmd >> Command;
 
-        std::cout << Command << std::endl;
+        // std::cout << Command << std::endl;
         if (!Command.empty()) //&& currUser->isAuthenticated() == false) // && (Command == "pass" || Command == "PASS" || Command == "user" || Command == "nick" || Command == "USER" || Command == "NICK"))
         {
             if (Command == "pass" || Command == "PASS")

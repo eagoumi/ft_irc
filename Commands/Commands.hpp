@@ -18,13 +18,17 @@
 #include "../Users/user.hpp"
 #include "../error_request.hpp"
 
-enum reset { NANDA, RESET };
+enum reset
+{
+    NANDA,
+    RESET
+};
 
 enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, MODE_ARG, LOG_BEG, LOG_END};
 struct token
 {
-	token_type		type;
-	std::string	    data;
+    token_type type;
+    std::string data;
 };
 
 // :yousra!~a@127.0.0.1 JOIN #HD
@@ -33,19 +37,24 @@ struct token
 // :Pentagone.chat 366 yousra #HD :End of /NAMES list.
 // :Pentagone.chat 332 yousra #HD :TOPIC Not set
 
-typedef struct s_comData{
+class Database;
+
+typedef struct s_comData
+{
     std::string line;
     std::string nick;
     int fd;
 
-}cmdData;
+} cmdData;
 
-
-class Commands{
+class Commands
+{
 private:
+    // std::map<std::string, bool> modes;
     static std::string newTopic;
-
-    Database* db;
+    static std::string invitedNick;
+    std::string modeStr;
+    Database *db;
 
     int flag;
     std::list<token> _tokensList;
@@ -58,75 +67,47 @@ private:
     // std::string command;
     std::vector<std::string> command;
     std::vector<std::string>::iterator itV;
-    std::string::iterator it;
-    // std::multimap<std::string, std::string> channels;
-    // std::map<std::string, std::string> channels;
-    // std::map<std::string, std::string>::iterator itCh;
     unsigned long fd;
     User *currUser;
     std::string owner;
     std::string topicMsg;
-
-    std::pair<
-        std::multimap<std::string, std::string>::iterator,
-        std::multimap<std::string, std::string>::iterator>
-        range;
-
     std::string line;
-    std::string client;
-
 
 public:
     Commands();
     ~Commands();
-    Commands(const Commands& obj);
-    Commands& operator=(const Commands& obj);
+    Commands(const Commands &obj);
+    Commands &operator=(const Commands &obj);
 
-    void parsCommands(std::string str, std::string owner, std::string host, int fd);
-
-    std::string ft_trim(std::string str);
-
-    void ft_split(std::string str);
+    void CommandMapinit(cmdData dataCmd);
 
     void kick();
-
-    int searchChannel();
-
-    void fillMultimap();
-
     void invite();
-
     void topic();
-
     void mode();
-
     void join();
-
     void logtime();
 
 
     std::map<std::string, std::string> splitInput(std::string input);
-
     bool existMemberChannel(std::string member);
     bool existOperatorChannel(std::string nick);
     size_t existUser(std::string nick);
 
-    void CommandMapinit(cmdData dataCmd);
-    // void CommandMapinit(std::string &line);
-
 
     std::string getNick();
-    std::string getClient() const;
     std::string getCommand() const;
     std::string getChannel();
-    std::string getCommentTopic();
+    std::string getTopic();
+    std::string getComment();
     std::string getHostName();
-    void seTopic(std::string newTopic);
-    // std::string geTopic();
+    std::string getModeString();
 
+    // bool gettingModes(char toFind, std::string mode, std::map<std::string, bool> &modSeted);
+    // void seTopic(std::string newTopic);
     void sendResponse(int userfd, std::string msg);
-
     void displayMember();
+    bool getMode(std::string letter);
 
 };
 
@@ -135,8 +116,6 @@ public:
 // pass yous
 // nick yous
 // user s s s s
-
-
 
 // INVITE <nickname> <channel>
 // JOIN <channel>{,<channel>} [<key>{,<key>}]

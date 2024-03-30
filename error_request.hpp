@@ -33,7 +33,7 @@
 #define ERR_SUMMONDISABLED		445
 #define ERR_USERSDISABLED		446
 #define ERR_NOTREGISTERED(Client)		"451 " + Client + ": You have not registered"
-#define ERR_NEEDMOREPARAMS(NickName, Parameter)		"461 " + NickName + Parameter + ": Not enough parameters, Please try again!"
+#define ERR_NEEDMOREPARAMS(NickName, Parameter)		"461 " + NickName + " " + Parameter + ": Not enough parameters, Please try again!"
 #define ERR_ALREADYREGISTRED	462
 #define ERR_NOPERMFORHOST		463
 #define ERR_PASSWDMISMATCH(Client)		"464 " + Client + ": Password Incorrect, Please try again!"

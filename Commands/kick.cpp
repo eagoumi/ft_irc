@@ -1,4 +1,5 @@
 #include "Commands.hpp"
+#include "../error_request.hpp"
 
 void Commands::displayMember()
 {
@@ -39,7 +40,8 @@ void Commands::kick()
 
     if (command.size() < 3)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
+        sendResponse(fd, ERR_NEEDMOREPARAMS(db->getUser(fd)->getNickName(), getCommand()) + "\n");
+        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
         return;
     }
 
@@ -60,12 +62,20 @@ void Commands::kick()
 
     else
     {
-        // displayMember();
+        size_t kickedFd = existUser(getNick());
+        displayMember();
+        std::cout << "\n" << std::endl;
         db->getChannel(this->getChannel())->deleteMember(getNick());
-        // displayMember();
-        if (getCommentTopic() != "") 
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getCommentTopic() + "\n");
+        displayMember();
+        if (getComment() != "") 
+        {
+            sendResponse(kickedFd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getComment() + "\n");
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getComment() + "\n");
+        }  
         else
+        {
+            sendResponse(kickedFd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + "\n");
             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + "\n");
+        }   
     }
 }

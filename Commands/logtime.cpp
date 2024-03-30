@@ -45,18 +45,10 @@ static bool checkDateOrder(const std::string& begin_at, const std::string& end_a
 
 static bool checkDateFormat(const std::string& dateString) {
 
-    char dash;
     std::stringstream ss(dateString);
 
     struct tm date = getTimeStruct(dateString);
     struct tm roundedDate = date;
-
-    // ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
-    // date.tm_year -= 1900; date.tm_mon -= 1;
-    // date.tm_hour = 1;
-    // date.tm_min = 0;
-    // date.tm_sec = 0;
-    // roundedDate = date;
 
     mktime(&roundedDate);
     if (
@@ -195,7 +187,7 @@ static std::string getHoursSum(const std::vector<std::string>& loggedHours) {
 }
 
 void Commands::logtime() {
-    int x = "TEST";
+
     std::string token42 = get42Token(); if (token42.empty()) return ;
 
     std::string login = getNextParam().first; std::transform(login.begin(), login.end(), login.begin(), ::tolower);

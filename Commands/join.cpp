@@ -26,16 +26,16 @@ void Commands::join()
                 sendResponse(fd, "User already in channel\n");
                 continue ;
             }
-            else if(getMode("i") == true && db->getUser(fd)->getNickName() != invitedNick)
-            {
-                sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + getChannel() + " :Cannot join channel (+i)\n");
-            }
-            else
-            {
+            // else if(getMode("i") == true && db->getUser(fd)->getNickName() != invitedNick)
+            // {
+            //     sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + getChannel() + " :Cannot join channel (+i)\n");
+            // }
+            // else
+            // {
                 currChannel->addMember(currUser);
                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
                 sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");
-            }
+            // }
         }
     }
 }

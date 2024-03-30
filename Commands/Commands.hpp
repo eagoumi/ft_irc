@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/socket.h>
 #include "../Database/database.hpp"
 #include "../Channels/channel.hpp"

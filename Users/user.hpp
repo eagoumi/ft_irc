@@ -57,6 +57,7 @@ class   User
         void ServertoClients(std::string string);
 
         void hasJoinedChannel(Channel *channel);
+        std::map<std::string, Channel *> const& getJoinedChannels();
         // Channel *createChannel(CHANNEL_NAME name);
         ~User();
 };

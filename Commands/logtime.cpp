@@ -48,21 +48,21 @@ static bool checkDateFormat(const std::string& dateString) {
     char dash;
     std::stringstream ss(dateString);
 
-    struct tm date;
-    struct tm newDate;
+    struct tm date = getTimeStruct(dateString);
+    struct tm roundedDate = date;
 
-    ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
-    date.tm_year -= 1900; date.tm_mon -= 1;
-    date.tm_hour = 1;
-    date.tm_min = 0;
-    date.tm_sec = 0;
+    // ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
+    // date.tm_year -= 1900; date.tm_mon -= 1;
+    // date.tm_hour = 1;
+    // date.tm_min = 0;
+    // date.tm_sec = 0;
+    // roundedDate = date;
 
-    newDate = date;
-    mktime(&newDate);
+    mktime(&roundedDate);
     if (
-        date.tm_year == newDate.tm_year &&
-        date.tm_mon == newDate.tm_mon   &&
-        date.tm_mday == newDate.tm_mday
+        date.tm_year == roundedDate.tm_year &&
+        date.tm_mon == roundedDate.tm_mon   &&
+        date.tm_mday == roundedDate.tm_mday
     )   
         return true; 
     return false;
@@ -195,7 +195,7 @@ static std::string getHoursSum(const std::vector<std::string>& loggedHours) {
 }
 
 void Commands::logtime() {
-
+    int x = "TEST";
     std::string token42 = get42Token(); if (token42.empty()) return ;
 
     std::string login = getNextParam().first; std::transform(login.begin(), login.end(), login.begin(), ::tolower);

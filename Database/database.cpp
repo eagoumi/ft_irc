@@ -39,7 +39,7 @@ Channel *Database::addNewChannel(CHANNEL_NAME name, User *user)
     createdChannel = new Channel(name, user);
     this->_channels[name] = createdChannel;
 
-    // user->joinChannel(createdChannel);//srsly I see no need for this, at least for now
+    user->hasJoinedChannel(createdChannel);//srsly I see no need for this, at least for now
     return createdChannel;
 }
 

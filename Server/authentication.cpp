@@ -76,7 +76,9 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                     std::string nickname;
                     GetCmd >> nickname;
                     // std::cout << nickname << std::endl;
-                    if (!nickname.empty() && !currUser->isStrContains(nickname, " ,*?!@.") \
+                    if (_db->isNicknameUsed(nickname) == true)
+                        currUser->ServertoClients(ERR_NICKNAMEINUSE(nickname));
+                    else if (!nickname.empty() && !currUser->isStrContains(nickname, " ,*?!@.") \
                             && !currUser->isStrStartWith(nickname, "$:#&+~%") && len_param_command == 2)
                         currUser->setNickName(nickname);
                     else if (nickname.empty() || len_param_command == 1)

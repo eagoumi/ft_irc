@@ -51,7 +51,6 @@ void Commands::join()
         }
     }
 }
-}
 
 // void Commands::join()
 // {

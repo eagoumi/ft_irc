@@ -28,8 +28,10 @@ class Channel
 
         //added
         std::map<std::string, bool> modeSeted;
+        std::vector<std::string> invitedList;
         std::string newTopic;
-        std::string mode;
+        std::string modeS;
+        size_t limitMembers;
 
     public:
         Channel(CHANNEL_NAME, User *);
@@ -43,11 +45,14 @@ class Channel
         //added
         std::map<USER_ID, User *>   getMembers();
         std::map<USER_ID, User *>   getOperators();
-        std::map<std::string, bool> gettingModes(char toFind);
+        std::map<std::string, bool> gettingModes(std::string toFind);
+        std::string                 getTopic();
         void                        deleteMember(std::string nickTarget);
         void                        setTopic(std::string nTopic);
         void                        initializeModes(std::string modeStr);
-        std::string                 getTopic();
+        void                        setInvitedNick(std::string Nick);
+        bool                        getInvitedNick(std::string nickTarget);
+        void                        setLimit(size_t limitMembers);
         // std::string                 channelTopic(int fd);
 
 

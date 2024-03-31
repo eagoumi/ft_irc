@@ -228,7 +228,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // std::cout << "what" << std::endl;
     std::string token;
     std::istringstream iss(dataCmd.line);
-
+    std::cout << "LIIINE = " << dataCmd.line;
     while (iss >> token)
     {
         command.push_back(token);
@@ -262,6 +262,17 @@ void Commands::CommandMapinit(cmdData dataCmd)
 void Commands::sendResponse(int userfd, std::string message)
 {
     send(userfd, message.c_str(), message.length(), 0);
+}
+
+size_t Commands::getLimitArg()
+{
+    if(command[4] == "")
+        return 0;
+    std::cout << "TEST = " << command[4] << std::endl;
+    size_t nbr = static_cast<size_t>(atoi(command[4].c_str()));
+    if(nbr == 0)
+        return 1 ;
+    return nbr;
 }
 
 std::string Commands::getNick()
@@ -350,6 +361,7 @@ std::string Commands::getChannel()
     {
         if (itV->find('#', 0) != std::string::npos)
         {
+            // std::cout << "THAAAAAT'S WHYYYY = " << *itV << std::endl;
             return *itV;
         }
     }

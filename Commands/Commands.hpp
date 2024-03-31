@@ -15,17 +15,15 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include "../Database/database.hpp"
-#include "../Channels/channel.hpp"
-#include "../Users/user.hpp"
 #include "../error_request.hpp"
 
-enum reset
+enum OPTION
 {
     NANDA,
     RESET
 };
 
-enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END};
+enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, WHOIS_CMD, LOCATION_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END};
 struct token
 {
     token_type type;
@@ -61,7 +59,7 @@ private:
     std::list<token> _tokensList;
     size_t _paramCounter;
     void tokenize(std::string const&);
-    std::pair<std::string, std::vector<std::string> > getNextParam(reset option = NANDA);
+    std::pair<std::string, std::vector<std::string> > getNextParam(OPTION option = NANDA);
     void checkTokensListSyntax();
     token_type  determineToken(char sep, token_type cmdType);
     std::string get42Token();
@@ -88,6 +86,8 @@ public:
     void mode();
     void join();
     void logtime();
+    void location();
+    void whois();
 
 
     std::map<std::string, std::string> splitInput(std::string input);
@@ -97,7 +97,7 @@ public:
 
 
     std::string getNick();
-    std::string getCommand() const;
+    std::string  const& getCommand() const;
     std::string getChannel();
     std::string getTopic();
     std::string getComment();

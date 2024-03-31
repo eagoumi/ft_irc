@@ -41,6 +41,10 @@ token_type determine_cmd(std::string token)
         return MODE_CMD;
     else if (token == "LOGTIME")
         return LOGTIME_CMD;
+    else if (token == "WHOIS")
+        return WHOIS_CMD;
+    else if (token == "LOCATION")
+        return LOCATION_CMD;
     return NONE;
 }
 
@@ -55,7 +59,7 @@ token_type    Commands::determineToken(char sep, token_type cmdType) {
     token_type tokenType(NONE);
     if (sep == ',') {
         if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : tokenType = NONE;
-        if      (cmdType == PART_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
+        else if (cmdType == PART_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
         else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = NONE    : (_paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
         else if (cmdType == TOPIC_CMD)      tokenType = NONE;
         else if (cmdType == INVITE_CMD)     tokenType = NONE;
@@ -63,19 +67,21 @@ token_type    Commands::determineToken(char sep, token_type cmdType) {
         else if (cmdType == LOGTIME_CMD)    tokenType = NONE;
     }
     else if (isspace(sep)) {
-        if      (cmdType == JOIN_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY       : tokenType = NONE);
-        if      (cmdType == PART_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = REASON    : tokenType = NONE);
-        else if (cmdType == KICK_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = NICK      : (_paramCounter == 3 ? tokenType = COMMENT  : tokenType = NONE));
-        else if (cmdType == TOPIC_CMD)   _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = TOPIC_MSG : tokenType = NONE);
-        else if (cmdType == INVITE_CMD)  _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = CHANNEL   : tokenType = NONE);
-        else if (cmdType == MODE_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = NONE);
-        else if (cmdType == LOGTIME_CMD) _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = LOG_BEG   : (_paramCounter == 3 ? tokenType = LOG_END  : tokenType = NONE));
+        if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY       : tokenType = NONE);
+        else if (cmdType == PART_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = REASON    : tokenType = NONE);
+        else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = NICK      : (_paramCounter == 3 ? tokenType = COMMENT  : tokenType = NONE));
+        else if (cmdType == TOPIC_CMD)      _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = TOPIC_MSG : tokenType = NONE);
+        else if (cmdType == INVITE_CMD)     _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = CHANNEL   : tokenType = NONE);
+        else if (cmdType == MODE_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = NONE);
+        else if (cmdType == LOGTIME_CMD)    _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = LOG_BEG   : (_paramCounter == 3 ? tokenType = LOG_END  : tokenType = NONE));
+        else if (cmdType == WHOIS_CMD)      _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
+        else if (cmdType == LOCATION_CMD)   _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
     }
     return (tokenType);
 }
 
 //call it when you are sure from the command syntax
-std::pair<std::string, std::vector<std::string> > Commands::getNextParam(reset option) {
+std::pair<std::string, std::vector<std::string> > Commands::getNextParam(OPTION option) {
 
     static token_type tokenType;
     static bool firstTime = true;
@@ -114,7 +120,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
         /************************************/
         /*			skip spaces				*/
         /************************************/
-        while (/*isspace(cmdLine[i]) == true*/ cmdLine[i] == ' ')
+        while (isspace(cmdLine[i]) == true/*cmdLine[i] == ' '*/)
         {
             i++;
         }
@@ -182,7 +188,7 @@ void Commands::checkTokensListSyntax()
 	std::list<token>::iterator ListIt = _tokensList.begin();
     token_type cmd = _tokensList.front().type;
     /**************************************************** THIS LINE WILL BE REMOVED ****************************************************/
-    char justFordebug[42][42] = { "NONE", "COMMA ", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "CHANNEL", "KEY", "NICK", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END"};
+    char justFordebug[42][42] = { "NONE", "COMMA ", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", "KEY", "NICK", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END"};
     /***********************************************************************************************************************************/
     _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
     if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n");
@@ -255,6 +261,10 @@ void Commands::CommandMapinit(cmdData dataCmd)
         topic();
     else if (cmd == "MODE")
         mode();
+    else if (cmd == "LOCATION")
+        location();
+    else if (cmd == "WHOIS")
+        whois();
     else
         sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd) + "\n");
 }
@@ -279,7 +289,7 @@ std::string Commands::getNick()
     return "";
 }
 
-std::string Commands::getCommand() const
+std::string const& Commands::getCommand() const
 {
     // if (command[1] == "KICK")
     //     return command[1];

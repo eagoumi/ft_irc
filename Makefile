@@ -28,7 +28,7 @@ SRC_FILES	=	Server/server.cpp \
 				Commands/Commands.cpp Commands/kick.cpp \
 				Commands/join.cpp Commands/invite.cpp \
 				Commands/topic.cpp Commands/mode.cpp \
-				Commands/logtime.cpp
+				Commands/logtime.cpp Commands/whois.cpp Commands/location.cpp
 
 INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \

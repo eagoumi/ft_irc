@@ -32,7 +32,7 @@ std::cout << "join() : user nickname: " + currUser->getNickName() << std::endl;
                 sendResponse(fd, "User already in channel\n");
                 continue ;
             }
-            else if(this->getMode("i") == true && currChannel->getInvitedNick(currUser->getNickName()) == false )            
+             else if(this->getMode("i") == true && currChannel->getInvitedNick(currUser->getNickName()) == false )            
             {
                 sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + getChannel() + " :Cannot join channel (+i)\n");
             }
@@ -46,6 +46,7 @@ std::cout << "join() : user nickname: " + currUser->getNickName() << std::endl;
             }
         }
     }
+}
 }
 
 

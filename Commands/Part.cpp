@@ -22,18 +22,18 @@ void Commands::part()
 
     std::vector<std::string> All_channels = getNextParam().second;
     std::cout << "1 " << All_channels[0] << std::endl;
-    if (db->getChannel(All_channels[0]) == NULL)
-    {
-        puts ("ssss");
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
-        return ;
-    }
-    else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
-        puts ("ssss");
-    {
-        currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
-        return ;
-    }
+    // if (db->getChannel(All_channels[0]) == NULL)
+    // {
+    //     puts ("ssss");
+    //     currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
+    //     return ;
+    // }
+    // else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
+    //     puts ("ssss");
+    // {
+    //     currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
+    //     return ;
+    // }
     std::cout << "2 " << All_channels[0] << std::endl;
     SendMessageToMembers(db->getChannel(All_channels[0]), currUser, " PART " + db->getUser(fd)->getNickName());
     db->getChannel(All_channels[0])->deleteMember(db->getUser(fd)->getNickName());

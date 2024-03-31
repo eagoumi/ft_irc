@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include "../Database/database.hpp"
 #include "../Channels/channel.hpp"
+#include "../Server/server.hpp"
 #include "../Users/user.hpp"
 #include "../error_request.hpp"
 
@@ -89,6 +90,7 @@ public:
     void join();
     void logtime();
 
+    void part();
 
     std::map<std::string, std::string> splitInput(std::string input);
     bool existMemberChannel(std::string member);

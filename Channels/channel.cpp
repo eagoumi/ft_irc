@@ -66,7 +66,8 @@ bool Channel::isUserInvited(USER_ID Id)
     return false;
 }
 
-bool Channel::isUserOperator(USER_ID Id) {
+bool Channel::isUserOperator(USER_ID Id)
+{
 
     UserIter it = this->_operators.find(Id);
     if (it != this->_operators.end())
@@ -74,11 +75,13 @@ bool Channel::isUserOperator(USER_ID Id) {
     return false;
 }
 
-CHANNEL_NAME const & Channel::getChannelName() {
+CHANNEL_NAME const &Channel::getChannelName()
+{
     return this->_name;
 }
 
-User *Channel::getMember(USER_ID Id) {
+User *Channel::getMember(USER_ID Id)
+{
 
     UserIter it = this->_members.find(Id);
     if (it != this->_members.end())
@@ -86,9 +89,11 @@ User *Channel::getMember(USER_ID Id) {
     return NULL;
 }
 
+
+// Added
 std::string Channel::getTopic()
 {
-    return newTopic; 
+    return newTopic;
 }
 
 void Channel::setTopic(std::string nTopic)
@@ -105,9 +110,9 @@ void Channel::deleteMember(std::string nickTarget)
 {
     std::map<USER_ID, User *>::iterator tmp;
     std::map<USER_ID, User *>::iterator it = _members.begin();
-    while(it != _members.end())
+    while (it != _members.end())
     {
-        if(it->second->getNickName() == nickTarget)
+        if (it->second->getNickName() == nickTarget)
         {
             tmp = it;
             it++;
@@ -119,10 +124,33 @@ void Channel::deleteMember(std::string nickTarget)
     }
 }
 
+void Channel::setInvitedNick(std::string Nick)
+{
+    this->invitedList.push_back(Nick);
+}
+
+bool Channel::getInvitedNick(std::string nickTarget)
+{
+    std::cout << "***Displaying Inviting list***" << std::endl;
+    for (std::vector<std::string>::iterator it = invitedList.begin(); it != invitedList.end(); it++)
+        std::cout << "NICK = " << *it << std::endl;
+    std::cout << std::endl;
+    std::vector<std::string>::iterator it = std::find(this->invitedList.begin(), this->invitedList.end(), nickTarget);
+    if (it != invitedList.end())
+        return true;
+    return false;
+}
+
 std::map<USER_ID, User *> Channel::getOperators()
 {
     return this->_operators;
 }
+
+void Channel::setLimit(size_t nLimitMembers)
+{
+    this->limitMembers = nLimitMembers;
+}
+
 
 Channel::~Channel()
 {

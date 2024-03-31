@@ -38,12 +38,12 @@ bool Commands::existOperatorChannel(std::string nick)
 void Commands::kick()
 {
 
-    if (command.size() < 3)
-    {
-        sendResponse(fd, ERR_NEEDMOREPARAMS(db->getUser(fd)->getNickName(), getCommand()) + "\n");
-        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
-        return;
-    }
+    // if (command.size() < 3)
+    // {
+    //     sendResponse(fd, ERR_NEEDMOREPARAMS(db->getUser(fd)->getNickName(), getCommand()) + "\n");
+    //     // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
+    //     return;
+    // }
 
     if (db->getChannel(this->getChannel()) == NULL)
         sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :No such channel\n");
@@ -62,20 +62,21 @@ void Commands::kick()
 
     else
     {
+        // puts("delete member \n");
         size_t kickedFd = existUser(getNick());
         displayMember();
         std::cout << "\n" << std::endl;
         db->getChannel(this->getChannel())->deleteMember(getNick());
         displayMember();
-        if (getComment() != "") 
-        {
-            sendResponse(kickedFd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getComment() + "\n");
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getComment() + "\n");
-        }  
-        else
-        {
+        // if (getComment() != "") 
+        // {
+        //     sendResponse(kickedFd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getComment() + "\n");
+        //     sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + ":" + getComment() + "\n");
+        // }  
+        // else
+        // {
             sendResponse(kickedFd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + "\n");
             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " KICK " + getChannel() + " " + getNick() + "\n");
-        }   
+        // }   
     }
 }

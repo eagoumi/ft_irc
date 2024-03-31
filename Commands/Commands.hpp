@@ -50,6 +50,7 @@ typedef struct s_comData
 class Commands
 {
 private:
+    Channel *currChannel;
     // std::map<std::string, bool> modes;
     static std::string newTopic;
     static std::string invitedNick;
@@ -105,9 +106,11 @@ public:
 
     // bool gettingModes(char toFind, std::string mode, std::map<std::string, bool> &modSeted);
     // void seTopic(std::string newTopic);
-    void sendResponse(int userfd, std::string msg);
-    void displayMember();
-    bool getMode(std::string letter);
+    void    sendResponse(int userfd, std::string msg);
+    void    displayMember();
+    bool    getMode(std::string letter);
+    size_t  getLimitArg();
+
 
 };
 

@@ -7,12 +7,17 @@ std::string Commands::invitedNick;
 
 void Commands::join()
 {
-    std::vector<std::string> channelNamesList = getNextParam().second;
-    std::vector<std::string> channelkeysList = getNextParam().second;
 
+std::cout << "join() : beg" << std::endl;
+    std::vector<std::string> channelNamesList = getNextParam().second;
+std::cout << "join() : line 2" << std::endl;
+    std::vector<std::string> channelkeysList = getNextParam().second;
     for (size_t channelIndex = 0; channelIndex < channelNamesList.size(); channelIndex++)
     {
-        Channel *currChannel = db->getChannel(channelNamesList[channelIndex]);
+std::cout << "join() : loop " << channelNamesList[channelIndex] << std::endl;
+std::cout << "join() : user nickname: " + currUser->getNickName() << std::endl;
+
+        currChannel = db->getChannel(channelNamesList[channelIndex]);
         if (currChannel == NOT_FOUND) {
 
             std::cout << "channel not found, creating by " << currUser->getUserName() << " ...\n";
@@ -21,17 +26,20 @@ void Commands::join()
             sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + " Created The Channel successfully\n");
         }
         else {
+            std::cout << "getMode = " << getMode("i") << " getInvited = " << currChannel->getInvitedNick(currUser->getNickName()) << std::endl;
             if (currChannel->getMember(fd) != NULL)
             {
                 sendResponse(fd, "User already in channel\n");
                 continue ;
             }
-            else if(getMode("i") == true && db->getUser(fd)->getNickName() != invitedNick)
+            else if(this->getMode("i") == true && currChannel->getInvitedNick(currUser->getNickName()) == false )            
             {
                 sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + getChannel() + " :Cannot join channel (+i)\n");
             }
+            // else if(getMode("l") == true && db->get)
             else
             {
+                // std::cout << "TEST = " << currChannel->getChannelName() << std::endl;
                 currChannel->addMember(currUser);
                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
                 sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");

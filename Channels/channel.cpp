@@ -23,7 +23,7 @@ static bool isStrContains(std::string const &str, std::string const &charSet)
 
 Channel::Channel(CHANNEL_NAME channelName, User *creator)
 {
-
+    // db = Database::GetInstance();
     creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;
     // welp I think I'll add some extra work for checking name syntax
     isStrContains(channelName, " ,\a");
@@ -43,6 +43,7 @@ void Channel::addMember(User *member)
     getMember(memberId) != NOT_FOUND ? throw std::string("Channel::addMember() -> member already exist") : NULL;
 
     this->_members[memberId] = member;
+    member->hasJoinedChannel(this);
 }
 
 void Channel::inviteUser(User *user)
@@ -65,8 +66,7 @@ bool Channel::isUserInvited(USER_ID Id)
     return false;
 }
 
-bool Channel::isUserOperator(USER_ID Id)
-{
+bool Channel::isUserOperator(USER_ID Id) {
 
     UserIter it = this->_operators.find(Id);
     if (it != this->_operators.end())
@@ -74,13 +74,26 @@ bool Channel::isUserOperator(USER_ID Id)
     return false;
 }
 
-User *Channel::getMember(USER_ID Id)
-{
+CHANNEL_NAME const & Channel::getChannelName() {
+    return this->_name;
+}
+
+User *Channel::getMember(USER_ID Id) {
 
     UserIter it = this->_members.find(Id);
     if (it != this->_members.end())
         return it->second;
     return NULL;
+}
+
+std::string Channel::getTopic()
+{
+    return newTopic; 
+}
+
+void Channel::setTopic(std::string nTopic)
+{
+    this->newTopic = nTopic;
 }
 
 std::map<USER_ID, User *> Channel::getMembers()

@@ -21,7 +21,7 @@ class   User
         USER_ID								_Id;
         NICK_NAME							_nickname;
         USER_NAME						    _username;
-        std::map<std::string, Channel *>	_joinedChannels;//srsly I see no need for this, at least for now
+        std::map<std::string, Channel *>	_joinedChannels;//srsly I see no need for this, at least for now, :3 well I see now y I need it
         // bool								_isAuthenticated;
         bool                                _isPasswordInserted;
         bool                                _isNickInserted;
@@ -57,8 +57,8 @@ class   User
         void IRCPrint(size_t fd, std::string string);
         void ServertoClients(std::string string);
 
-
-        // void joinChannel(Channel *channel);
+        void hasJoinedChannel(Channel *channel);
+        std::map<std::string, Channel *> const& getJoinedChannels();
         // Channel *createChannel(CHANNEL_NAME name);
         ~User();
 };

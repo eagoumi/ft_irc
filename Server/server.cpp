@@ -63,9 +63,11 @@ void Server::CheckForConnectionClients()
 					std::cout << "sd :" << i << std::endl;
 				}
 				else if (getuser->isAuthenticated() == false)
-					Authentication(i, buffer);
+					Authentication(i, buffer);	
 				else
+				{
 					cmdObj.CommandMapinit(data);
+				}	
 				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}
@@ -101,7 +103,7 @@ std::string Server::HostIPADress()
 {
 
 	std::string iphost;
-	std::istringstream string(std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log"));
+	/*std::istringstream string(*/std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log")/*)*/;
 	std::fstream ipfile;
 	ipfile.open(".log");
 	std::getline(ipfile, iphost);
@@ -216,7 +218,7 @@ void Server::accept_connection()
 	size_t lensockadd = sizeof(_Sockaddclient);
 	// memset(&_Sockaddclient, 0, lensockadd);
 	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
-	std::cout << newSocketfd << std::endl;
+	// std::cout << newSocketfd << std::endl;
 	if (newSocketfd >= 0)
 	{
 		//inet_ntoa() only supports IPv4 addresses. 

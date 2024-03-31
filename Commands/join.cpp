@@ -3,10 +3,12 @@
 
 # define NOT_FOUND NULL
 
+std::string Commands::invitedNick;
+
 void Commands::join()
 {
-    std::vector<std::string> channelNamesList = getNextParam();
-    std::vector<std::string> channelkeysList = getNextParam();
+    std::vector<std::string> channelNamesList = getNextParam().second;
+    std::vector<std::string> channelkeysList = getNextParam().second;
 
     for (size_t channelIndex = 0; channelIndex < channelNamesList.size(); channelIndex++)
     {
@@ -15,8 +17,8 @@ void Commands::join()
 
             std::cout << "channel not found, creating by " << currUser->getUserName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
-            sendResponse(fd, ":" + client + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            sendResponse(fd, ": Client Created The Channel successfully\n");
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
+            sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + " Created The Channel successfully\n");
         }
         else {
             if (currChannel->getMember(fd) != NULL)
@@ -24,9 +26,16 @@ void Commands::join()
                 sendResponse(fd, "User already in channel\n");
                 continue ;
             }
-            currChannel->addMember(currUser);
-            sendResponse(fd, ":" + client + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            sendResponse(fd, "Client Joined successfully\n");
+            // else if(getMode("i") == true && db->getUser(fd)->getNickName() != invitedNick)
+            // {
+            //     sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + getChannel() + " :Cannot join channel (+i)\n");
+            // }
+            // else
+            // {
+                currChannel->addMember(currUser);
+                sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
+                sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");
+            // }
         }
     }
 }
@@ -65,20 +74,20 @@ void Commands::join()
 //             else
 //             {
 //                 existingChannel->addMember(user);
-//                 sendResponse(fd, ":" + client + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + it->first + "\n");
-//                 sendResponse(fd, "Client Joined successfully\n");
+//                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + it->first + "\n");
+//                 sendResponse(fd, "db->getUser(fd)->getNickName() Joined successfully\n");
 //             }
 //         }
 //         else
 //         {
 //             listChan[it->first] = db->addNewChannel(it->first, user);
-//             sendResponse(fd, ":" + client + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + it->first + "\n");
-//             sendResponse(fd, ": Client Created The Channel successfully\n");
+//             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + it->first + "\n");
+//             sendResponse(fd, ": db->getUser(fd)->getNickName() Created The Channel successfully\n");
 //         }
 //             // members = db->getChannel(it->first)->getMembers();
 //             // operators = db->getChannel(it->first)->getOperators();
 //             // std::cout << "members size = " << members.size() << std::endl;
 //             // std::cout << "operator size = " << operators.size() << std::endl;
-//             // std::cout << "client = " << client << std::endl;
+//             // std::cout << "db->getUser(fd)->getNickName() = " << db->getUser(fd)->getNickName() << std::endl;
 //     }
 // }

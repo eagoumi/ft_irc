@@ -91,8 +91,6 @@ void Server::CheckForConnectionClients()
 	}
 }
 
-
-
 Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {
 	_db = Database::GetInstance();

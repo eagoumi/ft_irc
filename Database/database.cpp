@@ -54,7 +54,6 @@ User *Database::getUser(USER_ID Id)
 
 Channel *Database::getChannel(CHANNEL_NAME name)
 {
-
     ChannelIter it = this->_channels.find(name);
     if (it != this->_channels.end())
         return it->second;

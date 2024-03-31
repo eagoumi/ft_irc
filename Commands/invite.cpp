@@ -3,10 +3,13 @@
 
 size_t Commands::existUser(std::string nick)
 {
+    std::transform(nick.begin(), nick.end(), nick.begin(), ::toupper);
     std::map<size_t, User *> users;
     users = db->getUsers();
+    std::cout << "CHANEEEEL NAME = 2" << nick << std::endl;
     for (std::map<size_t, User *>::iterator it = users.begin(); it != users.end(); it++)
     {
+        std::cout << "WHYYYYYYYY = " << it->second->getNickName() << std::endl;
         if(nick == it->second->getNickName())
             return it->first;
     }
@@ -15,38 +18,43 @@ size_t Commands::existUser(std::string nick)
 
 void Commands::invite()
 {
-    // std::cout << "NICK = " << getNick() << std::endl;
-    if (command.size() < 3)
+    // std::cout << "NICK = " << nickName << std::endl;
+    // if (command.size() < 3)
+    // {
+    //     sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
+    //     return;
+    // }
+    std::string nickName = getNextParam().first;
+    std::string channelName = getNextParam().first;
+    std::cout << "CHANEEEEL NAME = " << channelName << std::endl;
+    std::cout << "CHANEEEEL NAME = " << nickName << std::endl;
+
+    if (db->getChannel(channelName) == NULL)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
-        return;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
     }
-    else if (db->getChannel(this->getChannel()) == NULL)
+    else if (existMemberChannel(db->getUser(fd)->getNickName(), channelName) == false)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :No such channel\n");
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
     }
-    else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
+    else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not on that channel\n");
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
-    else if (existOperatorChannel(db->getUser(fd)->getNickName()) == false)
+    else if(existMemberChannel(nickName, channelName) == true)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not channel operator\n");
-    }
-    else if(existMemberChannel(getNick()) == true)
-    {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getNick() + " " + getChannel() + " :is already on channel\n");
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + " :is already on channel\n");
     }
     else{
-        size_t inviteFd = existUser(getNick());
+        size_t inviteFd = existUser(nickName);
         if(inviteFd != 0)
         {
-            sendResponse(inviteFd, ":" + db->getUser(fd)->getNickName() + " " + getNick() + " " + getChannel() + "\n");
-            invitedNick = getNick();
-            std::cout << "INVITEDNICK = " << invitedNick << std::endl;
+            sendResponse(inviteFd, ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n");
+            db->getChannel(channelName)->setInvitedNick(nickName);
+            // std::cout << "INVITEDNICK = " << invitedNick << std::endl;
         }   
         else
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :User does not exist\n");
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :User does not exist\n");
     }
 }
 

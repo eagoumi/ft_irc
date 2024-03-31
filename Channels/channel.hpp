@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <map>
 #include <string>
+#include <vector>
 // #include "../Commands/Commands.hpp"
 // #include "../Database/database.hpp"
 // #include "../Users/user.hpp"
@@ -53,6 +54,8 @@ class Channel
         void                        setInvitedNick(std::string Nick);
         bool                        getInvitedNick(std::string nickTarget);
         void                        setLimit(size_t limitMembers);
+        size_t                      getLimit();
+
         // std::string                 channelTopic(int fd);
 
 

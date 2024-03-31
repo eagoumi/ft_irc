@@ -14,24 +14,24 @@ void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string com
 
 void Commands::part()
 {
-    if (command.size() < 2)
-    {
-        currUser->ServertoClients(ERR_NEEDMOREPARAMS(currUser->getNickName(), "PART"));
-        return ;
-    }
+    // if (command.size() < 2)
+    // {
+    //     currUser->ServertoClients(ERR_NEEDMOREPARAMS(currUser->getNickName(), "PART"));
+    //     return ;
+    // }
 
-    if (db->getChannel(this->getChannel()) == NULL)
-    {
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
-        return ;
-    }
-    else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
-    {
-        currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
-        return ;
-    }
-    SendMessageToMembers(db->getChannel(this->getChannel()), currUser, "PART" + db->getUser(fd)->getNickName());
-    db->getChannel(this->getChannel())->deleteMember(db->getUser(fd)->getNickName());
+    // if (db->getChannel(this->getChannel()) == NULL)
+    // {
+    //     currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
+    //     return ;
+    // }
+    // else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
+    // {
+    //     currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
+    //     return ;
+    // }
+    // SendMessageToMembers(db->getChannel(this->getChannel()), currUser, "PART" + db->getUser(fd)->getNickName());
+    // db->getChannel(this->getChannel())->deleteMember(db->getUser(fd)->getNickName());
 }
 
 

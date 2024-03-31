@@ -151,6 +151,10 @@ void Channel::setLimit(size_t nLimitMembers)
     this->limitMembers = nLimitMembers;
 }
 
+size_t Channel::getLimit()
+{
+    return this->limitMembers;
+}
 
 Channel::~Channel()
 {

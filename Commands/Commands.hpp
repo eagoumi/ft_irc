@@ -12,9 +12,11 @@
 #include <unistd.h>
 #include <cstring>
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/socket.h>
 #include "../Database/database.hpp"
 #include "../Channels/channel.hpp"
+#include "../Server/server.hpp"
 #include "../Users/user.hpp"
 #include "../error_request.hpp"
 
@@ -24,7 +26,7 @@ enum reset
     RESET
 };
 
-enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, MODE_ARG, LOG_BEG, LOG_END};
+enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END};
 struct token
 {
     token_type type;
@@ -89,6 +91,7 @@ public:
     void join();
     void logtime();
 
+    void part();
 
     std::map<std::string, std::string> splitInput(std::string input);
     bool existMemberChannel(std::string member);

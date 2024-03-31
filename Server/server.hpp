@@ -44,6 +44,8 @@ class Server
         Server(const int &port, const std::string &password);
         ~Server();
 
+        std::string skipSpace(std::string string);
+
         //setter
         void SetUserHostip(std::string USERHOST);
         void SetServerHostip(std::string SERVERHOST);
@@ -69,8 +71,12 @@ class Server
         std::string HostIPADress();
         void WelcomeClient(User *currUser);
 
+        // //Send
+        // void IRCPrint(size_t fd, std::string string);
+        // void ServertoClients(std::string string);
+
         //Command Quit 
-        void Quit(int i, std::string reason);
+        void Quit(size_t i, std::string reason);
 };
 
 #endif

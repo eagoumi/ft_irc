@@ -54,6 +54,8 @@ class Channel
         void                        setInvitedNick(std::string Nick);
         bool                        getInvitedNick(std::string nickTarget);
         void                        setLimit(size_t limitMembers);
+        size_t                      getLimit();
+
         // std::string                 channelTopic(int fd);
 
 

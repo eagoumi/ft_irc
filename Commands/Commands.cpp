@@ -255,6 +255,8 @@ void Commands::CommandMapinit(cmdData dataCmd)
         topic();
     else if (cmd == "MODE")
         mode();
+    else if (cmd == "PART")
+        part();
     else
         sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd) + "\n");
 }

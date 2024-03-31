@@ -129,7 +129,7 @@ void User::IRCPrint(size_t fd, std::string string)
 
 void User::ServertoClients(std::string string)
 {
-    IRCPrint(getUserId(), ":" + getServerIP() + " " + string);
+    IRCPrint(_Id, ":" + getServerIP() + " " + string);
 }
 
 User::~User() {

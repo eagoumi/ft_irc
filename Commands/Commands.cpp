@@ -52,13 +52,13 @@ token_type determine_cmd(std::string token)
 
 token_type    Commands::determineToken(char sep, token_type cmdType) {
 
-    /* Command: PRIVMSG Parameters: <target>{,<target>}      <text to be sent>                       */
-    /* Command: JOIN    Parameters: <channel>{,<channel>}    [<key>{,<key>}]                         */
-    /* Command: KICK    Parameters: <channel>                <user> *( "," <user> ) [<comment>]      */
-    /* Command: PART    Parameters: <channel>{,<channel>}    [<reason>]                              */
-    /* Command: TOPIC   Parameters: <channel>                [<topic>]                               */
-    /* Command: INVITE  Parameters: <nickname>               <channel>                               */
-    /* Command: MODE    Parameters: <target>                 [<modestring> [<mode arguments>...]]    */
+    /* Command:             PRIVMSG         Parameters: <target>{,<target>}             <text to be sent>                       */
+    /* Command:             JOIN            Parameters: <channel>{,<channel>}           [<key>{,<key>}]                         */
+    /* Command:             KICK            Parameters: <channel>                       <user> *( "," <user> ) [<comment>]      */
+    /* Command:             PART            Parameters: <channel>{,<channel>}           [<reason>]                              */
+    /* Command:             TOPIC           Parameters: <channel>                       [<topic>]                               */
+    /* Command:             INVITE          Parameters: <nickname>                      <channel>                               */
+    /* Command:             MODE            Parameters: <target>                        [<modestring> [<mode arguments>...]]    */
     token_type tokenType(NONE);
     if (sep == ',') {
         if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
@@ -134,7 +134,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
             /*********************************************************/
             /*  store word to the end of line if tokenType is a MSG  */
             /*********************************************************/
-            if (tokenType == COMMENT || tokenType == TOPIC_MSG || tokenType == REASON) {
+            if (tokenType == COMMENT || tokenType == TOPIC_MSG || tokenType == REASON || tokenType == MSG) {
 
                 cmdLine[i] != ':' ? word.push_back(':') : (void)word;
                 word += cmdLine.substr(i); i = cmdLine.length();

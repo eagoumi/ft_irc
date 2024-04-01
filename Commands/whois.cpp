@@ -17,9 +17,9 @@ static std::string getJsonValue(std::string const& property, std::string const& 
 
     // {"access_token":"abcd","token_type":"bearer","expires_in":6765,"scope":"public","created_at":1711662095,"secret_valid_until":1713826844}
     std::string jsonValue;
-    size_t propertyStartingIndex = jsonContent.find(property);
+    size_t propertyStartingIndex = jsonContent.find("\"" + property + "\"");
     if (propertyStartingIndex != std::string::npos) {
-        size_t valueStartingIndex = propertyStartingIndex + property.length() + 2;
+        size_t valueStartingIndex = propertyStartingIndex + property.length() + 4;//2;
         valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
         for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
             if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
@@ -95,9 +95,6 @@ void Commands::whois() {
     std::string jsonContent = executeCmd(userCmd);
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
 
- 
-
-
     std::string imageLink = getJsonValue("link", jsonContent);
 
     if (imageLink != "null") {
@@ -119,7 +116,8 @@ void Commands::whois() {
             std::cout << objList[i] << std::endl << std::endl;
             
             std::string level = getJsonValue("level", objList[i]);
-            sendResponse(fd, "level: " + level + "\n");
+            std::string cursusName = getJsonValue("name", objList[i]);
+            sendResponse(fd, "cursus name: " + cursusName + "\tlevel: " + level + "\n");
         }
 
 

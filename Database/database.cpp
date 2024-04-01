@@ -90,6 +90,7 @@ bool Database::isNicknameUsed(NICK_NAME name) {
     while (it != this->_users.end()) {
         if (it->second->getNickName() == name)
             return true;
+        it++;
     }
     return false;
 }

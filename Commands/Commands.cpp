@@ -193,6 +193,7 @@ void Commands::checkTokensListSyntax()
     /***********************************************************************************************************************************/
     _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
     if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n");
+    //ServertoClients(std::string string)
 	while (ListIt != _tokensList.end())
 	{
         if ((*ListIt).type == CHANNEL)

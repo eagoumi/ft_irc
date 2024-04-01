@@ -41,13 +41,13 @@ class Channel
         CHANNEL_NAME const & getChannelName();
 
         //added
-        std::map<USER_ID, User *>   getMembers();
-        std::map<USER_ID, User *>   getOperators();
-        std::map<std::string, bool> gettingModes(char toFind);
-        void                        deleteMember(std::string nickTarget);
-        void                        setTopic(std::string nTopic);
-        void                        initializeModes(std::string modeStr);
-        std::string                 getTopic();
+        std::map<USER_ID, User *> const& getMembers();
+        std::map<USER_ID, User *>        getOperators();
+        std::map<std::string, bool>      gettingModes(char toFind);
+        void                             deleteMember(std::string nickTarget);
+        void                             setTopic(std::string nTopic);
+        void                             initializeModes(std::string modeStr);
+        std::string                      getTopic();
         // std::string                 channelTopic(int fd);
 
 

@@ -21,13 +21,66 @@ static std::string getJsonValue(std::string const& property, std::string const& 
         size_t valueStartingIndex = propertyStartingIndex + property.length() + 2;
         valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
         for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
-            if (jsonContent[valueStartingIndex] == '\"')
+            if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
                 break ;
             jsonValue += jsonContent[valueStartingIndex];
         }
     }
     return jsonValue;
 }
+
+// static std::vector<std::string> getJsonList(std::string const& property, std::string const& jsonContent) {
+
+//     // {"access_token":"abcd","token_type":"bearer","expires_in":6765,"scope":"public","created_at":1711662095,"secret_valid_until":1713826844}
+//     std::vector<std::string> jsonObjList;
+//     int bracketsCounter = 0;
+//     int curlyBracketsCounter = 0;
+
+//     for (size_t propertyStartingIndex = 0; propertyStartingIndex < jsonContent.length();) {
+//         propertyStartingIndex = jsonContent.find(property, propertyStartingIndex);
+//         if (jsonContent[propertyStartingIndex + property.length() + 3] == '[') {
+//             // bracketsCounter += 1;
+//             // propertyStartingIndex++;
+//             std::string obj;
+//             for (; propertyStartingIndex < jsonContent.length();) {
+//                 std::cout << "[" << jsonContent[propertyStartingIndex] << "]";
+//                 if (jsonContent[propertyStartingIndex] == '[')
+//                     bracketsCounter++;
+//                 else if (bracketsCounter == ']')
+//                     bracketsCounter--;
+//                 else if (jsonContent[propertyStartingIndex] == ']' && bracketsCounter == 0)
+//                 {
+//                     break ;
+//                 }
+//                 else if (jsonContent[propertyStartingIndex] == '{')
+//                     curlyBracketsCounter++;
+//                 else if (jsonContent[propertyStartingIndex] == '}')
+//                     curlyBracketsCounter--;
+//                 if (curlyBracketsCounter >= 1)
+//                     obj += jsonContent[propertyStartingIndex];
+//                 else if (curlyBracketsCounter == 0)
+//                 {
+//                     jsonObjList.push_back(obj);
+//                     std::cout << obj << std::endl;
+//                     obj.clear();
+//                 }
+//                 propertyStartingIndex++;
+//             }
+//         }
+//     }
+
+
+    // if (propertyStartingIndex != std::string::npos) {
+    //     size_t valueStartingIndex = propertyStartingIndex + property.length() + 2;
+    //     valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
+    //     for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
+    //         if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
+    //             break ;
+    //         jsonValue += jsonContent[valueStartingIndex];
+    //     }
+    // }
+    // return jsonObjList;
+// }
 
 static std::string executeCmd(std::string const& cmd) {
 
@@ -55,6 +108,8 @@ void Commands::whois() {
 
     std::string jsonContent = executeCmd(userCmd);
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
+
+    // getJsonList("cursus_users", jsonContent);
     
     std::string imageLink = getJsonValue("link", jsonContent);
 
@@ -69,8 +124,10 @@ void Commands::whois() {
 
         std::string displayName = getJsonValue("displayname", jsonContent);
         sendResponse(fd, "name: " + displayName + "\n");
-        std::string profileUrl = getJsonValue("url", jsonContent);
-        sendResponse(fd, std::string("\e]8;;" + profileUrl + "\e\\42 Intra Profile:\e]8;;\e\\ " + profileUrl + "\n"));
+        std::string level = getJsonValue("level", jsonContent);
+        sendResponse(fd, "level: " + level + "\n");
+        // std::string profileUrl = getJsonValue("url", jsonContent);
+        // sendResponse(fd, std::string("\e]8;;" + profileUrl + "\e\\42 Intra Profile:\e]8;;\e\\ " + profileUrl + "\n"));
         // sendResponse(fd, std::string("42 Intra Profile: ") + "\e]8;;https://ubuntu.com/\e\\uwu\e]8;;\e\\\n");
 
         // std::string imgContent =  executeCmd("curl -s https://iterm2.com/utilities/imgcat | bash /dev/stdin image.png");

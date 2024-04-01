@@ -133,7 +133,8 @@ void   Commands::tokenize(std::string const& cmdLine) {
 
                 cmdLine[i] != ':' ? word.push_back(':') : (void)word;
                 word += cmdLine.substr(i); i = cmdLine.length();
-                word.erase(word.length() - 1);
+                if (word.back() == '\n') word.pop_back();
+                if (word.back() == '\r') word.pop_back();
                 tokenNode.data = word;
                 tokenNode.type = tokenType;
                 _tokensList.push_back(tokenNode);

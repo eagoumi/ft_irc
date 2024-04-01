@@ -4,7 +4,7 @@
 
 
 
-void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command)
+void Commands::SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command)
 {
     std::map<USER_ID, User *> checkUsers = Channel_name->getMembers();
     std::map<USER_ID, User *>::iterator iter_map = checkUsers.begin();

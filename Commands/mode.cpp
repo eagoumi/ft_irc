@@ -85,21 +85,24 @@ void Commands::mode()
         db->getChannel(channelName)->gettingModes("l");
         db->getChannel(channelName)->gettingModes("k");
     }
-    size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-    if(limit > 0)
-        currChannel->setLimit(limit);
-    else
-        currChannel->setLimit(1);
-
-    // if(getMode("l") == true)
-    // {
-    // db->getChannel(this->channelName)->setLimit(get)
-    // }
-    // for (std::map<std::string, bool>::iterator it = modeSeted.begin(); it != modeSeted.end(); it++)
-    // {
-    //     std::cout << it->first << "       " << it->second << std::endl;
-    // }
-    // if(gettingModes('t', mode, modeSeted) == true){
+    std::cout << "_paramCounter : " << _paramCounter << std::endl;
+    if (_paramCounter > 2)
+    {
+        size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
+        if(limit > 0)
+            currChannel->setLimit(limit);
+        else
+            currChannel->setLimit(1);
+    }
+        // if(getMode("l") == true)
+        // {
+        // db->getChannel(this->channelName)->setLimit(get)
+        // }
+        // for (std::map<std::string, bool>::iterator it = modeSeted.begin(); it != modeSeted.end(); it++)
+        // {
+        //     std::cout << it->first << "       " << it->second << std::endl;
+        // }
+        // if(gettingModes('t', mode, modeSeted) == true){
 
     // }
 }

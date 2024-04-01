@@ -58,7 +58,7 @@ class   User
         void ServertoClients(std::string string);
 
         //Send Cleint to Clients
-        void CleintToClient(std::string string);
+        void CleintToClient(std::string msg);
 
         void hasJoinedChannel(Channel *channel);
         std::map<std::string, Channel *> const& getJoinedChannels();

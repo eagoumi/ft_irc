@@ -27,15 +27,15 @@ void Commands::part()
         // std::cout << All_channels[i] << std::endl;
         if (Store_channel == NULL)
         {
-            currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
+            currUser->ServertoClients(ERR_NOSUCHCHANNEL(db->getUser(fd)->getNickName(), "PART"));
             return ;
         }
         else if (Store_channel->getMember(fd) == NULL)
         {
-            currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
+            currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), "PART"));
             return ;
         }
-        SendMessageToMembers(Store_channel, currUser, " PART " + db->getUser(fd)->getNickName() + " " + All_channels[i]);
+        SendMessageToMembers(Store_channel, currUser, "PART " + db->getUser(fd)->getNickName() + " " + All_channels[i]);
         Store_channel->deleteMember(db->getUser(fd)->getNickName());
     }
     // std::cout << "2 " << All_channels[0] << std::endl;

@@ -6,7 +6,7 @@
 void Commands::topic()
 {
     std::string channelName = getNextParam().first;
-    std::string nickName = getNextParam().first;
+    
     std::string theTopic = getNextParam().first;
     std::cout << "TOPIC1 = " << theTopic << std::endl;
 

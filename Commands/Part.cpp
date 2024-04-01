@@ -2,7 +2,7 @@
 
 
 
-void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command)
+void Commands::SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command)
 {
     std::map<USER_ID, User *>checkUsers = Channel_name->getMembers();
     std::string mess = ":" + user_fds->getNickName() + "!" + user_fds->getUserName() + "@" + user_fds->getServerIP() + " " + command + "\r\n";

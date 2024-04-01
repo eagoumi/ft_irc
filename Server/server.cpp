@@ -8,12 +8,12 @@ void Server::Quit(size_t i, std::string reason)
 	// :dan-!d@localhost QUIT :Quit: Bye for now!
 	std::cout << "Nick : " << _User->getNickName() << std::endl;
 	if (_User->getNickName().empty())
-		_User->IRCPrint(_User->getUserId(), ":*@localhost.IRC QUIT :Quit:" + reason);
+		_User->IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
 	else if (reason.at(0) == ':')
-		_User->IRCPrint(_User->getUserId(), ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
+		_User->IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
 	else
-		_User->IRCPrint(_User->getUserId(), ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
-	_User->IRCPrint(_User->getUserId(),"ERROR: Quit:" + reason);
+		_User->IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
+	_User->IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
 	//send Message to all channels
 
 	std::cout << "Client DISCONNECTED." << std::endl;
@@ -90,8 +90,6 @@ void Server::CheckForConnectionClients()
 		}
 	}
 }
-
-
 
 Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {

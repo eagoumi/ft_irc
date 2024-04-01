@@ -11,8 +11,8 @@ Database::Database()
 {
 }
 
-Database *Database::GetInstance()
-{
+Database *Database::GetInstance() {
+
     if (database_ == NULL)
     {
         database_ = new Database();
@@ -20,8 +20,8 @@ Database *Database::GetInstance()
     return database_;
 }
 
-User *Database::addNewUser(User *user)
-{
+User *Database::addNewUser(User *user) {
+
     USER_ID userId = user->getUserId();
 
     user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
@@ -31,8 +31,8 @@ User *Database::addNewUser(User *user)
     return user;
 }
 
-Channel *Database::addNewChannel(CHANNEL_NAME name, User *user)
-{
+Channel *Database::addNewChannel(CHANNEL_NAME name, User *user) {
+
     Channel *createdChannel;
     user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
     // since the channel take a user in its constructor, it has to assign that user as its operator
@@ -43,8 +43,7 @@ Channel *Database::addNewChannel(CHANNEL_NAME name, User *user)
     return createdChannel;
 }
 
-User *Database::getUser(USER_ID Id)
-{
+User *Database::getUser(USER_ID Id) {
 
     UserIter it = this->_users.find(Id);
     if (it != this->_users.end())
@@ -52,8 +51,9 @@ User *Database::getUser(USER_ID Id)
     return NULL;
 }
 
-Channel *Database::getChannel(CHANNEL_NAME name)
-{
+Channel *Database::getChannel(CHANNEL_NAME name) {
+
+    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
 
     ChannelIter it = this->_channels.find(name);
     if (it != this->_channels.end())
@@ -61,25 +61,30 @@ Channel *Database::getChannel(CHANNEL_NAME name)
     return NULL;
 }
 
-void Database::deleteUser(USER_ID Id)
-{
+void Database::deleteUser(USER_ID Id) {
+
     UserIter it = this->_users.find(Id);
     delete it->second;
     this->_users.erase(it);
 }
 
-void Database::deleteChannel(CHANNEL_NAME name)
-{
+void Database::deleteChannel(CHANNEL_NAME name) {
+
+    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+
     ChannelIter it = this->_channels.find(name);
     delete it->second;
     this->_channels.erase(it);
 }
 
-std::map<size_t, User *> Database::getUsers(){
+std::map<size_t, User *> const& Database::getUsers() {
+
     return this->_users;
 }
 
 bool Database::isNicknameUsed(NICK_NAME name) {
+
+    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
 
     UserIter it = this->_users.begin();
     while (it != this->_users.end()) {

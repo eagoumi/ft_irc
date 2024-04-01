@@ -44,6 +44,7 @@ void User::setNickName(NICK_NAME const& name) {
     isStrStartWith(name, "$:#&+~%") == true ? throw  std::string("uWu nickname is wrong") : NULL;
     isStrContains(name, " ,*?!@.") == true ? throw std::string("uWu nickname is wrong") : NULL;
     _nickname = name;
+    std::transform(_nickname.begin(), _nickname.end(), _nickname.begin(), ::toupper);
     _isNickInserted = true;
 }
 
@@ -129,7 +130,7 @@ void User::IRCPrint(size_t fd, std::string string)
 
 void User::ServertoClients(std::string string)
 {
-    IRCPrint(getUserId(), ":" + getServerIP() + " " + string);
+    IRCPrint(_Id, ":" + getServerIP() + " " + string);
 }
 
 User::~User() {

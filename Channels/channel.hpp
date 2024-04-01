@@ -4,8 +4,9 @@
 #include <cstddef>
 #include <map>
 #include <string>
-#include "../Commands/Commands.hpp"
-#include "../Database/database.hpp"
+#include <vector>
+// #include "../Commands/Commands.hpp"
+// #include "../Database/database.hpp"
 // #include "../Users/user.hpp"
 
 # define USER_ID size_t
@@ -28,8 +29,10 @@ class Channel
 
         //added
         std::map<std::string, bool> modeSeted;
+        std::vector<std::string> invitedList;
         std::string newTopic;
-        std::string mode;
+        std::string modeS;
+        size_t limitMembers;
 
     public:
         Channel(CHANNEL_NAME, User *);
@@ -42,12 +45,17 @@ class Channel
 
         //added
         std::map<USER_ID, User *> const& getMembers();
-        std::map<USER_ID, User *>        getOperators();
-        std::map<std::string, bool>      gettingModes(char toFind);
-        void                             deleteMember(std::string nickTarget);
-        void                             setTopic(std::string nTopic);
-        void                             initializeModes(std::string modeStr);
-        std::string                      getTopic();
+        std::map<USER_ID, User *> const& getOperators();
+        std::map<std::string, bool> 	 gettingModes(std::string toFind);
+        std::string                 	 getTopic();
+        void                        	 deleteMember(std::string nickTarget);
+        void                        	 setTopic(std::string nTopic);
+        void                        	 initializeModes(std::string modeStr);
+        void                        	 setInvitedNick(std::string Nick);
+        bool                        	 getInvitedNick(std::string nickTarget);
+        void                        	 setLimit(size_t limitMembers);
+        size_t                      	 getLimit();
+
         // std::string                 channelTopic(int fd);
 
 

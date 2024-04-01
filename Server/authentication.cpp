@@ -1,7 +1,7 @@
 #include "server.hpp"
 #include <sstream>
 
-std::string skipSpace(std::string string)
+std::string Server::skipSpace(std::string string)
 {
     std::string skiip;
     int i= 0;

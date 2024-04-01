@@ -1,39 +1,47 @@
 #include "Commands.hpp"
 
-
-bool Commands::getMode(std::string letter){
+bool Commands::getMode(std::string letter, std::string channelName)
+{
+    // this->currChannel = db->getChannel(this->channelName);
     std::map<std::string, bool> modes;
-    modes = db->getChannel(this->getChannel())->gettingModes(letter[0]);
-    // for (std::map<std::string, bool>::iterator it = modes.begin(); it != modes.end(); it++)
-    // {
-    //     std::cout << it->first << "       " << it->second << std::endl;
-    // }
-    // std::cout << "HOOOOW = " << modes[letter] << " THAT'S WHYYYY " << letter << std::endl;
-    if(modes[letter] == true)
+    // std::string channelName = getNextParam().first;
+    modes = db->getChannel(channelName)->gettingModes(letter);
+    for (std::map<std::string, bool>::iterator it = modes.begin(); it != modes.end(); it++)
+    {
+        std::cout << it->first << "       " << it->second << std::endl;
+    }
+    if (modes[letter] == true)
         return true;
     return false;
-
 }
 
-
-std::map<std::string, bool> Channel::gettingModes(char toFind)
+std::map<std::string, bool> Channel::gettingModes(std::string toFind)
 {
-    std::string::size_type it = mode.find(toFind);
-    std::string toFindStr(1, toFind);
+    // size_t it;
+    // std::cout << "test1" << std::endl;
+    // if(modeS != "")
+    // {
+    //     std::cout << "cause of segfaulting = " << toFind << "     and     " << this->modeS << std::endl;
+    //     return modeSeted;
+    // }
+    
+    std::string::size_type it = modeS.find(toFind);
+
     if (it != std::string::npos)
     {
         it--;
-        if (mode[it] == '+' || (mode[0] == '+' && mode[it] != '-'))
+        if (modeS[it] == '+' || (modeS[0] == '+' && modeS[it] != '-'))
         {
-            modeSeted[toFindStr] = true;
-        }        
+            puts("test3");
+            modeSeted[toFind] = true;
+        }
     }
     return modeSeted;
 }
 
-
-void    Channel::initializeModes(std::string modeStr){
-    mode = modeStr;
+void Channel::initializeModes(std::string modeStr)
+{
+    modeS = modeStr;
     modeSeted["i"];
     modeSeted["t"];
     modeSeted["k"];
@@ -41,30 +49,52 @@ void    Channel::initializeModes(std::string modeStr){
     modeSeted["l"];
 }
 
-
+// std::string Commands::tolower(std::string modeStr)
+// {
+//     for(int i = 0; modeStr[i]; i++)
+//     {
+//          tolower(modeStr[i]);
+//     }
+// }
 
 void Commands::mode()
 {
-    modeStr = getModeString();
-    if (command.size() < 2)
+    std::string channelName = getNextParam().first;
+    modeStr = getNextParam().first;
+    std::string modeArg = getNextParam().first;
+    currChannel = db->getChannel(channelName);
+    // if (command.size() < 2)
+    // {
+    //     sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
+    //     return;
+    // }
+    if (db->getChannel(channelName) == NULL)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
-        return;
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
     }
-    if (db->getChannel(this->getChannel()) == NULL)
+    else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getChannel() + " :No such channel\n");
+        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
-    else if (existOperatorChannel(db->getUser(fd)->getNickName()) == false)
+    else
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + getChannel() + " :You're not channel operator\n");
+        db->getChannel(channelName)->initializeModes(modeStr);
+        db->getChannel(channelName)->gettingModes("t");
+        db->getChannel(channelName)->gettingModes("i");
+        db->getChannel(channelName)->gettingModes("o");
+        db->getChannel(channelName)->gettingModes("l");
+        db->getChannel(channelName)->gettingModes("k");
     }
-    db->getChannel(this->getChannel())->initializeModes(modeStr);
-    db->getChannel(this->getChannel())->gettingModes('t'); 
-    db->getChannel(this->getChannel())->gettingModes('i');
-    db->getChannel(this->getChannel())->gettingModes('o');
-    db->getChannel(this->getChannel())->gettingModes('l');
-    db->getChannel(this->getChannel())->gettingModes('k');
+    size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
+    if(limit > 0)
+        currChannel->setLimit(limit);
+    else
+        currChannel->setLimit(1);
+
+    // if(getMode("l") == true)
+    // {
+    // db->getChannel(this->channelName)->setLimit(get)
+    // }
     // for (std::map<std::string, bool>::iterator it = modeSeted.begin(); it != modeSeted.end(); it++)
     // {
     //     std::cout << it->first << "       " << it->second << std::endl;
@@ -72,5 +102,4 @@ void Commands::mode()
     // if(gettingModes('t', mode, modeSeted) == true){
 
     // }
-
 }

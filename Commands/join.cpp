@@ -1,41 +1,53 @@
 #include "Commands.hpp"
 #include <vector>
 
-# define NOT_FOUND NULL
+#define NOT_FOUND NULL
 
 std::string Commands::invitedNick;
 
 void Commands::join()
 {
-    std::vector<std::string> channelNamesList = getNextParam().second;
-    std::vector<std::string> channelkeysList = getNextParam().second;
 
+    // std::cout << "join() : beg" << std::endl;
+    std::vector<std::string> channelNamesList = getNextParam().second;
+    // std::cout << "join() : line 2" << std::endl;
+    std::vector<std::string> channelkeysList = getNextParam().second;
     for (size_t channelIndex = 0; channelIndex < channelNamesList.size(); channelIndex++)
     {
-        Channel *currChannel = db->getChannel(channelNamesList[channelIndex]);
-        if (currChannel == NOT_FOUND) {
+        std::cout << "join() : loop " << channelNamesList[channelIndex] << std::endl;
+        std::cout << "join() : user nickname: " + currUser->getNickName() << std::endl;
 
+        currChannel = db->getChannel(channelNamesList[channelIndex]);
+        if (currChannel == NOT_FOUND)
+        {
             std::cout << "channel not found, creating by " << currUser->getUserName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + " Created The Channel successfully\n");
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " Created The Channel successfully\n");
         }
-        else {
+        else
+        {
+            // std::cout << "getMode = " << getMode("i") << " getInvited = " << currChannel->getInvitedNick(currUser->getNickName()) << std::endl;
             if (currChannel->getMember(fd) != NULL)
             {
                 sendResponse(fd, "User already in channel\n");
-                continue ;
+                continue;
             }
-            // else if(getMode("i") == true && db->getUser(fd)->getNickName() != invitedNick)
-            // {
-            //     sendResponse(fd, ":"+  db->getUser(fd)->getNickName() + getChannel() + " :Cannot join channel (+i)\n");
-            // }
-            // else
-            // {
+            else if (this->getMode("i", channelNamesList[channelIndex]) == true && currChannel->getInvitedNick(currUser->getNickName()) == false)
+            {
+                sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+i)\n");
+            }
+            else if(getMode("l", channelNamesList[channelIndex]) == true && currChannel->getLimit() <= currChannel->getMembers().size())
+            {
+                sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+l)\n");
+            }
+            else
+            {
+                // std::cout << "TEST = " << currChannel->getChannelName() << std::endl;
                 currChannel->addMember(currUser);
                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
                 sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");
-            // }
+            }
         }
     }
 }
@@ -52,10 +64,10 @@ void Commands::join()
 //     // std::map<USER_ID, User *> members;
 //     // std::map<USER_ID, User *> operators;
 
-//     if (getChannel().find(',') != std::string::npos)
-//         channel = splitInput(getChannel());
+//     if (channelName.find(',') != std::string::npos)
+//         channel = splitInput(channelName);
 //     else
-//         channel[getChannel()] = "";
+//         channel[channelName] = "";
 
 //     for (it = channel.begin(); it != channel.end(); it++)
 //     {

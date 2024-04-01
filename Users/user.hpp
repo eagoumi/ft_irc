@@ -38,7 +38,6 @@ class   User
         NICK_NAME const& getNickName();
         bool isStrContains(std::string const& str, std::string const& charSet);
         bool isStrStartWith(std::string const& str, std::string const& charSet);
-        
         //by agoumi
         // void SetAuthenticated();
         bool isAuthenticated();
@@ -53,7 +52,9 @@ class   User
         //Print Errors
         void setServerIP(std::string const &ServerIP);
         std::string const &getServerIP();
-        void IRCPrint(std::string   string);
+
+        //Send
+        void IRCPrint(size_t fd, std::string string);
         void ServertoClients(std::string string);
 
         void hasJoinedChannel(Channel *channel);

@@ -44,6 +44,7 @@ void User::setNickName(NICK_NAME const& name) {
     isStrStartWith(name, "$:#&+~%") == true ? throw  std::string("uWu nickname is wrong") : NULL;
     isStrContains(name, " ,*?!@.") == true ? throw std::string("uWu nickname is wrong") : NULL;
     _nickname = name;
+    std::transform(_nickname.begin(), _nickname.end(), _nickname.begin(), ::toupper);
     _isNickInserted = true;
 }
 
@@ -118,20 +119,18 @@ std::string const &User::getServerIP()
     return (_IPServer);
 }
 
-
-void User::IRCPrint(std::string string)
+//Sending Message to clients
+void User::IRCPrint(size_t fd, std::string string)
 {
-    std::string buffer = string + "\n";
+    std::string buffer = string + "\r\n";
     //catch erro
-    if (send(_Id, buffer.c_str(), buffer.length(), 0) < 0)
+    if (send(fd, buffer.c_str(), buffer.length(), 0) < 0)
         throw std::runtime_error("Error On Sending a Message to the Client.\n");
 }
 
 void User::ServertoClients(std::string string)
 {
-    // std::cout << _IPServer << std::endl;
-    std::string ipserv = getServerIP();
-    IRCPrint(":" + ipserv + " " + string);
+    IRCPrint(_Id, ":" + getServerIP() + " " + string);
 }
 
 User::~User() {

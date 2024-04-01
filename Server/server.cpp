@@ -3,28 +3,20 @@
 #include <unistd.h>
 
 
-// void Server::CommandMapinit()
-// {
-	//commands 
-	//than loop to insert commands on the map
-// }
-
-// void Server::SetClientNickName(int fd, std::string &nickname)
-// {
-
-// }
-
-void Server::Quit(int i, std::string reason)
+void Server::Quit(size_t i, std::string reason)
 {
+	// :dan-!d@localhost QUIT :Quit: Bye for now!
+	std::cout << "Nick : " << _User->getNickName() << std::endl;
 	if (_User->getNickName().empty())
-		_User->ServertoClients( "*@localhost.IRC QUIT : Quit : " + reason);
-	_User->ServertoClients( _User->getNickName() + "@" + "localhost.IRC " + "QUIT : Quit : " + reason);
-	_User->ServertoClients("ERROR: Quit : " + reason);
+		_User->IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
+	else if (reason.at(0) == ':')
+		_User->IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
+	else
+		_User->IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
+	_User->IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
+	//send Message to all channels
+
 	std::cout << "Client DISCONNECTED." << std::endl;
-	_db->deleteUser(_Storeusersfd.at(i).fd);
-	close(_Storeusersfd.at(i).fd);
-	_Storeusersfd.erase(_Storeusersfd.begin() + i);
-	i--;
 }
 
 
@@ -40,7 +32,10 @@ void Server::CheckForConnectionClients()
 			bzero(buffer, sizeof(buffer));
 			// std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
-			// std::cout << recive << std::endl;
+			std::cout << recive << std::endl;
+			std::cout << "Buffer : " << buffer << std::endl; // PROBLEM HERE
+			std::string cmdquit; // PROBLEM HERE
+			std::istringstream QUITCMD(buffer); // PROBLEM HERE
 			// puts(buffer);
 			if (recive > 0)
 			{
@@ -49,17 +44,23 @@ void Server::CheckForConnectionClients()
 				// std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
         		User *getuser = _db->getUser(_Storeusersfd[i].fd);
 				data.fd = _Storeusersfd[i].fd;
-				data.line = buffer;
+				data.line = buffer; // PROBLEM HERE
 				// data.nick = User->getNickName();
-				std::istringstream QUITCMD(data.line);
-				std::string cmdquit;
-				QUITCMD >> cmdquit;
-				std::cout << cmdquit << std::endl;
+				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
 				{
-					std::string reason;
-					QUITCMD >> reason;
-					Quit(i, reason);
+					std::string reason = buffer;
+					int C = reason.find(" ");
+					reason = reason.substr(C, reason.length());
+					std::cout << skipSpace(reason) << std::endl;
+					// QUITCMD >> reason;
+					Quit(i, skipSpace(reason) + "\r\n");
+
+					_db->deleteUser(_Storeusersfd.at(i).fd);
+					close(_Storeusersfd.at(i).fd);
+					_Storeusersfd.erase(_Storeusersfd.begin() + i);
+					i--;
+					std::cout << "sd :" << i << std::endl;
 				}
 				else if (getuser->isAuthenticated() == false)
 					Authentication(i, buffer);	
@@ -89,8 +90,6 @@ void Server::CheckForConnectionClients()
 		}
 	}
 }
-
-
 
 Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {

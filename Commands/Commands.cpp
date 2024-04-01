@@ -152,8 +152,8 @@ void   Commands::tokenize(std::string const& cmdLine) {
                 /* store word if it is not empty, it can be empty if this is the first iteration */
                 /*********************************************************************************/
                 if (!(word.empty())) {
-
-                    std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+                    if (tokenType != MODE_STR)
+                        std::transform(word.begin(), word.end(), word.begin(), ::toupper);
                     tokenCounter == 0 ? tokenType = determine_cmd(word) : 0;
                     tokenNode.data = word;
                     tokenNode.type = tokenType;
@@ -211,6 +211,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     currUser = db->getUser(fd);
     // std::cout << "LINE = " << dataCmd.line << std::endl;
     /***********************************************************************************/
+    line = dataCmd.line;
     tokenize(dataCmd.line);
     try {
         checkTokensListSyntax();
@@ -219,6 +220,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
         std::cout << err << std::endl;
         return ;
     }
+    // puts("1");
     /* Here I need to verfiy of tokens List has a true sytnax, If not I'll print error */
     /* SO YOU WILL NEED TO ENTER COMMANDS THAT ARE WELL SYNTAXED FOR NOW */
     /***********************************************************************************/
@@ -233,14 +235,14 @@ void Commands::CommandMapinit(cmdData dataCmd)
 
     // std::cout << line << dataCmd.line << std::endl;
     // std::cout << "what" << std::endl;
-    std::string token;
-    std::istringstream iss(dataCmd.line);
-
-    while (iss >> token)
-    {
-        command.push_back(token);
-        // std::cout << "[" << token << "]" << std::endl;
-    }
+    // std::string token;
+    // std::istringstream iss(dataCmd.line);
+    // std::cout << "LIIINE = " << dataCmd.line;
+    // while (iss >> token)
+    // {
+    //     command.push_back(token);
+    //     // std::cout << "[" << token << "]" << std::endl;
+    // }
 
 
     // for (itV = command.begin(); itV != command.end(); itV++)
@@ -251,7 +253,10 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // User *currUser = db->getUser(fd);
     std::string cmd = getCommand();
     if (cmd == "JOIN")
-        join();
+     {
+        // puts("2");
+      join();
+     }  
     else if (cmd == "KICK")
         kick();
     else if (cmd == "LOGTIME")
@@ -266,6 +271,8 @@ void Commands::CommandMapinit(cmdData dataCmd)
         location();
     else if (cmd == "WHOIS")
         whois();
+    else if (cmd == "PART")
+        part();
     else
         sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd) + "\n");
 }
@@ -275,97 +282,106 @@ void Commands::sendResponse(int userfd, std::string message)
     send(userfd, message.c_str(), message.length(), 0);
 }
 
-std::string Commands::getNick()
-{
-    if (getCommand() == "invite" || getCommand() == "INVITE")
-        return command[1];
-    for (itV = command.begin(); itV != command.end(); itV++)
-    {
-        if (itV->find('#', 0) != std::string::npos)
-        {
-            itV++;
-            return *itV;
-        }
-    }
-    return "";
-}
+// size_t Commands::getLimitArg()
+// {
+//     if(command[4] == "")
+//         return 0;
+//     std::cout << "TEST = " << command[4] << std::endl;
+//     size_t nbr = static_cast<size_t>(atoi(command[4].c_str()));
+//     if(nbr == 0)
+//         return 1 ;
+//     return nbr;
+// }
+
+// std::string Commands::getNick()
+// {
+//     if (getCommand() == "invite" || getCommand() == "INVITE")
+//         return originLine[1];
+//     for (itV = originLine.begin(); itV != originLine.end(); itV++)
+//     {
+//         if (itV->find('#', 0) != std::string::npos)
+//         {
+//             itV++;
+//             return *itV;
+//         }
+//     }
+//     return "";
+// }
 
 std::string const& Commands::getCommand() const
 {
-    // if (command[1] == "KICK")
-    //     return command[1];
-    // return command[0];
     return _tokensList.front().data;
 }
 
-std::string Commands::getModeString()
-{
-    if (command[2] != "")
-        return command[2];
-    return "";
-}
+// std::string Commands::getModeString()
+// {
+//     if (originLine[2] != "")
+//         return originLine[2];
+//     return "";
+// }
 
-std::string Commands::getComment()
-{
-    if (command[3] != "")
-        return command[3];
-    else
-        return "";
-}
+// std::string Commands::getComment()
+// {
+//     if (originLine[3] != "")
+//         return originLine[3];
+//     else
+//         return "";
+// }
 
-std::string Commands::getTopic()
-{
-    // std::cout << "WHY " <<command[2] << std::endl;
-    if (command[2] != "")
-        return command[2];
-    else
-        return "";
-}
+// std::string Commands::getTopic()
+// {
+//     // std::cout << "WHY " <<command[2] << std::endl;
+//     if (originLine[2] != "")
+//         return originLine[2];
+//     else
+//         return "";
+// }
 
-std::map<std::string, std::string> Commands::splitInput(std::string input)
-{
+// std::map<std::string, std::string> Commands::splitInput(std::string input)
+// {
 
-    std::map<std::string, std::string> sChannels;
-    std::map<std::string, std::string>::iterator it;
+//     std::map<std::string, std::string> sChannels;
+//     std::map<std::string, std::string>::iterator it;
 
-    std::istringstream str(input);
-    std::string token;
-    while (getline(str, token, ','))
-    {
-        sChannels.insert(std::make_pair(token, ""));
-    }
-    if (command[0] == "JOIN" && command[2] != "")
-    {
-        it = sChannels.begin();
-        std::istringstream str2(command[2]);
-        while (getline(str2, token, ','))
-        {
-            it->second = token;
-            it++;
-        }
-    }
+//     std::istringstream str(input);
+//     std::string token;
+//     while (getline(str, token, ','))
+//     {
+//         sChannels.insert(std::make_pair(token, ""));
+//     }
+//     if (originLine[0] == "JOIN" && originLine[2] != "")
+//     {
+//         it = sChannels.begin();
+//         std::istringstream str2(originLine[2]);
+//         while (getline(str2, token, ','))
+//         {
+//             it->second = token;
+//             it++;
+//         }
+//     }
     // for (it = sChannels.begin(); it != sChannels.end(); it++)
     // {
     //     std::cout << it->first << "      " << it->second << std::endl;
     // }
 
-    return sChannels;
-}
+//     return sChannels;
+// }
 
-std::string Commands::getChannel()
-{
-    if (getCommand() == "mode" || getCommand() == "MODE")
-        return command[1];
+// std::string Commands::getChannel()
+// {
+//     if (getCommand() == "mode" || getCommand() == "MODE")
+//         return originLine[1];
 
-    for (itV = command.begin(); itV != command.end(); itV++)
-    {
-        if (itV->find('#', 0) != std::string::npos)
-        {
-            return *itV;
-        }
-    }
-    return "";
-}
+//     for (itV = originLine.begin(); itV != originLine.end(); itV++)
+//     {
+//         if (itV->find('#', 0) != std::string::npos)
+//         {
+//             // std::cout << "THAAAAAT'S WHYYYY = " << *itV << std::endl;
+//             return *itV;
+//         }
+//     }
+//     return "";
+// }
 
 std::string Commands::getHostName()
 {

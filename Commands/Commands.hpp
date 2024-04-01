@@ -49,11 +49,15 @@ typedef struct s_comData
 class Commands
 {
 private:
+    Channel *currChannel;
     // std::map<std::string, bool> modes;
     static std::string newTopic;
     static std::string invitedNick;
     std::string modeStr;
     Database *db;
+    // std::string channelName;
+    // std::string nickName;
+    // std::vector<std::string> channelNamesList;
 
     int flag;
     std::list<token> _tokensList;
@@ -64,7 +68,7 @@ private:
     token_type  determineToken(char sep, token_type cmdType);
     std::string get42Token();
     // std::string command;
-    std::vector<std::string> command;
+    // std::vector<std::string> command;
     std::vector<std::string>::iterator itV;
     unsigned long fd;
     User *currUser;
@@ -89,41 +93,43 @@ public:
     void location();
     void whois();
 
+    void part();
 
     std::map<std::string, std::string> splitInput(std::string input);
-    bool existMemberChannel(std::string member);
-    bool existOperatorChannel(std::string nick);
+    bool existMemberChannel(std::string member, std::string channelName);
+    bool existOperatorChannel(std::string nick, std::string channelName);
     size_t existUser(std::string nick);
 
 
-    std::string getNick();
-    std::string  const& getCommand() const;
-    std::string getChannel();
-    std::string getTopic();
-    std::string getComment();
+    std::string const& getCommand() const;
     std::string getHostName();
-    std::string getModeString();
+    // std::string getNick();
+    // std::string getChannel();
+    // std::string getTopic();
+    // std::string getComment();
+    // std::string getModeString();
 
     // bool gettingModes(char toFind, std::string mode, std::map<std::string, bool> &modSeted);
     // void seTopic(std::string newTopic);
-    void sendResponse(int userfd, std::string msg);
-    void displayMember();
-    bool getMode(std::string letter);
+    void    sendResponse(int userfd, std::string msg);
+    void    displayMember(std::string channelName);
+    bool    getMode(std::string letter, std::string channelName);
+    size_t  getLimitArg();
+    // std::string tolower(std::string modeStr);
+
 
 };
 
 #endif
 
-// pass yous
-// nick yous
-// user s s s s
+
+// JOIN <channel>{,<channel>} [<key>{,<key>}]
+// part
 
 // INVITE <nickname> <channel>
-// JOIN <channel>{,<channel>} [<key>{,<key>}]
 // KICK <channel> <user> *( "," <user> ) [<comment>]
-// TOPIC <channel> [<topic>]
-// MODE <target> [<modestring> [<mode arguments>...]]
 
-// topic #ch
-// topic #ch :
-// topic #ch :channel's topic
+// TOPIC <channel> [<topic>]
+// MODE <channel> [<modestring> [<mode arguments>...]]
+
+

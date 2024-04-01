@@ -1,27 +1,43 @@
 Problem line 166
 
-while infinit loop server (check for each connection not just for server fd)
+<!-- while infinit loop server (check for each connection not just for server fd) -->
 
 
 
 
-Enjoy Dear New Client You just Now Connected, Welcome aboard!
+<!-- Enjoy Dear New Client You just Now Connected, Welcome aboard!
 4
 4
 0
 Client DISCONNECTED.
 jj
 Enjoy Dear New Client You just Now Connected, Welcome aboard!
+4 -->
 
 
 
 SEARCH FO "PROBLEM HERE"
 
-Quit
+<!-- Quit
 Part
 
 PASS meow
 NICK tofa7a
+USER uwu -->
+
+
+
+Buffer : PART ss
+
+[PART] : [PART_CMD]
+[#SS] : [CHANNEL]
+[:] : [REASON]
+9 
+Buffer : MODE +i
+
+[MODE] : [MODE_CMD]
+[#+I] : [CHANNEL]
+[1]    71819 segmentation fault  ./ircserv 9090 p
 USER uwu
 
 

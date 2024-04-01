@@ -24,7 +24,7 @@
 #define ERR_FILEERROR			424
 #define ERR_NONICKNAMEGIVEN(Client)		"431 " + Client + ": No nickname given"
 #define ERR_ERRONEUSNICKNAME(NickName)	"432 " + nickname + ": Erroneus nickname!"
-#define ERR_NICKNAMEINUSE		433
+#define ERR_NICKNAMEINUSE(NickName)		"433 " + NickName + ": Nickname is already in use!"
 #define ERR_NICKCOLLISION		436
 #define ERR_USERNOTINCHANNEL	441
 #define ERR_NOTONCHANNEL(NickName, Chanl)              "442 " + NickName + " " + Chanl + " :You're not on that Channel"

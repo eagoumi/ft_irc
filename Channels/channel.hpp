@@ -44,17 +44,17 @@ class Channel
         CHANNEL_NAME const & getChannelName();
 
         //added
-        std::map<USER_ID, User *>   getMembers();
-        std::map<USER_ID, User *>   getOperators();
-        std::map<std::string, bool> gettingModes(std::string toFind);
-        std::string                 getTopic();
-        void                        deleteMember(std::string nickTarget);
-        void                        setTopic(std::string nTopic);
-        void                        initializeModes(std::string modeStr);
-        void                        setInvitedNick(std::string Nick);
-        bool                        getInvitedNick(std::string nickTarget);
-        void                        setLimit(size_t limitMembers);
-        size_t                      getLimit();
+        std::map<USER_ID, User *> const& getMembers();
+        std::map<USER_ID, User *> const& getOperators();
+        std::map<std::string, bool> 	 gettingModes(std::string toFind);
+        std::string                 	 getTopic();
+        void                        	 deleteMember(std::string nickTarget);
+        void                        	 setTopic(std::string nTopic);
+        void                        	 initializeModes(std::string modeStr);
+        void                        	 setInvitedNick(std::string Nick);
+        bool                        	 getInvitedNick(std::string nickTarget);
+        void                        	 setLimit(size_t limitMembers);
+        size_t                      	 getLimit();
 
         // std::string                 channelTopic(int fd);
 

@@ -39,6 +39,8 @@ void Commands::kick()
 {
     std::string channelName = getNextParam().first;
     std::string nickName = getNextParam().first;
+    std::string reason = getNextParam().first;
+    currChannel = db->getChannel(channelName);
     // if (command.size() < 3)
     // {
     //     sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName(), getCommand()) + "\n");
@@ -46,8 +48,8 @@ void Commands::kick()
     //     return;
     // }
     if (db->getChannel(channelName) == NULL)
-        sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
-
+        // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
+            currUser->ServertoClients(ERR_NOSUCHCHANNEL(nickName, channelName));
     else if (existMemberChannel(currUser->getNickName(), channelName) == false)
     {
         sendResponse(fd, ":" + currUser->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
@@ -70,22 +72,24 @@ void Commands::kick()
     else
     {
         size_t kickedFd = existUser(nickName);
-        puts("here is the segv2");
-        displayMember(channelName);
-        std::cout << "\n"
-                  << std::endl;
-        db->getChannel(channelName)->deleteMember(nickName);
-        puts("here is the segv3");
-        displayMember(channelName);
-        // if (getComment() != "")
-        // {
-        //     sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + ":" + getComment() + "\n");
-        //     sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + ":" + getComment() + "\n");
-        // }
+        // displayMember(channelName);
+        std::cout << std::endl;
+        // displayMember(channelName);
+        if (reason != "")
+        {
+            std::cout << "REASON = " << reason << std::endl;
+            SendMessageToMembers(currChannel, currUser,  "you have been kicked by your enemie");
+
+            // sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
+            // sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + " " + reason + "\n");
+            sendResponse(fd, "user kicked succefully");
+            db->getChannel(channelName)->deleteMember(nickName);
+        }
         // else
         // {
-        sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
-        sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
+        //     sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
+        //     sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
+                // db->getChannel(channelName)->deleteMember(nickName);
         // }
     }
 }

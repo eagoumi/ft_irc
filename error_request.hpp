@@ -8,7 +8,7 @@
 #define ERR_CORRECTPASS(Client)			"4003 " + Client + ": Your password is correct ✅"
 #define ERR_MISSPASS(Client)			"4004 " + Client + ": Please enter the password to connect to the server first. 🚫"
 #define ERR_NOSUCHSERVER		402
-#define ERR_NOSUCHCHANNEL(NickName, Chanel)             "403 " + NickName + " " + Chanel + " :No such channel"
+#define ERR_NOSUCHCHANNEL(NickName, Chanel)            "403 " + NickName + " " + Chanel + " :No such channel"
 #define ERR_CANNOTSENDTOCHAN	404
 #define ERR_TOOMANYCHANNELS		405
 #define ERR_WASNOSUCHNICK		406

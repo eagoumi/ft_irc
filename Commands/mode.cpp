@@ -24,7 +24,7 @@ std::map<std::string, bool> Channel::gettingModes(std::string toFind)
     //     std::cout << "cause of segfaulting = " << toFind << "     and     " << this->modeS << std::endl;
     //     return modeSeted;
     // }
-    
+
     std::string::size_type it = modeS.find(toFind);
 
     if (it != std::string::npos)
@@ -34,6 +34,11 @@ std::map<std::string, bool> Channel::gettingModes(std::string toFind)
         {
             puts("test3");
             modeSeted[toFind] = true;
+        }
+        else
+        {
+            puts("test4");
+            modeSeted[toFind] = false;
         }
     }
     return modeSeted;
@@ -71,6 +76,7 @@ void Commands::mode()
     if (db->getChannel(channelName) == NULL)
     {
         sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
+        
     }
     else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     {
@@ -78,31 +84,36 @@ void Commands::mode()
     }
     else
     {
-        db->getChannel(channelName)->initializeModes(modeStr);
-        db->getChannel(channelName)->gettingModes("t");
-        db->getChannel(channelName)->gettingModes("i");
-        db->getChannel(channelName)->gettingModes("o");
-        db->getChannel(channelName)->gettingModes("l");
-        db->getChannel(channelName)->gettingModes("k");
+        currChannel->initializeModes(modeStr);
+        currChannel->gettingModes("t");
+        currChannel->gettingModes("i");
+        currChannel->gettingModes("o");
+        currChannel->gettingModes("l");
+        currChannel->gettingModes("k");
     }
-    std::cout << "_paramCounter : " << _paramCounter << std::endl;
-    if (_paramCounter > 2)
+    if (getMode("l", channelName) == true)
     {
         size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-        if(limit > 0)
+        if (limit > 0)
             currChannel->setLimit(limit);
         else
             currChannel->setLimit(1);
     }
-        // if(getMode("l") == true)
-        // {
-        // db->getChannel(this->channelName)->setLimit(get)
-        // }
-        // for (std::map<std::string, bool>::iterator it = modeSeted.begin(); it != modeSeted.end(); it++)
-        // {
-        //     std::cout << it->first << "       " << it->second << std::endl;
-        // }
-        // if(gettingModes('t', mode, modeSeted) == true){
+    if (getMode("o", channelName) == true && existMemberChannel(modeArg, channelName) == true)
+    {
+        size_t fdo = existUser(modeArg);
+        currChannel->addOperator(fdo);
+    }
+
+    // if(getMode("l") == true)
+    // {
+    // db->getChannel(this->channelName)->setLimit(get)
+    // }
+    // for (std::map<std::string, bool>::iterator it = modeSeted.begin(); it != modeSeted.end(); it++)
+    // {
+    //     std::cout << it->first << "       " << it->second << std::endl;
+    // }
+    // if(gettingModes('t', mode, modeSeted) == true){
 
     // }
 }

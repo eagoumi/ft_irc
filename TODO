@@ -15,9 +15,6 @@ Enjoy Dear New Client You just Now Connected, Welcome aboard!
 4 -->
 
 
-//adding # when there is no #
-//creating empty channel #
-
 
 SEARCH FO "PROBLEM HERE"
 
@@ -41,3 +38,10 @@ Buffer : MODE +i
 [MODE] : [MODE_CMD]
 [#+I] : [CHANNEL]
 [1]    71819 segmentation fault  ./ircserv 9090 p
+USER uwu
+
+
+ :yousra!~0@78E36C86.143D983D.EE43E20F.IP JOIN :#a
+<-  :irc2.unrealircd.org MODE #a +nt 
+<-  :irc2.unrealircd.org 353 yousra = #a :@yousra
+<-  :irc2.unrealircd.org 366 yousra #a :End of /NAMES list.

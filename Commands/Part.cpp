@@ -1,37 +1,45 @@
 #include "Commands.hpp"
+#include <map>
+#include "../Users/user.hpp"
 
 
 
 void Commands::SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command)
 {
-    std::map<USER_ID, User *>checkUsers = Channel_name->getMembers();
-    std::string mess = ":" + user_fds->getNickName() + "!" + user_fds->getUserName() + "@" + user_fds->getServerIP() + " " + command + "\r\n";
+    std::map<USER_ID, User *> checkUsers = Channel_name->getMembers();
+    std::map<USER_ID, User *>::iterator iter_map = checkUsers.begin();
+    std::string mess = ": " + user_fds->getNickName() + "!" + user_fds->getUserName() + "@" + "127.0.0.1" + " " + command + " " + "\r\n";
 
-    for(size_t i = 0; i < checkUsers.size(); i++)
-        if(send(user_fds->getUserId(), mess.c_str(), mess.length(), 0) < 0)
+    for(; iter_map != checkUsers.end(); iter_map++)
+    {
+        if(send(iter_map->first, mess.c_str(), mess.length(), 0) < 0)
             throw std::runtime_error("Error On Sending a Message to the Client.\n");
+    }
 }
 
 void Commands::part()
 {
-    // if (command.size() < 2)
-    // {
-    //     currUser->ServertoClients(ERR_NEEDMOREPARAMS(currUser->getNickName(), "PART"));
-    //     return ;
-    // }
+    std::vector<std::string> All_channels = getNextParam().second;
 
-    // if (db->getChannel(this->getChannel()) == NULL)
-    // {
-    //     currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
-    //     return ;
-    // }
-    // else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
-    // {
-    //     currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
-    //     return ;
-    // }
-    // SendMessageToMembers(db->getChannel(this->getChannel()), currUser, "PART" + db->getUser(fd)->getNickName());
-    // db->getChannel(this->getChannel())->deleteMember(db->getUser(fd)->getNickName());
+    for (size_t i = 0; i < All_channels.size() ; i++)
+    {
+        std::cout << All_channels[i] << std::endl;
+        // if (db->getChannel(All_channels[i]) == NULL)
+        // {
+        //     puts ("ssss");
+        //     currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), "PART"));
+        //     return ;
+        // }
+        // else if (existMemberChannel(db->getUser(fd)->getNickName()) == false)
+        // {
+        //     puts ("ssss");
+        //     currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
+        //     return ;
+        // }
+        SendMessageToMembers(db->getChannel(All_channels[i]), currUser, " PART " + db->getUser(fd)->getNickName() + " " + All_channels[i]);
+        db->getChannel(All_channels[i])->deleteMember(db->getUser(fd)->getNickName());
+    }
+    // std::cout << "2 " << All_channels[0] << std::endl;
 }
 
 

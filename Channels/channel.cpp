@@ -5,8 +5,7 @@
 #define NOT_FOUND NULL
 typedef std::map<USER_ID, User *>::iterator UserIter;
 
-static bool isStrContains(std::string const &str, std::string const &charSet)
-{
+static bool isStrContains(std::string const &str, std::string const &charSet) {
 
     for (int i = 0; charSet[i]; i++)
         if (str.find(charSet[i]) != std::string::npos)
@@ -21,8 +20,8 @@ static bool isStrContains(std::string const &str, std::string const &charSet)
 //     return false;
 // }
 
-Channel::Channel(CHANNEL_NAME channelName, User *creator)
-{
+Channel::Channel(CHANNEL_NAME channelName, User *creator) {
+
     // db = Database::GetInstance();
     creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;
     // welp I think I'll add some extra work for checking name syntax
@@ -34,8 +33,7 @@ Channel::Channel(CHANNEL_NAME channelName, User *creator)
     this->_operators[creatorId] = creator;
 }
 
-void Channel::addMember(User *member)
-{
+void Channel::addMember(User *member) {
 
     USER_ID memberId = member->getUserId();
 
@@ -46,8 +44,7 @@ void Channel::addMember(User *member)
     member->hasJoinedChannel(this);
 }
 
-void Channel::inviteUser(User *user)
-{
+void Channel::inviteUser(User *user) {
 
     USER_ID userId = user->getUserId();
 
@@ -57,8 +54,7 @@ void Channel::inviteUser(User *user)
     this->_invited[userId] = user;
 }
 
-bool Channel::isUserInvited(USER_ID Id)
-{
+bool Channel::isUserInvited(USER_ID Id) {
 
     UserIter it = this->_invited.find(Id);
     if (it != this->_invited.end())
@@ -75,8 +71,8 @@ bool Channel::isUserOperator(USER_ID Id)
     return false;
 }
 
-CHANNEL_NAME const &Channel::getChannelName()
-{
+CHANNEL_NAME const & Channel::getChannelName() {
+
     return this->_name;
 }
 
@@ -89,27 +85,25 @@ User *Channel::getMember(USER_ID Id)
     return NULL;
 }
 
+std::string Channel::getTopic() {
 
-
-
-// Added
-std::string Channel::getTopic()
-{
-    return newTopic;
+    return newTopic; 
 }
 
-void Channel::setTopic(std::string nTopic)
-{
+void Channel::setTopic(std::string nTopic) {
+
     this->newTopic = nTopic;
 }
 
-std::map<USER_ID, User *> Channel::getMembers()
-{
+std::map<USER_ID, User *> const& Channel::getMembers() {
+
     return this->_members;
 }
 
-void Channel::deleteMember(std::string nickTarget)
-{
+void Channel::deleteMember(std::string nickTarget) {
+
+    std::transform(nickTarget.begin(), nickTarget.end(), nickTarget.begin(), ::toupper);
+
     std::map<USER_ID, User *>::iterator tmp;
     std::map<USER_ID, User *>::iterator it = _members.begin();
     while (it != _members.end())
@@ -143,7 +137,7 @@ bool Channel::getInvitedNick(std::string nickTarget)
     return false;
 }
 
-std::map<USER_ID, User *> Channel::getOperators()
+std::map<USER_ID, User *> const& Channel::getOperators()
 {
     return this->_operators;
 }

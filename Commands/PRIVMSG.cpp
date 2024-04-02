@@ -1,6 +1,6 @@
 #include "Commands.hpp"
 
-
+//Check with LimeChat
 void Commands::PRIVMSG()
 {
     std::vector<std::string> get_param = getNextParam().second;
@@ -8,15 +8,20 @@ void Commands::PRIVMSG()
     for(size_t i = 0; i < get_param.size(); i++)
     {
         Channel *Current_ch = db->getChannel(get_param[i]);
-        if (get_param[i][0] == '#' && Current_ch->getMember(fd))
+        if (!Current_ch)
         {
-            SendMessageToMembers(Current_ch, *currUser, Message);
+            if (get_param[i][0] == '#' && Current_ch->getMember(fd))
+                SendMessageToMembers(Current_ch, currUser, Message); // check for message syntax
+            else
+                currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
         }
-        // send(db->getUsers().find(get_param[i]));
-        // currUser->CleintToClient(Message);
-        // else
-        //     currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
-        // std::cout << db->getUser(fd)->getNickName() << std::endl;
+        else
+        {
+            User *reciver_msg = db->existUser(get_param[i]);
+            if (reciver_msg)
+                currUser->CleintToClient(reciver_msg->getUserId(), Message);
+            else
+                currUser->ServertoClients(ERR_NOSUCHNICK(get_param[i]));
+        }
     }
-    // if (get_param[])
 }

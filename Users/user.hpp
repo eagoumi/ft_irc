@@ -58,7 +58,7 @@ class   User
         void ServertoClients(std::string string);
 
         //Send Cleint to Clients
-        void CleintToClient(std::string msg);
+        void CleintToClient(int id, std::string msg);
 
         void joinedChannel(Channel *channel);
         void partedChannel(Channel *channel);

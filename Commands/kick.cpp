@@ -78,18 +78,18 @@ void Commands::kick()
         if (reason != "")
         {
             std::cout << "REASON = " << reason << std::endl;
-            SendMessageToMembers(currChannel, currUser,  "you have been kicked by your enemie");
+            SendMessageToMembers(currChannel, *currUser,  "you have been kicked by your enemie");
 
             // sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
             // sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + " " + reason + "\n");
             sendResponse(fd, "user kicked succefully");
             db->getChannel(channelName)->deleteMember(nickName);
         }
-        // else
-        // {
-        //     sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
-        //     sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
-                // db->getChannel(channelName)->deleteMember(nickName);
-        // }
+        else
+        {
+            sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
+            sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
+                db->getChannel(channelName)->deleteMember(nickName);
+        }
     }
 }

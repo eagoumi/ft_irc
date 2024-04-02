@@ -35,11 +35,13 @@ Channel *Database::addNewChannel(CHANNEL_NAME name, User *user) {
 
     Channel *createdChannel;
     user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
+    getChannel(name) != NOT_FOUND ?  throw std::string("db->addNewChannel() -> channel already exist") : NULL;
+
     // since the channel take a user in its constructor, it has to assign that user as its operator
     createdChannel = new Channel(name, user);
     this->_channels[name] = createdChannel;
 
-    user->hasJoinedChannel(createdChannel);//srsly I see no need for this, at least for now
+    user->joinedChannel(createdChannel);//srsly I see no need for this, at least for now
     return createdChannel;
 }
 
@@ -51,13 +53,30 @@ User *Database::getUser(USER_ID Id) {
     return NULL;
 }
 
-Channel *Database::getChannel(CHANNEL_NAME name) {
+Channel *Database::getChannel(CHANNEL_NAME nameToFind) {
 
-    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    // std::cout << "TOFIND = " << nameToFind << std::endl;
+    // ChannelIter currChanItD = _channels.begin();
+    // std::cout << "Channels:" << std::endl;
+    // while (currChanItD != _channels.end()) {
+    //     std::cout << "Channel : [" << currChanItD->first << "]" << std::endl;
+    //     currChanItD++;
+    // }
 
-    ChannelIter it = this->_channels.find(name);
-    if (it != this->_channels.end())
-        return it->second;
+
+    std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
+
+    std::string currChanNameUpperCase;
+    ChannelIter currChanIt = _channels.begin();
+    while (currChanIt != _channels.end()) {
+        const std::string& currChanName = currChanIt->first;
+        // currChanNameUpperCase = currChanName;
+        std::transform(currChanName.begin(), currChanName.end(), std::back_inserter(currChanNameUpperCase), ::toupper);
+        std::cout << currChanNameUpperCase + " =? " + nameToFind << std::endl;
+        if (currChanNameUpperCase == nameToFind)
+            return currChanIt->second;
+        currChanIt++;
+    }
     return NULL;
 }
 
@@ -68,13 +87,27 @@ void Database::deleteUser(USER_ID Id) {
     this->_users.erase(it);
 }
 
-void Database::deleteChannel(CHANNEL_NAME name) {
+void Database::deleteChannel(CHANNEL_NAME nameToFind) {
 
-    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    ChannelIter it = this->_channels.find(name);
-    delete it->second;
-    this->_channels.erase(it);
+    std::string currChanNameUpperCase;
+    ChannelIter currChanIt = _channels.begin();
+    while (currChanIt != _channels.end()) {
+        const std::string& currChanName = currChanIt->first;
+        std::transform(currChanName.begin(), currChanName.end(), std::back_inserter(currChanNameUpperCase), ::toupper);
+        if (currChanNameUpperCase == nameToFind)
+        {
+            delete currChanIt->second;
+            this->_channels.erase(currChanIt);
+            break ;
+        }
+        currChanIt++;
+    }
+
+    // ChannelIter it = this->_channels.find(name);
+    // delete it->second;
+    // this->_channels.erase(it);
 }
 
 std::map<size_t, User *> const& Database::getUsers() {
@@ -82,15 +115,32 @@ std::map<size_t, User *> const& Database::getUsers() {
     return this->_users;
 }
 
-bool Database::isNicknameUsed(NICK_NAME name) {
+bool Database::isNicknameUsed(NICK_NAME nameToFind) {
 
-    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    UserIter it = this->_users.begin();
-    while (it != this->_users.end()) {
-        if (it->second->getNickName() == name)
+    UserIter currUserIt = this->_users.begin();
+    std::string currUserNickNameUpperCase;
+    while (currUserIt != this->_users.end()) {
+        const std::string& currUserNickName = currUserIt->second->getNickName();
+        std::transform(currUserNickName.begin(), currUserNickName.end(), std::back_inserter(currUserNickNameUpperCase), ::toupper);
+        if (currUserNickNameUpperCase == nameToFind)
             return true;
-        it++;
+        currUserIt++;
     }
     return false;
+}
+
+User *Database::existUser(std::string nick)
+{
+    std::transform(nick.begin(), nick.end(), nick.begin(), ::toupper);
+    std::string currUserNickCapitilized;
+    for (std::map<size_t, User *>::iterator it = _users.begin(); it != _users.end(); it++)
+    {
+        std::string currUserNick = it->second->getNickName();
+        std::transform(currUserNick.begin(), currUserNick.end(), std::back_inserter(currUserNickCapitilized), ::toupper);
+        if(currUserNickCapitilized == nick)
+            return it->second;
+    }
+    return 0;
 }

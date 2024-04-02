@@ -3,6 +3,8 @@
 #include "../Channels/channel.hpp"
 #include <utility>
 
+typedef std::map<std::string, Channel *>::iterator ChanIter;
+
 bool User::isStrContains(std::string const& str, std::string const& charSet) {
 
     for (int i = 0; charSet[i]; i++)
@@ -44,7 +46,7 @@ void User::setNickName(NICK_NAME const& name) {
     isStrStartWith(name, "$:#&+~%") == true ? throw  std::string("uWu nickname is wrong") : NULL;
     isStrContains(name, " ,*?!@.") == true ? throw std::string("uWu nickname is wrong") : NULL;
     _nickname = name;
-    std::transform(_nickname.begin(), _nickname.end(), _nickname.begin(), ::toupper);
+    // std::transform(_nickname.begin(), _nickname.end(), _nickname.begin(), ::toupper);
     _isNickInserted = true;
 }
 
@@ -98,14 +100,19 @@ bool User::hasInsertedUsername()
     return (_isUserNameInserted);
 }
 
-void User::hasJoinedChannel(Channel* channel) {
+void User::joinedChannel(Channel* channel) {
     _joinedChannels.insert(std::make_pair(channel->getChannelName(), channel));
+}
+
+void User::partedChannel(Channel* channel) {
+    ChanIter it = _joinedChannels.find(channel->getChannelName());
+    if (it != _joinedChannels.end())
+        _joinedChannels.erase(it);
 }
 
 std::map<std::string, Channel *> const& User::getJoinedChannels() {
     return this->_joinedChannels;
 }
-
 
 void User::setServerIP(std::string const &ServerIP)
 {

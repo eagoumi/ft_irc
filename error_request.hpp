@@ -55,7 +55,7 @@
 #define ERR_BADCHANNELKEY(NickName ,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
 #define ERR_BADCHANMASK(NickName ,chanel)		"476 " + NickName + " " + chanel + " :Bad Channel Mask"
 #define ERR_NOPRIVILEGES		481
-#define ERR_CHANOPRIVSNEEDED(NickName,Chanel)	"482 " + Nick + " " + ch + " :You're not channel operator"
+#define ERR_CHANOPRIVSNEEDED(NickName, channel)  "482 " + NickName + " " + channelName + " :You're not channel operator"
 #define ERR_CANTKILLSERVER		483
 #define ERR_NOOPERHOST			491
 #define ERR_UMODEUNKNOWNFLAG(NickName)	"501 " + Nick + " " + " :Unknown MODE flag"
@@ -83,7 +83,7 @@
 #define RPL_LISTEND				323
 #define RPL_CHANNELMODEIS		324
 #define RPL_NOTOPIC(nick,chanel)			"331 " + nick + " " + chanel + ":No topic is set"
-#define RPL_TOPIC(chanel,topic)				"332 " + chanel + " :" + topic
+#define RPL_TOPIC(nickName, chanel,topic)				"332 " + nickName + " " + chanel + " :" + topic
 #define RPL_INVITING(client,NickName,Chanel)			"341 " + client + " " + NickName + " " + channel
 #define RPL_SUMMONING			342
 #define RPL_VERSION				351

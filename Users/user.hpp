@@ -60,7 +60,8 @@ class   User
         //Send Cleint to Clients
         void CleintToClient(std::string msg);
 
-        void hasJoinedChannel(Channel *channel);
+        void joinedChannel(Channel *channel);
+        void partedChannel(Channel *channel);
         std::map<std::string, Channel *> const& getJoinedChannels();
         // Channel *createChannel(CHANNEL_NAME name);
         ~User();

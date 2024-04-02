@@ -2,28 +2,19 @@
 
 bool Commands::getMode(std::string letter, std::string channelName)
 {
-    // this->currChannel = db->getChannel(this->channelName);
     std::map<std::string, bool> modes;
-    // std::string channelName = getNextParam().first;
     modes = db->getChannel(channelName)->gettingModes(letter);
     for (std::map<std::string, bool>::iterator it = modes.begin(); it != modes.end(); it++)
     {
         std::cout << it->first << "       " << it->second << std::endl;
     }
-    if (modes[letter] == true)
+    if (!modes.empty() && modes[letter] == true)
         return true;
     return false;
 }
 
 std::map<std::string, bool> Channel::gettingModes(std::string toFind)
 {
-    // size_t it;
-    // std::cout << "test1" << std::endl;
-    // if(modeS != "")
-    // {
-    //     std::cout << "cause of segfaulting = " << toFind << "     and     " << this->modeS << std::endl;
-    //     return modeSeted;
-    // }
 
     std::string::size_type it = modeS.find(toFind);
 
@@ -53,16 +44,11 @@ void Channel::initializeModes(std::string modeStr)
     modeSeted["l"];
 }
 
-// std::string Commands::tolower(std::string modeStr)
-// {
-//     for(int i = 0; modeStr[i]; i++)
-//     {
-//          tolower(modeStr[i]);
-//     }
-// }
 
 void Commands::mode()
 {
+    puts("1");
+    std::cout << "param number = " << _paramCounter << std::endl;
     std::string channelName = getNextParam().first;
     modeStr = getNextParam().first;
     std::string modeArg = getNextParam().first;
@@ -72,19 +58,24 @@ void Commands::mode()
     //     sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
     //     return;
     // }
+    puts("2");
     if (db->getChannel(channelName) == NULL)
     {
+    puts("3");
         currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
+        return ;
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
     }
     // else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
+    puts("4");
         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
     else
     {
+    puts("5");
         currChannel->initializeModes(modeStr);
         currChannel->gettingModes("t");
         currChannel->gettingModes("i");
@@ -92,8 +83,10 @@ void Commands::mode()
         currChannel->gettingModes("l");
         currChannel->gettingModes("k");
     }
+    puts("6");
     if(_paramCounter == 2)
     {
+    puts("7");
         // RPL_UMODEIS(Nickname, Mode)
         std::string mode;
             mode = "+";
@@ -112,6 +105,7 @@ void Commands::mode()
     }
     if (_paramCounter > 2)
     {
+    puts("8");
         if (getMode("l", channelName) == true)
         {
             size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));

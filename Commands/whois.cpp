@@ -1,4 +1,5 @@
 #include "Commands.hpp"
+#include <algorithm>
 #include <cstddef>
 #include <cstdlib>
 #include <string>
@@ -16,9 +17,9 @@ static std::string getJsonValue(std::string const& property, std::string const& 
 
     // {"access_token":"abcd","token_type":"bearer","expires_in":6765,"scope":"public","created_at":1711662095,"secret_valid_until":1713826844}
     std::string jsonValue;
-    size_t propertyStartingIndex = jsonContent.find(property);
+    size_t propertyStartingIndex = jsonContent.find("\"" + property + "\"");
     if (propertyStartingIndex != std::string::npos) {
-        size_t valueStartingIndex = propertyStartingIndex + property.length() + 2;
+        size_t valueStartingIndex = propertyStartingIndex + property.length() + 4;//2;
         valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
         for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
             if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
@@ -29,58 +30,43 @@ static std::string getJsonValue(std::string const& property, std::string const& 
     return jsonValue;
 }
 
-// static std::vector<std::string> getJsonList(std::string const& property, std::string const& jsonContent) {
+static std::vector<std::string> getJsonList(std::string const& property, std::string const& jsonContent) {
 
-//     // {"access_token":"abcd","token_type":"bearer","expires_in":6765,"scope":"public","created_at":1711662095,"secret_valid_until":1713826844}
-//     std::vector<std::string> jsonObjList;
-//     int bracketsCounter = 0;
-//     int curlyBracketsCounter = 0;
+    std::vector<std::string> jsonObjList;
+    int bracketsCounter = 0;
+    int curlyBracketsCounter = 0;
 
-//     for (size_t propertyStartingIndex = 0; propertyStartingIndex < jsonContent.length();) {
-//         propertyStartingIndex = jsonContent.find(property, propertyStartingIndex);
-//         if (jsonContent[propertyStartingIndex + property.length() + 3] == '[') {
-//             // bracketsCounter += 1;
-//             // propertyStartingIndex++;
-//             std::string obj;
-//             for (; propertyStartingIndex < jsonContent.length();) {
-//                 std::cout << "[" << jsonContent[propertyStartingIndex] << "]";
-//                 if (jsonContent[propertyStartingIndex] == '[')
-//                     bracketsCounter++;
-//                 else if (bracketsCounter == ']')
-//                     bracketsCounter--;
-//                 else if (jsonContent[propertyStartingIndex] == ']' && bracketsCounter == 0)
-//                 {
-//                     break ;
-//                 }
-//                 else if (jsonContent[propertyStartingIndex] == '{')
-//                     curlyBracketsCounter++;
-//                 else if (jsonContent[propertyStartingIndex] == '}')
-//                     curlyBracketsCounter--;
-//                 if (curlyBracketsCounter >= 1)
-//                     obj += jsonContent[propertyStartingIndex];
-//                 else if (curlyBracketsCounter == 0)
-//                 {
-//                     jsonObjList.push_back(obj);
-//                     std::cout << obj << std::endl;
-//                     obj.clear();
-//                 }
-//                 propertyStartingIndex++;
-//             }
-//         }
-//     }
-
-
-    // if (propertyStartingIndex != std::string::npos) {
-    //     size_t valueStartingIndex = propertyStartingIndex + property.length() + 2;
-    //     valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
-    //     for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
-    //         if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
-    //             break ;
-    //         jsonValue += jsonContent[valueStartingIndex];
-    //     }
-    // }
-    // return jsonObjList;
-// }
+    for (size_t propertyStartingIndex = 0; propertyStartingIndex < jsonContent.length();) {
+        propertyStartingIndex = jsonContent.find(property, propertyStartingIndex);
+        if (propertyStartingIndex == std::string::npos) break;
+        size_t objListIndex = propertyStartingIndex + property.length() + 2;
+        if (jsonContent[objListIndex] == '[') {
+            std::string obj;
+            while (objListIndex < jsonContent.length()) {
+                if (jsonContent[objListIndex] == '[')
+                    bracketsCounter++;
+                else if (jsonContent[objListIndex] == ']')
+                    bracketsCounter--;
+                if (jsonContent[objListIndex] == ']' && bracketsCounter == 0)
+                    return jsonObjList;
+                else if (jsonContent[objListIndex] == '{')
+                    curlyBracketsCounter++;
+                else if (jsonContent[objListIndex] == '}')
+                    curlyBracketsCounter--;
+                if (curlyBracketsCounter >= 1)
+                    obj += jsonContent[objListIndex];
+                else if (curlyBracketsCounter == 0 && !obj.empty())
+                {
+                    jsonObjList.push_back(obj);
+                    obj.clear();
+                }
+                objListIndex++;
+            }
+        }
+        propertyStartingIndex += property.length();
+    }
+    return jsonObjList;
+}
 
 static std::string executeCmd(std::string const& cmd) {
 
@@ -109,8 +95,6 @@ void Commands::whois() {
     std::string jsonContent = executeCmd(userCmd);
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
 
-    // getJsonList("cursus_users", jsonContent);
-    
     std::string imageLink = getJsonValue("link", jsonContent);
 
     if (imageLink != "null") {
@@ -124,8 +108,19 @@ void Commands::whois() {
 
         std::string displayName = getJsonValue("displayname", jsonContent);
         sendResponse(fd, "name: " + displayName + "\n");
-        std::string level = getJsonValue("level", jsonContent);
-        sendResponse(fd, "level: " + level + "\n");
+        // std::string level = getJsonValue("level", jsonContent);
+        // sendResponse(fd, "level: " + level + "\n");
+
+        std::vector<std::string> objList = getJsonList("cursus_users", jsonContent);
+        for (size_t i = 0; i < objList.size(); i++) {
+            std::cout << objList[i] << std::endl << std::endl;
+            
+            std::string level = getJsonValue("level", objList[i]);
+            std::string cursusName = getJsonValue("name", objList[i]);
+            sendResponse(fd, "cursus name: " + cursusName + "\tlevel: " + level + "\n");
+        }
+
+
         // std::string profileUrl = getJsonValue("url", jsonContent);
         // sendResponse(fd, std::string("\e]8;;" + profileUrl + "\e\\42 Intra Profile:\e]8;;\e\\ " + profileUrl + "\n"));
         // sendResponse(fd, std::string("42 Intra Profile: ") + "\e]8;;https://ubuntu.com/\e\\uwu\e]8;;\e\\\n");

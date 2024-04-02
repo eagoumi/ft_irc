@@ -200,15 +200,19 @@ void Commands::logtime() {
     if (checkDateFormat(begin_at) == false || checkDateFormat(end_at) == false || checkDateOrder(begin_at, end_at) == false)
         { sendResponse(fd, "The start or end date format is invalid please use YYYY-MM-DD.\n"); return; }
 
+    std::string userCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login;
+    std::string jsonContent = executeCmd(userCmd);
+    if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
+    
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
     locations_statsCmd += begin_at;
     locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at);
 
-
-    std::string jsonContent = executeCmd(locations_statsCmd);
-    if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
-    
-
+    jsonContent = executeCmd(locations_statsCmd);
+    if (jsonContent == "{}") {
+        sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");
+        sendResponse(fd, "Result: 0 Hours \U0001F61C\n"); return ;
+    }
     /****************************************DEBUG****************************************/
         std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;
         std::cout << locations_statsCmd << std::endl;

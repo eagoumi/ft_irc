@@ -19,12 +19,35 @@ static std::string getJsonValue(std::string const& property, std::string const& 
     std::string jsonValue;
     size_t propertyStartingIndex = jsonContent.find("\"" + property + "\"");
     if (propertyStartingIndex != std::string::npos) {
-        size_t valueStartingIndex = propertyStartingIndex + property.length() + 4;//2;
+        size_t valueStartingIndex = propertyStartingIndex + property.length() + 3;//2;
         valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
         for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
             if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
                 break ;
             jsonValue += jsonContent[valueStartingIndex];
+        }
+    }
+    return jsonValue;
+}
+
+static std::string getJsonObjValue(std::string const& property, std::string const& jsonContent) {
+
+    std::string jsonValue;
+    size_t propertyStartingIndex = jsonContent.find("\"" + property + "\"");
+    int curlyBracketsCounter = 0;
+    if (propertyStartingIndex != std::string::npos) {
+        size_t valueStartingIndex = propertyStartingIndex + property.length() + 3;//2;
+        // valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
+        if (jsonContent[valueStartingIndex] == '{') {
+            for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
+                if (jsonContent[valueStartingIndex] == '{')
+                        curlyBracketsCounter++;
+                else if (jsonContent[valueStartingIndex] == '}')
+                    curlyBracketsCounter--;
+                if (jsonContent[valueStartingIndex] == '}' && curlyBracketsCounter == 0)
+                    break ;
+                jsonValue += jsonContent[valueStartingIndex];
+            }
         }
     }
     return jsonValue;
@@ -95,7 +118,7 @@ void Commands::whois() {
     std::string jsonContent = executeCmd(userCmd);
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
 
-    std::string imageLink = getJsonValue("link", jsonContent);
+    std::string imageLink = getJsonValue("medium", jsonContent);
 
     if (imageLink != "null") {
         // sendResponse(fd, "Currently on: " + userValue + "\n");
@@ -108,15 +131,25 @@ void Commands::whois() {
 
         std::string displayName = getJsonValue("displayname", jsonContent);
         sendResponse(fd, "name: " + displayName + "\n");
+        std::string email = getJsonValue("email", jsonContent);
+        sendResponse(fd, "email: " + email + "\n");
+        std::string correctionPoints = getJsonValue("correction_point", jsonContent);
+        sendResponse(fd, "correction points: " + correctionPoints + "\n");
+        std::string poolDate = getJsonValue("pool_month", jsonContent) + "/" + getJsonValue("pool_year", jsonContent);
+        sendResponse(fd, "Pool Date: " + poolDate + "\n");
+        std::string campusCity = getJsonValue("name", getJsonList("campus", jsonContent)[0]) ;
+        sendResponse(fd, "Campus City: " + campusCity + "\n");
+        
+
         // std::string level = getJsonValue("level", jsonContent);
         // sendResponse(fd, "level: " + level + "\n");
 
         std::vector<std::string> objList = getJsonList("cursus_users", jsonContent);
         for (size_t i = 0; i < objList.size(); i++) {
             std::cout << objList[i] << std::endl << std::endl;
-            
             std::string level = getJsonValue("level", objList[i]);
-            std::string cursusName = getJsonValue("name", objList[i]);
+            std::string cursusObj = getJsonObjValue("cursus", objList[i]);
+            std::string cursusName = getJsonValue("name", cursusObj);
             sendResponse(fd, "cursus name: " + cursusName + "\tlevel: " + level + "\n");
         }
 

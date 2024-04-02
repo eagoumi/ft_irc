@@ -30,6 +30,7 @@ SRC_FILES	=	Server/server.cpp \
 				Commands/topic.cpp Commands/mode.cpp \
 				Commands/whois.cpp Commands/location.cpp \
 				Commands/logtime.cpp \
+				Commands/PRIVMSG.cpp \
 				Commands/Part.cpp
 
 INC_FILES	=	Server/server.hpp \

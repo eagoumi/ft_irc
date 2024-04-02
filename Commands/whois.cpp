@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
+#include <ios>
 #include <string>
 #include <ctime>
 #include <iostream>
@@ -11,6 +12,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <iostream>
+#include <sstream>
+#include <utility>
+#include <vector>
+#include <iomanip>
+#include <stdio.h>
 
 
 static std::string getJsonValue(std::string const& property, std::string const& jsonContent) {
@@ -114,15 +121,18 @@ void Commands::whois() {
     std::string login = getNextParam().first; std::transform(login.begin(), login.end(), login.begin(), ::tolower);
     
     std::string userCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login;
-
+std::cout << userCmd << std::endl;
     std::string jsonContent = executeCmd(userCmd);
+std::cout << jsonContent << std::endl;
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
 
     std::string imageLink = getJsonValue("medium", jsonContent);
 
     if (imageLink != "null") {
         // sendResponse(fd, "Currently on: " + userValue + "\n");
+        std::cout << "curl -s " + imageLink << std::endl;
         executeCmd("curl -s " + imageLink + " > image.png");
+        std::cout << "img cmd executed" << std::endl;
         int saved_stdout = dup(1);
         dup2(currUser->getUserId(), 1);
         system("curl -s https://iterm2.com/utilities/imgcat | bash /dev/stdin image.png");
@@ -130,19 +140,24 @@ void Commands::whois() {
         close(saved_stdout);
 
         std::string displayName = getJsonValue("displayname", jsonContent);
-        sendResponse(fd, "name: " + displayName + "\n");
+        // sendResponse(fd, "name " + displayName + "\n");
         std::string email = getJsonValue("email", jsonContent);
-        sendResponse(fd, "email: " + email + "\n");
+        // sendResponse(fd, "email: " + email + "\n");
         std::string correctionPoints = getJsonValue("correction_point", jsonContent);
-        sendResponse(fd, "correction points: " + correctionPoints + "\n");
+        // sendResponse(fd, "correction points: " + correctionPoints + "\n");
         std::string poolDate = getJsonValue("pool_month", jsonContent) + "/" + getJsonValue("pool_year", jsonContent);
-        sendResponse(fd, "Pool Date: " + poolDate + "\n");
+        // sendResponse(fd, "Pool Date: " + poolDate + "\n");
         std::string campusCity = getJsonValue("name", getJsonList("campus", jsonContent)[0]) ;
-        sendResponse(fd, "Campus City: " + campusCity + "\n");
+        // sendResponse(fd, "Campus City: " + campusCity + "\n");
         
-
-        // std::string level = getJsonValue("level", jsonContent);
-        // sendResponse(fd, "level: " + level + "\n");
+        std::ostringstream os;
+        os << std::setw(28) << std::left << "Name" << "▒ " << displayName << "\n";
+        os << std::setw(28) << std::left << "Email" << "▒ " << email << "\n";
+        os << std::setw(28) << std::left << "CorrectionPoints" << "▒ " << correctionPoints << "\n";
+        os << std::setw(28) << std::left << "CampusCity" << "▒ " << campusCity<< "\n";
+        os << std::setw(28) << std::left << "PoolDate" << "▒ " << poolDate << "\n";
+       // std::string level = getJsonValue("level", jsonContent);
+       // sendResponse(fd, "level: " + level + "\n");
 
         std::vector<std::string> objList = getJsonList("cursus_users", jsonContent);
         for (size_t i = 0; i < objList.size(); i++) {
@@ -150,8 +165,11 @@ void Commands::whois() {
             std::string level = getJsonValue("level", objList[i]);
             std::string cursusObj = getJsonObjValue("cursus", objList[i]);
             std::string cursusName = getJsonValue("name", cursusObj);
-            sendResponse(fd, "cursus name: " + cursusName + "\tlevel: " + level + "\n");
+            os << std::setw(30) << std::left << cursusName << "▒ " << level << "\n";
+            // os << std::setw(18) << std::left << "level: " << "▒ " << level + "\n";
+            // sendResponse(fd, "cursus name: " + cursusName + "\tlevel: " + level + "\n");
         }
+        sendResponse(fd, os.str());
 
 
         // std::string profileUrl = getJsonValue("url", jsonContent);

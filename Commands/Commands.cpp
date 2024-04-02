@@ -279,6 +279,8 @@ void Commands::CommandMapinit(cmdData dataCmd)
         whois();
     else if (cmd == "PART")
         part();
+    else if (cmd == "PRIVMSG")
+        PRIVMSG();
     else
         sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd) + "\n");
 }

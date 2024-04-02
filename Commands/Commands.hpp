@@ -94,6 +94,7 @@ public:
     void whois();
 
     void part();
+    void PRIVMSG();
 
     std::map<std::string, std::string> splitInput(std::string input);
     bool existMemberChannel(std::string member, std::string channelName);

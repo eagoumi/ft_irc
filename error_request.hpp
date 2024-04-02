@@ -83,7 +83,7 @@
 #define RPL_LISTEND				323
 #define RPL_CHANNELMODEIS		324
 #define RPL_NOTOPIC(nick,chanel)			"331 " + nick + " " + chanel + ":No topic is set"
-#define RPL_TOPIC(chanel,topic)				"332 " + chanel + " :" + topic
+#define RPL_TOPIC(nickName, chanel,topic)				"332 " + nickName + " " + chanel + " :" + topic
 #define RPL_INVITING(client,NickName,Chanel)			"341 " + client + " " + NickName + " " + channel
 #define RPL_SUMMONING			342
 #define RPL_VERSION				351

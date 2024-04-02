@@ -23,7 +23,10 @@ void Commands::join()
         {
             std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
+            sendResponse(fd, ":" /*+ std::string("@")*/ + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex]);
+            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + "  has changed mode: +s " + channelNamesList[channelIndex] + "\n");
+            // currUser->ServertoClients( ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
+            // currUser->ServertoClients(currUser->getNickName() + " has changed mode: +s\n");
         }
         else
         {

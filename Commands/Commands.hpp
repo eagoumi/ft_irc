@@ -115,7 +115,7 @@ public:
     void    displayMember(std::string channelName);
     bool    getMode(std::string letter, std::string channelName);
     size_t  getLimitArg();
-    void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
+    void SendMessageToMembers(Channel *Channel_name, User user_fds, std::string command);
 
 
 };

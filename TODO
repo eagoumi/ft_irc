@@ -54,3 +54,5 @@ USER uwu
 # TOFA7A: User.getMembers() & User.getOperators() will be removed, instead it will be getMember(NICKname), getMember(FD) is already there, no need to get the whole list
 # TOFA7A: getInvitedNick() Which is see if the nickname associated with a user, is invited or not, has to add an alphabet case validation
 # TOFA7A: I mean it will be better if we user isUserInvited(fd) instead of getInvitedNick(Nickname) since no validation is required 
+
+Empty channel from members

@@ -45,3 +45,7 @@ USER uwu
 <-  :irc2.unrealircd.org MODE #a +nt 
 <-  :irc2.unrealircd.org 353 yousra = #a :@yousra
 <-  :irc2.unrealircd.org 366 yousra #a :End of /NAMES list.
+
+
+
+Empty channel from members

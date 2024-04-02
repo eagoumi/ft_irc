@@ -66,9 +66,9 @@ Channel *Database::getChannel(CHANNEL_NAME nameToFind) {
 
     std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    std::string currChanNameUpperCase;
     ChannelIter currChanIt = _channels.begin();
     while (currChanIt != _channels.end()) {
+        std::string currChanNameUpperCase;
         const std::string& currChanName = currChanIt->first;
         // currChanNameUpperCase = currChanName;
         std::transform(currChanName.begin(), currChanName.end(), std::back_inserter(currChanNameUpperCase), ::toupper);
@@ -91,9 +91,9 @@ void Database::deleteChannel(CHANNEL_NAME nameToFind) {
 
     std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    std::string currChanNameUpperCase;
     ChannelIter currChanIt = _channels.begin();
     while (currChanIt != _channels.end()) {
+        std::string currChanNameUpperCase;
         const std::string& currChanName = currChanIt->first;
         std::transform(currChanName.begin(), currChanName.end(), std::back_inserter(currChanNameUpperCase), ::toupper);
         if (currChanNameUpperCase == nameToFind)
@@ -120,8 +120,8 @@ bool Database::isNicknameUsed(NICK_NAME nameToFind) {
     std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
     UserIter currUserIt = this->_users.begin();
-    std::string currUserNickNameUpperCase;
     while (currUserIt != this->_users.end()) {
+        std::string currUserNickNameUpperCase;
         const std::string& currUserNickName = currUserIt->second->getNickName();
         std::transform(currUserNickName.begin(), currUserNickName.end(), std::back_inserter(currUserNickNameUpperCase), ::toupper);
         if (currUserNickNameUpperCase == nameToFind)
@@ -134,9 +134,9 @@ bool Database::isNicknameUsed(NICK_NAME nameToFind) {
 User *Database::existUser(std::string nick)
 {
     std::transform(nick.begin(), nick.end(), nick.begin(), ::toupper);
-    std::string currUserNickCapitilized;
     for (std::map<size_t, User *>::iterator it = _users.begin(); it != _users.end(); it++)
     {
+        std::string currUserNickCapitilized;
         std::string currUserNick = it->second->getNickName();
         std::transform(currUserNick.begin(), currUserNick.end(), std::back_inserter(currUserNickCapitilized), ::toupper);
         if(currUserNickCapitilized == nick)

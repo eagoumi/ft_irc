@@ -23,7 +23,7 @@ enum OPTION
     RESET
 };
 
-enum token_type { NONE, COMMA , JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, WHOIS_CMD, LOCATION_CMD, CHANNEL, KEY, NICK, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END};
+enum token_type { NONE, COMMA , PRIVMSG_CMD, JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, WHOIS_CMD, LOCATION_CMD, CHANNEL, KEY, NICK, MSG, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END};
 struct token
 {
     token_type type;
@@ -101,8 +101,8 @@ public:
     // size_t existUser(std::string nick);
 
 
-    std::string const& getCommand() const;
-    std::string getHostName();
+    std::string const getCommand() const;
+    std::string const getHostName();
     // std::string getNick();
     // std::string getChannel();
     // std::string getTopic();

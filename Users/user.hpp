@@ -53,11 +53,15 @@ class   User
         void setServerIP(std::string const &ServerIP);
         std::string const &getServerIP();
 
-        //Send
+        //Send Server To Clients
         void IRCPrint(size_t fd, std::string string);
         void ServertoClients(std::string string);
 
-        void hasJoinedChannel(Channel *channel);
+        //Send Cleint to Clients
+        void CleintToClient(std::string msg);
+
+        void joinedChannel(Channel *channel);
+        void partedChannel(Channel *channel);
         std::map<std::string, Channel *> const& getJoinedChannels();
         // Channel *createChannel(CHANNEL_NAME name);
         ~User();

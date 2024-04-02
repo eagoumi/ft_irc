@@ -1,6 +1,8 @@
 #include "channel.hpp"
 #include "../Users/user.hpp"
+#include <algorithm>
 #include <iostream>
+#include <utility>
 
 #define NOT_FOUND NULL
 typedef std::map<USER_ID, User *>::iterator UserIter;
@@ -41,7 +43,7 @@ void Channel::addMember(User *member) {
     getMember(memberId) != NOT_FOUND ? throw std::string("Channel::addMember() -> member already exist") : NULL;
 
     this->_members[memberId] = member;
-    member->hasJoinedChannel(this);
+    member->joinedChannel(this);
 }
 
 void Channel::inviteUser(User *user) {
@@ -62,8 +64,7 @@ bool Channel::isUserInvited(USER_ID Id) {
     return false;
 }
 
-bool Channel::isUserOperator(USER_ID Id)
-{
+bool Channel::isUserOperator(USER_ID Id) {
 
     UserIter it = this->_operators.find(Id);
     if (it != this->_operators.end())
@@ -84,8 +85,7 @@ CHANNEL_NAME const & Channel::getChannelName() {
     return this->_name;
 }
 
-User *Channel::getMember(USER_ID Id)
-{
+User *Channel::getMember(USER_ID Id) {
 
     UserIter it = this->_members.find(Id);
     if (it != this->_members.end())

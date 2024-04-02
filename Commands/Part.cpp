@@ -16,7 +16,7 @@ void Commands::SendMessageToMembers(Channel *Channel_name, User user_fds, std::s
 
 void Commands::part()
 {
-    std::vector<std::string> All_channels = getNextParam().second;
+    // std::vector<std::string> All_channels = getNextParam().second;
 
     for (size_t i = 0; i < All_channels.size() ; i++)
     {

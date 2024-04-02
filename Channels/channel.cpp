@@ -72,6 +72,14 @@ bool Channel::isUserOperator(USER_ID Id) {
     return false;
 }
 
+bool Channel::isUserMember(USER_ID Id)
+{
+    UserIter it = this->_members.find(Id);
+    if (it != this->_members.end())
+        return true;
+    return false;
+}
+
 CHANNEL_NAME const & Channel::getChannelName() {
 
     return this->_name;
@@ -100,42 +108,14 @@ std::map<USER_ID, User *> const& Channel::getMembers() {
     return this->_members;
 }
 
-void Channel::deleteMember(std::string nickTarget) {
+void Channel::deleteMember(User *userToDelete) {
+    std::map<USER_ID, User *>::iterator it = _members.find(userToDelete->getUserId());
 
-    std::transform(nickTarget.begin(), nickTarget.end(), nickTarget.begin(), ::toupper);
-
-    std::map<USER_ID, User *>::iterator tmp;
-    std::map<USER_ID, User *>::iterator it = _members.begin();
-    while (it != _members.end())
-    {
-        if (it->second->getNickName() == nickTarget)
-        {
-            tmp = it;
-            it++;
-            _members.erase(tmp);
-            return;
-        }
-        else
-            it++;
-    }
+    if(it != _members.end())
+        _members.erase(it);
+    
 }
 
-void Channel::setInvitedNick(std::string Nick)
-{
-    this->invitedList.push_back(Nick);
-}
-
-bool Channel::getInvitedNick(std::string nickTarget)
-{
-    std::cout << "***Displaying Inviting list***" << std::endl;
-    for (std::vector<std::string>::iterator it = invitedList.begin(); it != invitedList.end(); it++)
-        std::cout << "NICK = " << *it << std::endl;
-    std::cout << std::endl;
-    std::vector<std::string>::iterator it = std::find(this->invitedList.begin(), this->invitedList.end(), nickTarget);
-    if (it != invitedList.end())
-        return true;
-    return false;
-}
 
 std::map<USER_ID, User *> const& Channel::getOperators()
 {
@@ -156,6 +136,14 @@ void Channel::addOperator(size_t fdo){
     this->_operators[fdo] = getMember(fdo);
     for(std::__1::map<size_t, User *>::iterator it = _operators.begin(); it != _operators.end(); it++)
         std::cout << "operator fd  = " << it->first << " nickname =  " << it->second->getNickName() << std::endl;
+}
+
+void Channel::deleteOperator(User *operatorToDelete) {
+    std::map<USER_ID, User *>::iterator it = _operators.find(operatorToDelete->getUserId());
+
+    if(it != _operators.end())
+        _operators.erase(it);
+    
 }
 
 Channel::~Channel()

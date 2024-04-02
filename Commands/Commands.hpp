@@ -96,9 +96,9 @@ public:
     void part();
 
     std::map<std::string, std::string> splitInput(std::string input);
-    bool existMemberChannel(std::string member, std::string channelName);
-    bool existOperatorChannel(std::string nick, std::string channelName);
-    size_t existUser(std::string nick);
+    // bool existMemberChannel(std::string member, std::string channelName);
+    // bool existOperatorChannel(std::string nick, std::string channelName);
+    // size_t existUser(std::string nick);
 
 
     std::string const getCommand() const;
@@ -114,8 +114,7 @@ public:
     void    sendResponse(int userfd, std::string msg);
     void    displayMember(std::string channelName);
     bool    getMode(std::string letter, std::string channelName);
-    size_t  getLimitArg();
-    void SendMessageToMembers(Channel *Channel_name, User user_fds, std::string command);
+    void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
 
 
 };

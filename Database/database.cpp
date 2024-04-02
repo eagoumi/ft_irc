@@ -116,3 +116,18 @@ bool Database::isNicknameUsed(NICK_NAME nameToFind) {
     }
     return false;
 }
+
+User *Database::existUser(std::string nick)
+{
+    std::transform(nick.begin(), nick.end(), nick.begin(), ::toupper);
+    std::cout << "CHANEEEEL NAME = 2" << nick << std::endl;
+    for (std::map<size_t, User *>::iterator it = _users.begin(); it != _users.end(); it++)
+    {
+        std::string currUserNickCapitilized;
+        std::string currUserNick = it->second->getNickName();
+        std::transform(currUserNick.begin(), currUserNick.end(), currUserNickCapitilized.begin(), ::toupper);
+        if(currUserNickCapitilized == nick)
+            return it->second;
+    }
+    return 0;
+}

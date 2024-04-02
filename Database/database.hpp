@@ -32,7 +32,7 @@ class Database
 
 
         // void sendResponse(int fd, std::string massage);
-        
+        User  *existUser(std::string nick);
         std::map<size_t, User *> const& getUsers();
 
         // ~Database();

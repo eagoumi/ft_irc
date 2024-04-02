@@ -55,7 +55,7 @@
 #define ERR_BADCHANNELKEY(NickName ,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
 #define ERR_BADCHANMASK(NickName ,chanel)		"476 " + NickName + " " + chanel + " :Bad Channel Mask"
 #define ERR_NOPRIVILEGES		481
-#define ERR_CHANOPRIVSNEEDED(NickName,Chanel)	"482 " + Nick + " " + ch + " :You're not channel operator"
+#define ERR_CHANOPRIVSNEEDED(NickName, channel)  "482 " + NickName + " " + channelName + " :You're not channel operator"
 #define ERR_CANTKILLSERVER		483
 #define ERR_NOOPERHOST			491
 #define ERR_UMODEUNKNOWNFLAG(NickName)	"501 " + Nick + " " + " :Unknown MODE flag"

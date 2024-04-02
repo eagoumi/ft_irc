@@ -23,7 +23,6 @@ void Commands::join()
             std::cout << "channel not found, creating by " << currUser->getUserName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " Created The Channel successfully\n");
         }
         else
         {
@@ -33,7 +32,7 @@ void Commands::join()
                 sendResponse(fd, "User already in channel\n");
                 continue;
             }
-            else if (this->getMode("i", channelNamesList[channelIndex]) == true && currChannel->getInvitedNick(currUser->getNickName()) == false)
+            else if (this->getMode("i", channelNamesList[channelIndex]) == true && currChannel->isUserInvited(currUser->getUserId()) == false)
             {
                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+i)\n");
             }

@@ -45,7 +45,7 @@
 #define ERR_BANNEDFROMCHAN		474
 #define ERR_BADCHANNELKEY		475
 #define ERR_NOPRIVILEGES		481
-#define ERR_CHANOPRIVSNEEDED	482
+#define ERR_CHANOPRIVSNEEDED(NickName, channel)  "482 " + NickName + " " + channelName + " :You're not channel operator"
 #define ERR_CANTKILLSERVER		483
 #define ERR_NOOPERHOST			491
 #define ERR_UMODEUNKNOWNFLAG	501
@@ -72,8 +72,8 @@
 #define RPL_LIST				322
 #define RPL_LISTEND				323
 #define RPL_CHANNELMODEIS		324
-#define RPL_NOTOPIC				331
-#define RPL_TOPIC				332
+#define RPL_NOTOPIC(nickName, channelName)		"331 " + nickName + " " + channelName + " :No topic is set\n"
+#define RPL_TOPIC(nickName, channelName, topic) "332 " + nickName + " " + channelName + " " + topic + "\n"
 #define RPL_INVITING			341
 #define RPL_SUMMONING			342
 #define RPL_VERSION				351

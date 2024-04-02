@@ -19,11 +19,11 @@ void Commands::SendMessageToMembers(Channel *Channel_name, User *user_fds, std::
 
 void Commands::part()
 {
-    std::vector<std::string> All_channels = getNextParam().second;
+    // std::vector<std::string> All_channels = getNextParam().second;
 
-    for (size_t i = 0; i < All_channels.size() ; i++)
-    {
-        std::cout << All_channels[i] << std::endl;
+    // for (size_t i = 0; i < All_channels.size() ; i++)
+    // {
+        // std::cout << All_channels[i] << std::endl;
         // if (db->getChannel(All_channels[i]) == NULL)
         // {
         //     puts ("ssss");
@@ -36,9 +36,9 @@ void Commands::part()
         //     currUser->ServertoClients(ERR_NOTONCHANNEL(currUser->getNickName(), "PART"));
         //     return ;
         // }
-        SendMessageToMembers(db->getChannel(All_channels[i]), currUser, " PART " + db->getUser(fd)->getNickName() + " " + All_channels[i]);
-        db->getChannel(All_channels[i])->deleteMember(db->getUser(fd)->getNickName());
-    }
+        // SendMessageToMembers(db->getChannel(All_channels[i]), currUser, " PART " + db->getUser(fd)->getNickName() + " " + All_channels[i]);
+        // db->getChannel(All_channels[i])->deleteMember(db->getUser(fd)->getNickName());
+    // }
     // std::cout << "2 " << All_channels[0] << std::endl;
 }
 

@@ -32,7 +32,6 @@ std::map<std::string, bool> Channel::gettingModes(std::string toFind)
         it--;
         if (modeS[it] == '+' || (modeS[0] == '+' && modeS[it] != '-'))
         {
-            puts("test3");
             modeSeted[toFind] = true;
         }
         else
@@ -75,12 +74,14 @@ void Commands::mode()
     // }
     if (db->getChannel(channelName) == NULL)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
-        
+        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
+        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
     }
-    else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
+    // else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
+    else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
+        currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
     else
     {
@@ -91,18 +92,46 @@ void Commands::mode()
         currChannel->gettingModes("l");
         currChannel->gettingModes("k");
     }
-    if (getMode("l", channelName) == true)
+    if(_paramCounter == 2)
     {
-        size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-        if (limit > 0)
-            currChannel->setLimit(limit);
-        else
-            currChannel->setLimit(1);
+        // RPL_UMODEIS(Nickname, Mode)
+        std::string mode;
+            mode = "+";
+        if(getMode("t", channelName) == true)
+            mode.append("t");
+        if(getMode("i", channelName) == true)
+            mode.append("i");
+        if(getMode("o", channelName) == true)
+            mode.append("o");
+        if(getMode("l", channelName) == true)
+            mode.append("l");
+        if(getMode("k", channelName) == true)
+            mode.append("k");
+        std::cout << "mode = "<< mode << std::endl;
+        currUser->ServertoClients(RPL_UMODEIS(currUser->getNickName(), mode));
     }
-    if (getMode("o", channelName) == true && existMemberChannel(modeArg, channelName) == true)
+    if (_paramCounter > 2)
     {
-        size_t fdo = existUser(modeArg);
-        currChannel->addOperator(fdo);
+        if (getMode("l", channelName) == true)
+        {
+            size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
+            if (limit > 0)
+                currChannel->setLimit(limit);
+            else
+                currChannel->setLimit(1);
+        }
+        User* fdOperator = db->existUser(modeArg);
+        if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == false)
+            currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+        else if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
+        {
+            currChannel->addOperator(fdOperator->getUserId());
+        }
+        else if (getMode("o", channelName) == false && currChannel->isUserOperator(currUser->getUserId()) == true && currChannel->isUserOperator(fdOperator->getUserId()) == true)
+        {
+            currChannel->deleteOperator(fdOperator);
+            // currChannel->addOperator(modeArg);
+        }
     }
 
     // if(getMode("l") == true)

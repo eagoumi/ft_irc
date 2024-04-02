@@ -3,6 +3,8 @@
 #include "../Channels/channel.hpp"
 #include <utility>
 
+typedef std::map<std::string, Channel *>::iterator ChanIter;
+
 bool User::isStrContains(std::string const& str, std::string const& charSet) {
 
     for (int i = 0; charSet[i]; i++)
@@ -98,14 +100,19 @@ bool User::hasInsertedUsername()
     return (_isUserNameInserted);
 }
 
-void User::hasJoinedChannel(Channel* channel) {
+void User::joinedChannel(Channel* channel) {
     _joinedChannels.insert(std::make_pair(channel->getChannelName(), channel));
+}
+
+void User::partedChannel(Channel* channel) {
+    ChanIter it = _joinedChannels.find(channel->getChannelName());
+    if (it != _joinedChannels.end())
+        _joinedChannels.erase(it);
 }
 
 std::map<std::string, Channel *> const& User::getJoinedChannels() {
     return this->_joinedChannels;
 }
-
 
 void User::setServerIP(std::string const &ServerIP)
 {

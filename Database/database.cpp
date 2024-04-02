@@ -39,7 +39,7 @@ Channel *Database::addNewChannel(CHANNEL_NAME name, User *user) {
     createdChannel = new Channel(name, user);
     this->_channels[name] = createdChannel;
 
-    user->hasJoinedChannel(createdChannel);//srsly I see no need for this, at least for now
+    user->joinedChannel(createdChannel);//srsly I see no need for this, at least for now
     return createdChannel;
 }
 
@@ -51,13 +51,19 @@ User *Database::getUser(USER_ID Id) {
     return NULL;
 }
 
-Channel *Database::getChannel(CHANNEL_NAME name) {
+Channel *Database::getChannel(CHANNEL_NAME nameToFind) {
 
-    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    ChannelIter it = this->_channels.find(name);
-    if (it != this->_channels.end())
-        return it->second;
+    std::string currChanNameUpperCase;
+    ChannelIter currChanIt = _channels.begin();
+    while (currChanIt != _channels.end()) {
+        const std::string& currChanName = currChanIt->first;
+        std::transform(currChanName.begin(), currChanName.end(), currChanNameUpperCase.begin(), ::toupper);
+        if (currChanNameUpperCase == nameToFind)
+            return currChanIt->second;
+        currChanIt++;
+    }
     return NULL;
 }
 
@@ -68,13 +74,27 @@ void Database::deleteUser(USER_ID Id) {
     this->_users.erase(it);
 }
 
-void Database::deleteChannel(CHANNEL_NAME name) {
+void Database::deleteChannel(CHANNEL_NAME nameToFind) {
 
-    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    ChannelIter it = this->_channels.find(name);
-    delete it->second;
-    this->_channels.erase(it);
+    std::string currChanNameUpperCase;
+    ChannelIter currChanIt = _channels.begin();
+    while (currChanIt != _channels.end()) {
+        const std::string& currChanName = currChanIt->first;
+        std::transform(currChanName.begin(), currChanName.end(), currChanNameUpperCase.begin(), ::toupper);
+        if (currChanNameUpperCase == nameToFind)
+        {
+            delete currChanIt->second;
+            this->_channels.erase(currChanIt);
+            break ;
+        }
+        currChanIt++;
+    }
+
+    // ChannelIter it = this->_channels.find(name);
+    // delete it->second;
+    // this->_channels.erase(it);
 }
 
 std::map<size_t, User *> const& Database::getUsers() {
@@ -82,15 +102,17 @@ std::map<size_t, User *> const& Database::getUsers() {
     return this->_users;
 }
 
-bool Database::isNicknameUsed(NICK_NAME name) {
+bool Database::isNicknameUsed(NICK_NAME nameToFind) {
 
-    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    std::transform(nameToFind.begin(), nameToFind.end(), nameToFind.begin(), ::toupper);
 
-    UserIter it = this->_users.begin();
-    while (it != this->_users.end()) {
-        if (it->second->getNickName() == name)
+    UserIter currUserIt = this->_users.begin();
+    while (currUserIt != this->_users.end()) {
+        const std::string& currUserNickName = currUserIt->second->getNickName();
+        std::transform(currUserNickName.begin(), currUserNickName.end(), nameToFind.begin(), ::toupper);
+        if (currUserNickName == nameToFind)
             return true;
-        it++;
+        currUserIt++;
     }
     return false;
 }

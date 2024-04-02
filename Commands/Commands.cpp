@@ -27,6 +27,7 @@ Commands &Commands::operator=(const Commands &obj)
 token_type determine_cmd(std::string token)
 {
 
+    std::transform(token.begin(), token.end(), token.begin(), ::toupper);
     if (token == "JOIN")
         return JOIN_CMD;
     else if (token == "PRIVMSG")
@@ -136,7 +137,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
             /*********************************************************/
             if (tokenType == COMMENT || tokenType == TOPIC_MSG || tokenType == REASON || tokenType == MSG) {
 
-                cmdLine[i] != ':' ? word.push_back(':') : (void)word;
+                // cmdLine[i] != ':' ? word.push_back(':') : (void)word;
                 word += cmdLine.substr(i); i = cmdLine.length();
                 if (word.back() == '\n') word.pop_back();
                 if (word.back() == '\r') word.pop_back();
@@ -157,8 +158,8 @@ void   Commands::tokenize(std::string const& cmdLine) {
                 /* store word if it is not empty, it can be empty if this is the first iteration */
                 /*********************************************************************************/
                 if (!(word.empty())) {
-                    if (tokenType != MODE_STR)
-                        std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+                    // if (tokenType != MODE_STR)
+                    //     std::transform(word.begin(), word.end(), word.begin(), ::toupper);
                     tokenCounter == 0 ? tokenType = determine_cmd(word) : 0;
                     tokenNode.data = word;
                     tokenNode.type = tokenType;
@@ -259,10 +260,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // User *currUser = db->getUser(fd);
     std::string cmd = getCommand();
     if (cmd == "JOIN")
-     {
-        // puts("2");
       join();
-     }  
     else if (cmd == "KICK")
         kick();
     else if (cmd == "LOGTIME")
@@ -314,9 +312,11 @@ void Commands::sendResponse(int userfd, std::string message)
 //     return "";
 // }
 
-std::string const& Commands::getCommand() const
+std::string const Commands::getCommand() const
 {
-    return _tokensList.front().data;
+    std::string cmd = _tokensList.front().data;
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
+    return cmd;
 }
 
 // std::string Commands::getModeString()
@@ -389,7 +389,7 @@ std::string const& Commands::getCommand() const
 //     return "";
 // }
 
-std::string Commands::getHostName()
+std::string const Commands::getHostName()
 {
     char hostName[256];
     if (gethostname(hostName, sizeof(hostName)) != 0)

@@ -101,8 +101,8 @@ public:
     size_t existUser(std::string nick);
 
 
-    std::string const& getCommand() const;
-    std::string getHostName();
+    std::string const getCommand() const;
+    std::string const getHostName();
     // std::string getNick();
     // std::string getChannel();
     // std::string getTopic();

@@ -78,7 +78,7 @@ token_type    Commands::determineToken(char sep, token_type cmdType) {
         else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = NICK      : (_paramCounter == 3 ? tokenType = COMMENT  : tokenType = NONE));
         else if (cmdType == TOPIC_CMD)      _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = TOPIC_MSG : tokenType = NONE);
         else if (cmdType == INVITE_CMD)     _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = CHANNEL   : tokenType = NONE);
-        else if (cmdType == MODE_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = NONE);
+        else if (cmdType == MODE_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = MODE_ARG);
         else if (cmdType == LOGTIME_CMD)    _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = LOG_BEG   : (_paramCounter == 3 ? tokenType = LOG_END  : tokenType = NONE));
         else if (cmdType == WHOIS_CMD)      _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
         else if (cmdType == LOCATION_CMD)   _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
@@ -185,6 +185,13 @@ void   Commands::tokenize(std::string const& cmdLine) {
     getNextParam(RESET);
 }
 
+bool Commands::isEnoughParam(token_type cmd) {
+    
+    if (cmd == JOIN_CMD)
+        if (_paramCounter < 2) return false;
+    return true;
+}
+
 void Commands::checkTokensListSyntax()
 {
 	std::list<token>::iterator ListIt = _tokensList.begin();
@@ -201,7 +208,6 @@ void Commands::checkTokensListSyntax()
             if ((*ListIt).data[0] != '#') (*ListIt).data.insert(0, 1, '#');
         
         std::cout << "[" + (*ListIt).data + "]" + " : [" + justFordebug[(*ListIt).type] + "]" << std::endl;
-
         ListIt++;
 	}
 }

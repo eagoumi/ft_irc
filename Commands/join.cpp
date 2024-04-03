@@ -42,11 +42,11 @@ void Commands::join()
                 sendResponse(fd, "User already in channel\n");
                 continue;
             }
-            else if (this->getMode("i", channelNamesList[channelIndex]) == true && currChannel->isUserInvited(currUser->getUserId()) == false)
+            else if (currChannel->getMode('i') == true && currChannel->isUserInvited(currUser->getUserId()) == false)
             {
                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+i)\n");
             }
-            else if(getMode("l", channelNamesList[channelIndex]) == true && currChannel->getLimit() <= currChannel->getMembers().size())
+            else if(currChannel->getMode('l') == true && currChannel->getLimit() <= currChannel->getMembers().size())
             {
                 sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+l)\n");
             }

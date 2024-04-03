@@ -1,15 +1,11 @@
-Server Channels:
+*Server Channels* :
 
-#blah: [
-eagoumi, tafah, youssra, 
-]
-
-#uwu: [
-a, eagoumi, tafah, youssra, 
-]
+	#uwu: [ +iot, TOPIC:""
+		Operaters: agoumi, tofa7a, 
+		Members: agoumi, tofa7a, 
+	]
 
 =================================================================
 
-Server Users:
-
-a, eagoumi, tafah, youssra, zouhair, meow, xd, 
+*Server Users* :
+	agoumi, tofa7a, 

@@ -133,6 +133,7 @@ bool Database::isNicknameUsed(NICK_NAME nameToFind) {
 
 User *Database::existUser(std::string nick)
 {
+    //SGF CHECING FOR !@#!!#$#@$%!$% CHARACTERS
     std::transform(nick.begin(), nick.end(), nick.begin(), ::toupper);
     for (std::map<size_t, User *>::iterator it = _users.begin(); it != _users.end(); it++)
     {

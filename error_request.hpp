@@ -7,6 +7,8 @@
 #define ERR_ALLREADYENTERPASS(Client)			"4002 " + Client + " :You have already entered the password!"
 #define ERR_CORRECTPASS(Client)			"4003 " + Client + " :Your password is correct ✅"
 #define ERR_MISSPASS(Client)			"4004 " + Client + " :Please enter the password to connect to the server first. 🚫"
+#define RPL_ALREADYONCHANNEL(NickName,invNickName,Chanel)			"112 " + NickName + " " + invNickName + " " + Chanel + " :is already on channel"
+
 
 //Replys
 
@@ -16,7 +18,7 @@
 //Errors
 #define ERR_NOSUCHNICK(Nickname)			"401 " + Nickname + ": No such nick/channel"
 // #define ERR_NOSUCHSERVER		402
-#define ERR_NOSUCHCHANNEL(NickName, Chanel)            "403 " + NickName + " " + Chanel + "  :No such channel"
+#define ERR_NOSUCHCHANNEL(NickName, Chanel)            "403 " + NickName + " " + Chanel + " :No such channel"
 #define ERR_CANNOTSENDTOCHAN(NickName,chanel)	"404 " + NickName + " " + chanel + " :Cannot send to channel"
 #define ERR_TOOMANYCHANNELS(chanel)		"405 " + chanel + " :You have joined too many channels"
 #define ERR_WASNOSUCHNICK		406
@@ -47,13 +49,13 @@
 #define ERR_PASSWDMISMATCH(Client)		"464 " + Client + " :Password Incorrect, Please try again!"
 #define ERR_YOUREBANNEDCREEP	465
 #define ERR_KEYSET				467
-#define ERR_CHANNELISFULL(chanel)		"471 " + chanel + " :Cannot join channel (+l)"
-#define ERR_UNKNOWNMODE			472
-#define ERR_INVITEONLYCHAN(NickName ,chanel)		"473 " + NickName + " " + chanel + " :Cannot join channel (+i)"
-#define ERR_BANNEDFROMCHAN(NickName ,chanel)		"474 " + NickName + " " + chanel + " :Cannot join channel (+b)"
-#define ERR_BADCHANNELKEY(NickName ,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
-#define ERR_BADCHANNELKEY(NickName ,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
-#define ERR_BADCHANMASK(NickName ,chanel)		"476 " + NickName + " " + chanel + " :Bad Channel Mask"
+#define ERR_CHANNELISFULL(NickName, chanel)             "471 " + NickName + " " + chanel + " :Cannot join channel (+l)"
+#define ERR_UNKNOWNMODE(NickName, char)             "472 " + nick + " " + char + " :is unknown mode char"
+#define ERR_INVITEONLYCHAN(NickName,chanel)		"473 " + NickName + " " + chanel + " :Cannot join channel (+i)"
+#define ERR_BANNEDFROMCHAN(NickName,chanel)		"474 " + NickName + " " + chanel + " :Cannot join channel (+b)"
+#define ERR_BADCHANNELKEY(NickName,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
+#define ERR_BADCHANNELKEY(NickName,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
+#define ERR_BADCHANMASK(NickName,chanel)		"476 " + NickName + " " + chanel + " :Bad Channel Mask"
 #define ERR_NOPRIVILEGES		481
 #define ERR_CHANOPRIVSNEEDED(NickName, channel)  "482 " + NickName + " " + channelName + " :You're not channel operator"
 #define ERR_CANTKILLSERVER		483
@@ -83,14 +85,14 @@
 #define RPL_LISTEND				323
 #define RPL_CHANNELMODEIS		324
 #define RPL_NOTOPIC(nick,chanel)			"331 " + nick + " " + chanel + ":No topic is set"
-#define RPL_TOPIC(nickName, chanel,topic)				"332 " + nickName + " " + chanel + " :" + topic
+#define RPL_TOPIC(nickName,chanel,topic)				"332 " + nickName + " " + chanel + " :" + topic
 #define RPL_INVITING(client,NickName,Chanel)			"341 " + client + " " + NickName + " " + channel
 #define RPL_SUMMONING			342
 #define RPL_VERSION				351
 #define RPL_WHOREPLY			352
 #define RPL_ENDOFWHO			315
-#define RPL_NAMREPLY			353
-#define RPL_ENDOFNAMES(chanel, Name)			"366 " + chanel + " :End of " + Name + " list"
+#define RPL_NAMREPLY(NickName, channel, membs) "353 " + NickName + " = " + channel + " :" + membs
+#define RPL_ENDOFNAMES(NickName, chanel)			"366 " + NickName + " " + chanel + " :End of /NAMES list"
 #define RPL_LINKS				364
 #define RPL_ENDOFLINKS			365
 #define RPL_BANLIST				367
@@ -106,7 +108,7 @@
 #define RPL_USERSSTART			392
 #define RPL_USERS				393
 #define RPL_ENDOFUSERS			394
-#define RPL_NOUSERS				395
+#define RPL_NOUSERS(NickName,chanel)				"395 " + NickName + " " + chanel + " :User does not exist"
 #define RPL_TRACELINK			200
 #define RPL_TRACECONNECTING		201
 #define RPL_TRACEHANDSHAKE		202

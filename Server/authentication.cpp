@@ -57,7 +57,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                     if (pass == skipSpace(_Password)) //&& len_param_command == 2)
                     {
                         currUser->insertedPassSuccessfully();
-                        currUser->ServertoClients(ERR_CORRECTPASS(std::string("*")));
+                        // currUser->ServertoClients(ERR_CORRECTPASS(std::string("*")));
                     }
                     else if (pass.empty() || len_param_command == 1)
                         currUser->ServertoClients(ERR_NEEDMOREPARAMS(std::string("*"), Command));

@@ -3,9 +3,13 @@
 
 #include <cstddef>
 #include <iostream>
+// #include "../server/server.hpp"
 # include <map>
 #include <sys/socket.h>
 # include <string>
+#include <sstream>
+#include <fstream>
+#include <istream>
 
 # define USER_ID size_t  
 # define CHANNEL_NAME std::string
@@ -59,7 +63,8 @@ class   User
 
         //Send Cleint to Clients
         void CleintToClient(int id, std::string msg);
-
+        std::string GetIpAddress();
+    
         void joinedChannel(Channel *channel);
         void partedChannel(Channel *channel);
         std::map<std::string, Channel *> const& getJoinedChannels();

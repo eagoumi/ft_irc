@@ -37,6 +37,7 @@ INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \
 				Channels/channel.hpp \
 				Users/user.hpp \
+				error_request.hpp \
 				Commands/Commands.hpp
 
 

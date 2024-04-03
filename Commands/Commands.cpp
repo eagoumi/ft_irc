@@ -261,7 +261,7 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // User *currUser = db->getUser(fd);
     std::string cmd = getCommand();
     if (cmd == "JOIN")
-      join();
+        join();
     else if (cmd == "KICK")
         kick();
     else if (cmd == "LOGTIME")

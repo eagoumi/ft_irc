@@ -51,20 +51,22 @@ void Commands::invite()
     }
     else if(currChannel->isUserMember(nickUser->getUserId()) == true)
     {
-        sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + " :is already on channel\n");
+        currUser->ServertoClients(RPL_ALREADYONCHANNEL(db->getUser(fd)->getNickName(), nickName, channelName));
+        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + " :is already on channel\n");
     }
     else{
         // size_t inviteFd = existUser(nickName);
         User* invitedUser = db->existUser(nickName);
         if(invitedUser)
         {
-            sendResponse(invitedUser->getUserId(), ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n");
+            sendResponse(invitedUser->getUserId(), ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n"); //LOGS STILL HERE WITH ME
             // db->getChannel(channelName)->setInvitedNick(nickName);
             db->getChannel(channelName)->inviteUser(invitedUser);
             // std::cout << "INVITEDNICK = " << invitedNick << std::endl;
         }   
         else
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :User does not exist\n");
+            currUser->ServertoClients(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :User does not exist\n");
     }
 }
 

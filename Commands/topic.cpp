@@ -6,6 +6,7 @@
 void Commands::topic()
 {
     std::string channelName = getNextParam().first;
+    currChannel = db->getChannel(channelName);
     std::string theTopic = getNextParam().first;
     std::cout << "TOPIC1 = " << theTopic << std::endl;
 

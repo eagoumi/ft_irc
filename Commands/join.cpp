@@ -23,14 +23,18 @@ void Commands::join()
         {
             std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex]+ "\n");
+            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN " + channelNamesList[channelIndex] + "\n");
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt" + channelNamesList[channelIndex] + "\n");//MODE #blahmeow +nt
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt " + channelNamesList[channelIndex]+ '\n');
-            sendResponse(fd, ":" + getHostName() + " MODE " + channelNamesList[channelIndex] + " +nt\n");
-            sendResponse(fd, ":" + getHostName() + " 353 " + db->getUser(fd)->getNickName() + " @ " + channelNamesList[channelIndex] + " :" + "@tofa7A, agoumi, yousra\n");
-            sendResponse(fd, ":" + getHostName() + " 366 " + db->getUser(fd)->getNickName() + channelNamesList[channelIndex] + " :End of /NAMES list.\n");
-            sendResponse(fd, ":" + getHostName() + " 332 " + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :" + db->getChannel(channelNamesList[channelIndex])->getTopic() + "\n");
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + "  has changed mode: +s " + channelNamesList[channelIndex] + "\n");
+            
+            // sendResponse(fd, ":" + currUser->GetIpAddress() + " MODE " + channelNamesList[channelIndex] + " +t\n");
+            currUser->ServertoClients(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],"@" + db->getUser(fd)->getNickName()));
+            currUser->ServertoClients(RPL_ENDOFNAMES(db->getUser(fd)->getNickName(), channelNamesList[channelIndex]));
+
+            // sendResponse(fd, ":" + currUser->GetIpAddress() + " 353 " + db->getUser(fd)->getNickName() + " @ " + channelNamesList[channelIndex] + " :" + "@tofa7A, agoumi, yousra\n");
+            // sendResponse(fd, ":" + currUser->GetIpAddress() + " 366 " + db->getUser(fd)->getNickName() + channelNamesList[channelIndex] + " :End of /NAMES list.\n");
+            // sendResponse(fd, ":" + currUser->GetIpAddress() + " 332 " + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :" + db->getChannel(channelNamesList[channelIndex])->getTopic() + "\n");
+            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + "  has changed mode: +s " + channelNamesList[channelIndex] + "\n");
             // currUser->ServertoClients( ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
             // currUser->ServertoClients(currUser->getNickName() + " has changed mode: +s\n");
         }
@@ -42,20 +46,39 @@ void Commands::join()
                 sendResponse(fd, "User already in channel\n");
                 continue;
             }
-            else if (this->getMode("i", channelNamesList[channelIndex]) == true && currChannel->isUserInvited(currUser->getUserId()) == false)
-            {
-                sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+i)\n");
-            }
-            else if(getMode("l", channelNamesList[channelIndex]) == true && currChannel->getLimit() <= currChannel->getMembers().size())
-            {
-                sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+l)\n");
-            }
+            // else if (this->getMode("i", channelNamesList[channelIndex]) == true && currChannel->isUserInvited(currUser->getUserId()) == false)
+            // {
+            //     currUser->ServertoClients(ERR_INVITEONLYCHAN(db->getUser(fd)->getNickName(),channelNamesList[channelIndex]));
+            //     // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+i)\n");
+            // }
+            // else if(getMode("l", channelNamesList[channelIndex]) == true && currChannel->getLimit() <= currChannel->getMembers().size())
+            // {
+            //     currUser->ServertoClients(ERR_CHANNELISFULL(db->getUser(fd)->getNickName(),channelNamesList[channelIndex]));
+            //     // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+l)\n");
+            // }
             else
             {
                 // std::cout << "TEST = " << currChannel->getChannelName() << std::endl;
                 currChannel->addMember(currUser);
-                sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
-                sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");
+
+                std::map<USER_ID, User *> Members = currChannel->getMembers();
+                std::map<USER_ID, User *>::iterator It_Members = Members.begin();
+                std::string MemberStr;
+                int i = 0;
+                for (; It_Members != Members.end(); ++It_Members)
+                {
+                    if (currChannel->isUserOperator(It_Members->first))
+                    {
+                        MemberStr += "@";
+                    }
+                    MemberStr += It_Members->second->getNickName() + " ";
+                    // if (!MemberStr.empty())
+                    //     MemberStr.pop_back();
+                }
+                SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN :" + channelNamesList[channelIndex]);
+                // sendResponse(fd, ":" + MemberStr + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN :" + channelNamesList[channelIndex] + "\n");
+                currUser->ServertoClients(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],MemberStr)); //how to pranting all list of members on the channel 
+                // sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");
             }
         }
     }

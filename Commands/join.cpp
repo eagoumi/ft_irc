@@ -27,9 +27,9 @@ void Commands::join()
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt" + channelNamesList[channelIndex] + "\n");//MODE #blahmeow +nt
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt " + channelNamesList[channelIndex]+ '\n');
             sendResponse(fd, ":" + getHostName() + " MODE " + channelNamesList[channelIndex] + " +nt\n");
-            sendResponse(fd, ":" + getHostName() + " 353 " + db->getUser(fd)->getNickName() + " @ " + channelNamesList[channelIndex] + " :" + "@tofa7A, agoumi, yousra\n");
+            sendResponse(fd, ":" + getHostName() + " 353 " + db->getUser(fd)->getNickName() + " @ " + channelNamesList[channelIndex] + " :" + "@tofa7A agoumi yousra\n");
             sendResponse(fd, ":" + getHostName() + " 366 " + db->getUser(fd)->getNickName() + channelNamesList[channelIndex] + " :End of /NAMES list.\n");
-            sendResponse(fd, ":" + getHostName() + " 332 " + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :" + db->getChannel(channelNamesList[channelIndex])->getTopic() + "\n");
+            // sendResponse(fd, ":" + getHostName() + " 332 " + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :" + db->getChannel(channelNamesList[channelIndex])->getTopic() + "\n");
             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + "  has changed mode: +s " + channelNamesList[channelIndex] + "\n");
             // currUser->ServertoClients( ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex] + "\n");
             // currUser->ServertoClients(currUser->getNickName() + " has changed mode: +s\n");

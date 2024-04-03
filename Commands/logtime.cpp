@@ -207,26 +207,20 @@ void Commands::logtime() {
     if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n\n"); return; }
     
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
-    locations_statsCmd += begin_at;
-    locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at);
+    locations_statsCmd += begin_at + "\\&end_at\\=" + incrementDate(end_at);
 
     jsonContent = executeCmd(locations_statsCmd);
+    /*this is what we call hard code in person*/
     if (jsonContent == "{}") {
         sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");
         sendResponse(fd, "Result: 0 Hours \U0001F61C\n\n"); return ;
     }
-    /****************************************DEBUG****************************************/
-        std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;
-        std::cout << locations_statsCmd << std::endl;
-        std::cout << jsonContent << std::endl;
-    /*************************************************************************************/
-    
+
     std::string token;
     std::vector<std::string> loggedHours;
     std::string currDate = incrementDate(begin_at, 0);
     while (currDate.compare(incrementDate(end_at))) {
         loggedHours.push_back(getJsonValue(currDate, jsonContent));
-        std::cout << "[currDate:"+currDate + "] = ["+getJsonValue(currDate, jsonContent)+"]" << std::endl;
         currDate = incrementDate(currDate);
     }
     std::string result = getHoursSum(loggedHours);

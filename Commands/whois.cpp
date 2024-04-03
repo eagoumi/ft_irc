@@ -26,7 +26,7 @@ static std::string getJsonValue(std::string const& property, std::string const& 
     std::string jsonValue;
     size_t propertyStartingIndex = jsonContent.find("\"" + property + "\"");
     if (propertyStartingIndex != std::string::npos) {
-        size_t valueStartingIndex = propertyStartingIndex + property.length() + 3;//2;
+        size_t valueStartingIndex = propertyStartingIndex + property.length() + 3;;
         valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
         for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
             if (jsonContent[valueStartingIndex] == '\"' || jsonContent[valueStartingIndex] == ',')
@@ -43,8 +43,7 @@ static std::string getJsonObjValue(std::string const& property, std::string cons
     size_t propertyStartingIndex = jsonContent.find("\"" + property + "\"");
     int curlyBracketsCounter = 0;
     if (propertyStartingIndex != std::string::npos) {
-        size_t valueStartingIndex = propertyStartingIndex + property.length() + 3;//2;
-        // valueStartingIndex += jsonContent[valueStartingIndex] == '\"' ? 1 : 0;
+        size_t valueStartingIndex = propertyStartingIndex + property.length() + 3;
         if (jsonContent[valueStartingIndex] == '{') {
             for (; valueStartingIndex < jsonContent.length(); valueStartingIndex++) {
                 if (jsonContent[valueStartingIndex] == '{')
@@ -120,102 +119,58 @@ void Commands::whois() {
 
     std::string login = getNextParam().first; std::transform(login.begin(), login.end(), login.begin(), ::tolower);
     
+    /*User Validation*/
     std::string userCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login;
-std::cout << userCmd << std::endl;
     std::string jsonContent = executeCmd(userCmd);
-std::cout << jsonContent << std::endl;
-    if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
+    if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n\n"); return; }
 
     std::string imageLink = getJsonValue("medium", jsonContent);
-
     if (imageLink != "null") {
-        // sendResponse(fd, "Currently on: " + userValue + "\n");
-        std::cout << "curl -s " + imageLink << std::endl;
+
+        /*Display Image*/
         executeCmd("curl -s " + imageLink + " > image.png");
-        std::cout << "img cmd executed" << std::endl;
         int saved_stdout = dup(1);
         dup2(currUser->getUserId(), 1);
-        system("curl -s https://iterm2.com/utilities/imgcat | bash /dev/stdin image.png");
+        system("curl -s https://iterm2.com/utilities/imgcat | bash /dev/stdin image.png 2> /dev/null");
         dup2(saved_stdout, 1);
         close(saved_stdout);
 
-        std::string displayName = getJsonValue("displayname", jsonContent);
-        // sendResponse(fd, "name " + displayName + "\n");
-        std::string email = getJsonValue("email", jsonContent);
-        // sendResponse(fd, "email: " + email + "\n");
+        /*Display DATA*/
+        std::string displayName      = getJsonValue("displayname", jsonContent);
+        std::string email            = getJsonValue("email", jsonContent);
         std::string correctionPoints = getJsonValue("correction_point", jsonContent);
-        // sendResponse(fd, "correction points: " + correctionPoints + "\n");
-        std::string poolDate = getJsonValue("pool_month", jsonContent) + "/" + getJsonValue("pool_year", jsonContent);
-        // sendResponse(fd, "Pool Date: " + poolDate + "\n");
-        std::string campusCity = getJsonValue("name", getJsonList("campus", jsonContent)[0]) ;
-        // sendResponse(fd, "Campus City: " + campusCity + "\n");
+        std::string poolDate         = getJsonValue("pool_month", jsonContent) + "/" + getJsonValue("pool_year", jsonContent);
+        std::string campusCity       = getJsonValue("name", getJsonList("campus", jsonContent)[0]) ;
+        std::string blackholeAT;
         
+        size_t width = 25;
         std::ostringstream os;
-        os << std::setw(28) << std::left << "Name" << "▒ " << displayName << "\n";
-        os << std::setw(28) << std::left << "Email" << "▒ " << email << "\n";
-        os << std::setw(28) << std::left << "CorrectionPoints" << "▒ " << correctionPoints << "\n";
-        os << std::setw(28) << std::left << "CampusCity" << "▒ " << campusCity<< "\n";
-        os << std::setw(28) << std::left << "PoolDate" << "▒ " << poolDate << "\n";
-       // std::string level = getJsonValue("level", jsonContent);
-       // sendResponse(fd, "level: " + level + "\n");
+        os << std::setw(width) << std::left << "Name"             << "▒ " << displayName     << " 🧑🏻👩🏻\n";
+        os << std::setw(width) << std::left << "Email"            << "▒ " << email           << " 📨\n";
+        os << std::setw(width) << std::left << "Correction Points"<< "▒ " << correctionPoints<< " 🟡\n";
+        os << std::setw(width) << std::left << "Campus City"      << "▒ " << campusCity      << " 🏫\n";
+        os << std::setw(width) << std::left << "Pool Date"        << "▒ " << poolDate        << " 🏊\n";
 
         std::vector<std::string> objList = getJsonList("cursus_users", jsonContent);
         for (size_t i = 0; i < objList.size(); i++) {
-            std::cout << objList[i] << std::endl << std::endl;
             std::string level = getJsonValue("level", objList[i]);
             std::string cursusObj = getJsonObjValue("cursus", objList[i]);
             std::string cursusName = getJsonValue("name", cursusObj);
-            os << std::setw(30) << std::left << cursusName << "▒ " << level << "\n";
-            // os << std::setw(18) << std::left << "level: " << "▒ " << level + "\n";
-            // sendResponse(fd, "cursus name: " + cursusName + "\tlevel: " + level + "\n");
+            /*This is What we call it HARD CODE*/
+            if (cursusName == "Piscine C décloisonnée")
+                os << std::setw(width+2) << std::left << cursusName << "▒ " << level << " 📈\n";
+            else
+                os << std::setw(width) << std::left << cursusName << "▒ " << level << " 📈\n";
+            if (cursusName == "42cursus")
+                blackholeAT = getJsonValue("blackholed_at", objList[i]);
         }
-        sendResponse(fd, os.str());
+        if (blackholeAT != "null")
+            os << std::setw(width) << std::left << "Will Be Blackholed At" << "▒ " << blackholeAT.substr(0, 10) + " 🌀\n";
+        else
+            os << std::setw(width) << std::left << "Will Be Blackholed At" << "▒ " << "You Escaped The Matrix 💊😎\n";
 
-
-        // std::string profileUrl = getJsonValue("url", jsonContent);
-        // sendResponse(fd, std::string("\e]8;;" + profileUrl + "\e\\42 Intra Profile:\e]8;;\e\\ " + profileUrl + "\n"));
-        // sendResponse(fd, std::string("42 Intra Profile: ") + "\e]8;;https://ubuntu.com/\e\\uwu\e]8;;\e\\\n");
-
-        // std::string imgContent =  executeCmd("curl -s https://iterm2.com/utilities/imgcat | bash /dev/stdin image.png");
-        // std::cout << imgContent << std::endl;
-        // sendResponse(fd, imgContent);
+        sendResponse(fd, os.str() + "\n");
     }
-    else sendResponse(fd, "Not available :c\n");
-    
-    
-    // std::pair<std::string, std::string> defalutLogtimeDate = getLogTimeDate();
-    // std::string begin_at, end_at;
-
-    // if (_paramCounter >= 3) begin_at = getNextParam().first; else begin_at = defalutLogtimeDate.first;
-    // if (_paramCounter >= 4) end_at = getNextParam().first; else end_at = defalutLogtimeDate.second;
-
-    // if (checkDateFormat(begin_at) == false || checkDateFormat(end_at) == false || checkDateOrder(begin_at, end_at) == false)
-    //     { sendResponse(fd, "The start or end date format is invalid please use YYYY-MM-DD.\n"); return; }
-
-    // std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
-    // locations_statsCmd += begin_at;
-    // locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at);
-
-
-    // std::string jsonContent = executeCmd(locations_statsCmd);
-    // if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
-    
-
-    // /****************************************DEBUG****************************************/
-    //     std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;
-    //     std::cout << locations_statsCmd << std::endl;
-    //     std::cout << jsonContent << std::endl;
-    // /*************************************************************************************/
-    
-    // std::string token;
-    // std::vector<std::string> loggedHours;
-    // std::string currDate = incrementDate(begin_at, 0);
-    // while (currDate.compare(incrementDate(end_at))) {
-    //     loggedHours.push_back(getJsonValue(currDate, jsonContent));
-    //     std::cout << "[currDate:"+currDate + "] = ["+getJsonValue(currDate, jsonContent)+"]" << std::endl;
-    //     currDate = incrementDate(currDate);
-    // }
-    // std::string result = getHoursSum(loggedHours);
-    // sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");
-    // sendResponse(fd, "Result: " + result + " Hours \U0001F61C\n");
+    else 
+        sendResponse(fd, "Not available :c\n\n");
 }

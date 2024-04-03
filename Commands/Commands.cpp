@@ -126,18 +126,14 @@ void   Commands::tokenize(std::string const& cmdLine) {
         /************************************/
         /*			skip spaces				*/
         /************************************/
-        while (isspace(cmdLine[i]) == true/*cmdLine[i] == ' '*/)
-        {
+        while (isspace(cmdLine[i]) == true)
             i++;
-        }
         while (i <= cmdLine.length()) {
-
             /*********************************************************/
             /*  store word to the end of line if tokenType is a MSG  */
             /*********************************************************/
             if (tokenType == COMMENT || tokenType == TOPIC_MSG || tokenType == REASON || tokenType == MSG) {
 
-                // cmdLine[i] != ':' ? word.push_back(':') : (void)word;
                 word += cmdLine.substr(i); i = cmdLine.length();
                 if (word.back() == '\n') word.pop_back();
                 if (word.back() == '\r') word.pop_back();
@@ -146,7 +142,6 @@ void   Commands::tokenize(std::string const& cmdLine) {
                 _tokensList.push_back(tokenNode);
                 word.clear();
                 break ;
-                // tokenCounter++;
             }
 
             /*********************************************************/

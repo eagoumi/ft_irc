@@ -40,7 +40,7 @@ void Commands::topic()
     {
         puts("clear topic");
         // if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false && getMode("t", channelName) == true)
-        if (currChannel->isUserOperator(currUser->getUserId()) == false && getMode("t", channelName) == true)
+        if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
             currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
@@ -53,7 +53,7 @@ void Commands::topic()
     else if (theTopic[0] == ':')
     {
         // puts("set topic");
-        if (currChannel->isUserOperator(currUser->getUserId()) == false && this->getMode("t", channelName) == true)
+        if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
             currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");

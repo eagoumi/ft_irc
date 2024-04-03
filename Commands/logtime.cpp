@@ -163,7 +163,7 @@ std::string Commands::get42Token() {
             tokenValidUntil = atol(getJsonValue("secret_valid_until", jsonContent).c_str());
         }
         else
-            sendResponse(fd, "Please export your UID & SECRET, Go Get it from Intra or Ask Tofa7a.\n");
+            sendResponse(fd, "Please export your UID & SECRET, Go Get it from Intra or Ask Tofa7a.\n\n");
     }
     return token;
 }
@@ -172,11 +172,13 @@ static std::string getHoursSum(const std::vector<std::string>& loggedHours) {
 
     int totalSeconds = 0;
     for (size_t i = 0; i < loggedHours.size(); ++i) {
-        std::istringstream iss(loggedHours[i]);
-        int hours, minutes, seconds;
-        char colon;
-        iss >> hours >> colon >> minutes >> colon >> seconds;
-        totalSeconds += hours * 3600 + minutes * 60 + seconds;
+        if (!loggedHours[i].empty()) {
+            std::istringstream iss(loggedHours[i]);
+            int hours, minutes, seconds;
+            char colon;
+            iss >> hours >> colon >> minutes >> colon >> seconds;
+            totalSeconds += hours * 3600 + minutes * 60 + seconds;
+        }
     }
 
     int hours = totalSeconds / 3600;
@@ -198,32 +200,30 @@ void Commands::logtime() {
     if (_paramCounter >= 4) end_at = getNextParam().first; else end_at = defalutLogtimeDate.second;
 
     if (checkDateFormat(begin_at) == false || checkDateFormat(end_at) == false || checkDateOrder(begin_at, end_at) == false)
-        { sendResponse(fd, "The start or end date format is invalid please use YYYY-MM-DD.\n"); return; }
+        { sendResponse(fd, "The start or end date format is invalid please use YYYY-MM-DD.\n\n"); return; }
 
+    std::string userCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login;
+    std::string jsonContent = executeCmd(userCmd);
+    if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n\n"); return; }
+    
     std::string locations_statsCmd = "curl  -sH \"Authorization: Bearer " + token42 + "\" https://api.intra.42.fr/v2/users/" + login + "/locations_stats\\?begin_at\\=";
-    locations_statsCmd += begin_at;
-    locations_statsCmd += "\\&end_at\\=" + incrementDate(end_at);
+    locations_statsCmd += begin_at + "\\&end_at\\=" + incrementDate(end_at);
 
+    jsonContent = executeCmd(locations_statsCmd);
+    /*this is what we call hard code in person*/
+    if (jsonContent == "{}") {
+        sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");
+        sendResponse(fd, "Result: 0 Hours \U0001F61C\n\n"); return ;
+    }
 
-    std::string jsonContent = executeCmd(locations_statsCmd);
-    if (jsonContent == "{}") { sendResponse(fd, "This student isn't available on IBA7LAWN N IRC\n"); return; }
-    
-
-    /****************************************DEBUG****************************************/
-        std::cout << "converted date : " << incrementDate("2024-02-01") << std::endl;
-        std::cout << locations_statsCmd << std::endl;
-        std::cout << jsonContent << std::endl;
-    /*************************************************************************************/
-    
     std::string token;
     std::vector<std::string> loggedHours;
     std::string currDate = incrementDate(begin_at, 0);
     while (currDate.compare(incrementDate(end_at))) {
         loggedHours.push_back(getJsonValue(currDate, jsonContent));
-        std::cout << "[currDate:"+currDate + "] = ["+getJsonValue(currDate, jsonContent)+"]" << std::endl;
         currDate = incrementDate(currDate);
     }
     std::string result = getHoursSum(loggedHours);
     sendResponse(fd, "Logtime for " + login + " from " + begin_at + " to " + end_at + " is \U000023F2  :\n");
-    sendResponse(fd, "Result: " + result + " Hours \U0001F61C\n");
+    sendResponse(fd, "Result: " + result + " Hours \U0001F61C\n\n");
 }

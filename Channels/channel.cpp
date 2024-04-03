@@ -2,7 +2,12 @@
 #include "../Users/user.hpp"
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include <utility>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <istream>
 
 #define NOT_FOUND NULL
 typedef std::map<USER_ID, User *>::iterator UserIter;
@@ -33,6 +38,12 @@ Channel::Channel(CHANNEL_NAME channelName, User *creator) {
     // I think it is better to add the creator to both of them
     this->_members[creatorId] = creator;
     this->_operators[creatorId] = creator;
+
+    /**************************/
+    /* MODIFIED BY TOFA7A SRY */
+    /**************************/
+    // modeSeted['i']; modeSeted['t']; modeSeted['k']; modeSeted['o']; modeSeted['l'];
+    _modeSet.insert('+'); _modeSet.insert('t');
 }
 
 void Channel::addMember(User *member) {
@@ -93,16 +104,6 @@ User *Channel::getMember(USER_ID Id) {
     return NULL;
 }
 
-std::string Channel::getTopic() {
-
-    return newTopic; 
-}
-
-void Channel::setTopic(std::string nTopic) {
-
-    this->newTopic = nTopic;
-}
-
 std::map<USER_ID, User *> const& Channel::getMembers() {
 
     return this->_members;
@@ -113,13 +114,21 @@ void Channel::deleteMember(User *userToDelete) {
 
     if(it != _members.end())
         _members.erase(it);
-    
 }
-
 
 std::map<USER_ID, User *> const& Channel::getOperators()
 {
     return this->_operators;
+}
+
+std::string Channel::getTopic() {
+
+    return newTopic; 
+}
+
+void Channel::setTopic(std::string nTopic) {
+
+    this->newTopic = nTopic;
 }
 
 void Channel::setLimit(size_t nLimitMembers)
@@ -145,6 +154,82 @@ void Channel::deleteOperator(User *operatorToDelete) {
         _operators.erase(it);
     
 }
+
+
+/******************************/
+/* MODIFIED BY TOFA7A SRY     */
+/* This method does two       */
+/* things : set and get       */
+/* I'll try to split it       */
+/******************************/
+
+// std::map<std::string, bool> Channel::gettingModes(std::string toFind)
+// {
+//     std::string::size_type it = modeS.find(toFind);
+
+//     if (it != std::string::npos)
+//     {
+//         it--;
+//         if (modeS[it] == '+' || (modeS[0] == '+' && modeS[it] != '-'))
+//         {
+//             modeSeted[toFind] = true;
+//         }
+//         else
+//         {
+//             puts("test4");
+//             modeSeted[toFind] = false;
+//         }
+//     }
+//     return modeSeted;
+// }
+
+/*************************/
+/* updated version of    */
+/* both get and set      */
+/*************************/
+bool Channel::getMode(const char& modeLetter) {
+
+    if (_modeSet.find(modeLetter) != _modeSet.end())
+        return true;
+    return (false);
+}
+
+void Channel::setMode(const char& modeLetter) {
+
+    if (_modeSet.empty())   _modeSet.insert('+');
+                            _modeSet.insert(modeLetter);
+}
+
+void Channel::removeMode(const char& modeLetter) {
+
+                                _modeSet.erase(modeLetter);
+    if (_modeSet.size() == 1)   _modeSet.erase('+');
+}
+
+std::string Channel::getModeStr() {
+
+    std::ostringstream stream;
+    std::copy(_modeSet.begin(), _modeSet.end(), std::ostream_iterator<char>(stream));
+    return stream.str();
+}
+
+/*****************************/
+/* MODIFIED BY TOFA7A SRY    */
+/* I think no need for it    */
+/* since we can create a     */
+/* set method for that       */
+/* which will parse modeStr  */
+/* then set the right values */
+/*****************************/
+// void Channel::initializeModes(std::string modeStr)
+// {
+//     modeS = modeStr;
+    // modeSeted["i"]; <<<<<<<< those moved to Channel() Param constructer
+    // modeSeted["t"]; <<
+    // modeSeted["k"]; <<
+    // modeSeted["o"]; <<
+    // modeSeted["l"]; <<
+// }
 
 Channel::~Channel()
 {

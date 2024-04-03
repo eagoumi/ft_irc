@@ -10,3 +10,6 @@
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+DATABASE_DEBUG.csv
+image.png

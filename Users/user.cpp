@@ -51,6 +51,7 @@ void User::setNickName(NICK_NAME const& name) {
 }
 
 NICK_NAME const & User::getNickName() {
+    // std::cout << "NIIIIIII " << _nickname << std::endl;
     return (_nickname);
 }
 

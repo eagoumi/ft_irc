@@ -11,49 +11,20 @@ void Commands::displayMember(std::string channelName)
     }
 }
 
-// bool Commands::existMemberChannel(std::string member, std::string channelName)
-// {
-//     std::map<size_t, User *> members;
-//     members = db->getChannel(channelName)->getMembers();
-//     for (std::map<size_t, User *>::iterator it = members.begin(); it != members.end(); it++)
-//     {
-//         if (member == it->second->getNickName())
-//             return true;
-//     }
-//     return false;
-// }
-// bool Commands::existOperatorChannel(std::string nick, std::string channelName)
-// {
-//     std::map<size_t, User *> operators;
-//     // int flag;
-//     operators = db->getChannel(channelName)->getOperators();
-//     for (std::map<size_t, User *>::iterator it = operators.begin(); it != operators.end(); it++)
-//     {
-//         std::cout << "OPERATORS = " << it->second->getNickName() << "NICK ENTRED = " << nick << std::endl;
-//         if (nick == it->second->getNickName())
-//             return true;
-//     }
-//     return false;
-// }
-
 void Commands::kick()
 {
     std::string channelName = getNextParam().first;
     std::string nickName = getNextParam().first;
     std::string reason = getNextParam().first;
-    // std::cout << "REASON = " << reason << std::endl; 
-    // if(reason[0] == ':')
-    //     reason.erase(0, 1);
+
     currChannel = db->getChannel(channelName);
     User* nickUser = db->existUser(nickName);
-    // if (command.size() < 3)
-    // {
-    //     sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName(), getCommand()) + "\n");
-    //     // sendResponse(fd, ":" + currUser->getNickName() + " " + getCommand() + " :Not enough parameters\n");
-    //     return;
-    // }
+   
     if (currChannel == NULL)
+    {    
         sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
+        return ;
+    }
     // else if (existMemberChannel(currUser->getNickName(), channelName) == false)
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {
@@ -63,18 +34,11 @@ void Commands::kick()
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(nickName, channelName));
-        // sendResponse(fd, ":" + currUser->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
-        // sendResponse(fd, ERR_CHANOPRIVSNEEDED(nickName, channelName) + "\n");
     }
-    // std::cout << "SEGVVV = " << currChannel->isUserMember(nickUser->getUserId()) << std::endl;
     // else if (existMemberChannel(nickName, channelName) == false)
-        puts("1");
-    // std::cout << "NICHNAME = "  << nickName << std::endl;
-     if (currChannel->isUserMember(nickUser->getUserId()) == false)
+     if (currChannel->isNickExist(nickName) == false)
     {
-        puts("2");
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :They aren't on that channel\n");
-        puts("3");
     }
 
     // else if (existOperatorChannel(nickName, channelName) == true)

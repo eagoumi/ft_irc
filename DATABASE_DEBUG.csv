@@ -1,11 +1,11 @@
 *Server Channels* :
 
-	#gg: [ +t, TOPIC:""
-		Operaters: agoumi420, 
-		Members: agoumi420, 
+	#hello: [ +t, TOPIC:""
+		Operaters: a, 
+		Members: a, 
 	]
 
 =================================================================
 
 *Server Users* :
-	agoumi420, 
+	a, b, 

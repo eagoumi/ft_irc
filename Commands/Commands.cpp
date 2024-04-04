@@ -297,108 +297,12 @@ void Commands::sendResponse(int userfd, std::string message)
     send(userfd, message.c_str(), message.length(), 0);
 }
 
-// size_t Commands::getLimitArg()
-// {
-//     if(command[4] == "")
-//         return 0;
-//     std::cout << "TEST = " << command[4] << std::endl;
-//     size_t nbr = static_cast<size_t>(atoi(command[4].c_str()));
-//     if(nbr == 0)
-//         return 1 ;
-//     return nbr;
-// }
-
-// std::string Commands::getNick()
-// {
-//     if (getCommand() == "invite" || getCommand() == "INVITE")
-//         return originLine[1];
-//     for (itV = originLine.begin(); itV != originLine.end(); itV++)
-//     {
-//         if (itV->find('#', 0) != std::string::npos)
-//         {
-//             itV++;
-//             return *itV;
-//         }
-//     }
-//     return "";
-// }
-
 std::string const Commands::getCommand() const
 {
     std::string cmd = _tokensList.front().data;
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
     return cmd;
 }
-
-// std::string Commands::getModeString()
-// {
-//     if (originLine[2] != "")
-//         return originLine[2];
-//     return "";
-// }
-
-// std::string Commands::getComment()
-// {
-//     if (originLine[3] != "")
-//         return originLine[3];
-//     else
-//         return "";
-// }
-
-// std::string Commands::getTopic()
-// {
-//     // std::cout << "WHY " <<command[2] << std::endl;
-//     if (originLine[2] != "")
-//         return originLine[2];
-//     else
-//         return "";
-// }
-
-// std::map<std::string, std::string> Commands::splitInput(std::string input)
-// {
-
-//     std::map<std::string, std::string> sChannels;
-//     std::map<std::string, std::string>::iterator it;
-
-//     std::istringstream str(input);
-//     std::string token;
-//     while (getline(str, token, ','))
-//     {
-//         sChannels.insert(std::make_pair(token, ""));
-//     }
-//     if (originLine[0] == "JOIN" && originLine[2] != "")
-//     {
-//         it = sChannels.begin();
-//         std::istringstream str2(originLine[2]);
-//         while (getline(str2, token, ','))
-//         {
-//             it->second = token;
-//             it++;
-//         }
-//     }
-    // for (it = sChannels.begin(); it != sChannels.end(); it++)
-    // {
-    //     std::cout << it->first << "      " << it->second << std::endl;
-    // }
-
-//     return sChannels;
-// }
-
-// std::string Commands::getChannel()
-// {
-//     if (getCommand() == "mode" || getCommand() == "MODE")
-//         return originLine[1];
-
-//     for (itV = originLine.begin(); itV != originLine.end(); itV++)
-//     {
-//         if (itV->find('#', 0) != std::string::npos)
-//         {
-//             // std::cout << "THAAAAAT'S WHYYYY = " << *itV << std::endl;
-//             return *itV;
-//         }
-//     }
-//     return "";
-// }
 
 std::string const Commands::getHostName()
 {

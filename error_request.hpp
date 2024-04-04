@@ -28,7 +28,7 @@
 #define ERR_NOTEXTTOSEND(NickName)                  "412 " + NickName + " :No text to send"
 #define ERR_NOTOPLEVEL			413
 #define ERR_WILDTOPLEVEL		414
-#define ERR_UNKNOWNCOMMAND(Client, Command)		"421 " + Client + Command + " :Unknown command!"
+#define ERR_UNKNOWNCOMMAND(Client, Command)		"421 " + Client + " " + Command + " :Unknown command!"
 #define ERR_NOMOTD				422
 #define ERR_NOADMININFO			423
 #define ERR_FILEERROR			424

@@ -41,14 +41,14 @@ void Commands::mode()
     // }
     if (currChannel == NULL)
     {
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
+        _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
         return ;
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
     }
     // else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+        _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
     else {
@@ -151,7 +151,7 @@ void Commands::mode()
     //     // if(getMode("k", channelName) == true)
     //     //     mode.append("k");
     //     std::cout << "mode = "<< mode << std::endl;
-    //     currUser->ServertoClients(RPL_UMODEIS(currUser->getNickName(), mode));
+    //     _logger.ServertoClient(RPL_UMODEIS(currUser->getNickName(), mode));
     // }
 
     /**************************/
@@ -184,7 +184,7 @@ void Commands::mode()
 
         //     User* Operator = db->existUser(modeArg);
         //     if (currChannel->isUserOperator(currUser->getUserId()) == false)
-        //         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+        //         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
         //     else if (currChannel->isUserOperator(currUser->getUserId()) == true)
         //         currChannel->addOperator(Operator->getUserId());
         // }
@@ -199,7 +199,7 @@ void Commands::mode()
 
         // User* fdOperator = db->existUser(modeArg);
         // if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == false)
-        //     currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+        //     _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
         // else if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
         // {
         //     currChannel->addOperator(fdOperator->getUserId());

@@ -34,12 +34,12 @@ void Commands::PRIVMSG()
                 {
                     puts("ss11");
                     std::cout << "Operators = " << IT_OPER->second->getNickName() << std::endl;
-                    currUser->CleintToClient( IT_OPER->first, Message); // check for message syntax
+                    _logger.CleintToClient( IT_OPER->first, Message); // check for message syntax
                 }
                 puts("ss3");
             }
             else
-                currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), good_str));
+                _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), good_str));
         }
         else
         {
@@ -49,17 +49,17 @@ void Commands::PRIVMSG()
                 if (get_param[i][0] == '#' && ch->getMember(fd))
                     SendMessageToMembers(ch, currUser, Message); // check for message syntax
                 else
-                    currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
+                    _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
             }
             else
             {
                 User *reciver_msg = db->existUser(get_param[i]);
                 if (reciver_msg)
-                    currUser->CleintToClient(reciver_msg->getUserId(), Message);
+                    _logger.CleintToClient(reciver_msg->getUserId(), Message);
                 else
                 {
                     puts("i am here");
-                    currUser->ServertoClients(ERR_NOSUCHNICK(get_param[i]));
+                    _logger.ServertoClient(ERR_NOSUCHNICK(get_param[i]));
                 }
             }
         }

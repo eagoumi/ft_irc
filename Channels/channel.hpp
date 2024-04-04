@@ -26,7 +26,7 @@ class Channel
         std::map<USER_ID, User *>		_invited;
         std::pair<bool, size_t>			_limit; //hmmm not sure if we have to implement another limit for how much channel a user could join to
         std::pair<bool, std::string>	_topic;
-        std::pair<bool, std::string>	_key;
+        std::string _key;
 
         //added
         std::map<char, bool> modeSeted;
@@ -61,6 +61,8 @@ class Channel
         void                             deleteOperator(User *operatorToDelete);
         size_t                      	 getLimit();
         bool                             isUserMember(USER_ID Id);
+        void                             setKey(std::string const& givenKey);
+        bool                             isKeyMatch(std::string const& givenKey);
 
         // std::string                 channelTopic(int fd);
 

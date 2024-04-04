@@ -35,23 +35,23 @@ void Commands::invite()
     if (db->getChannel(channelName) == NULL)
     {
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(nickName, channelName));
+        _logger.ServertoClient(ERR_NOSUCHCHANNEL(nickName, channelName));
     }
     // else if (existMemberChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
+        _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
     }
     // else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+        _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
     else if(currChannel->isUserMember(nickUser->getUserId()) == true)
     {
-        currUser->ServertoClients(RPL_ALREADYONCHANNEL(db->getUser(fd)->getNickName(), nickName, channelName));
+        _logger.ServertoClient(RPL_ALREADYONCHANNEL(db->getUser(fd)->getNickName(), nickName, channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + " :is already on channel\n");
     }
     else{
@@ -65,7 +65,7 @@ void Commands::invite()
             // std::cout << "INVITEDNICK = " << invitedNick << std::endl;
         }   
         else
-            currUser->ServertoClients(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :User does not exist\n");
     }
 }

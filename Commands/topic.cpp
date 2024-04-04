@@ -18,10 +18,10 @@ void Commands::topic()
 
     if (db->getChannel(channelName) == NULL)
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
-            currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
+            _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
     // else if (existMemberChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
-        currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
+        _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
 
     else if (theTopic == "")
@@ -29,12 +29,12 @@ void Commands::topic()
         puts("empty topic");
         if(db->getChannel(channelName)->getTopic() != "")
         {
-            currUser->ServertoClients(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
+            _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + db->getChannel(channelName)->getTopic() + "\n");
         }
         else if (db->getChannel(channelName)->getTopic() == "")
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No topic is set\n");
-            currUser->ServertoClients(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName));
+            _logger.ServertoClient(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName));
     }
     else if (theTopic == ":")
     {
@@ -42,7 +42,7 @@ void Commands::topic()
         // if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false && getMode("t", channelName) == true)
         if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
-            currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
         }   
         else{
@@ -55,13 +55,13 @@ void Commands::topic()
         // puts("set topic");
         if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
-            currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
         }   
         else
         {
             db->getChannel(channelName)->setTopic(theTopic);
-            currUser->ServertoClients(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
+            _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " " + db->getChannel(channelName)->getTopic() + "\n");
         }
     }

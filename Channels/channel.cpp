@@ -141,6 +141,16 @@ size_t Channel::getLimit()
     return this->limitMembers;
 }
 
+void Channel::setKey(std::string const& givenKey) {
+    _key = givenKey;
+}
+
+bool Channel::isKeyMatch(std::string const& givenKey) {
+
+    if (givenKey == _key) return true;
+    return false;
+}
+
 void Channel::addOperator(size_t fdo){
     this->_operators[fdo] = getMember(fdo);
     for(std::__1::map<size_t, User *>::iterator it = _operators.begin(); it != _operators.end(); it++)

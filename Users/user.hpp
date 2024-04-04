@@ -30,7 +30,7 @@ class   User
         bool                                _isPasswordInserted;
         bool                                _isNickInserted;
         bool                                _isUserNameInserted;
-        std::string                         _IPServer;
+        std::string                         _IPServer;//this is will be removed
 
     public:
         User();
@@ -54,16 +54,16 @@ class   User
         bool hasInsertedUsername();
         void insertedPassSuccessfully();
         //Print Errors
-        void setServerIP(std::string const &ServerIP);
-        std::string const &getServerIP();
+        // void setServerIP(std::string const &ServerIP);//this is not called anywhere
+        // std::string const &getServerIP();
 
         //Send Server To Clients
-        void IRCPrint(size_t fd, std::string string);
-        void ServertoClients(std::string string);
+        // void IRCPrint(size_t fd, std::string string);
+        // void ServertoClient(std::string string);
 
         //Send Cleint to Clients
-        void CleintToClient(int id, std::string msg);
-        std::string GetIpAddress();
+        // void CleintToClient(int id, std::string msg);
+        // std::string GetIpAddress();
     
         void joinedChannel(Channel *channel);
         void partedChannel(Channel *channel);

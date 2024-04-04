@@ -2,7 +2,7 @@
 
 Usefull Resources:
 
-    NANDA
+    NADA
 
 In order to enable LogTime Bot, get your UID and SECRET from your 42Intra settings then export them :
 

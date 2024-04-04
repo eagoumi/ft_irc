@@ -53,18 +53,18 @@ void Commands::kick()
     //     return;
     // }
     if (db->getChannel(channelName) == NULL)
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(nickName, channelName));
+        _logger.ServertoClient(ERR_NOSUCHCHANNEL(nickName, channelName));
         // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
     // else if (existMemberChannel(currUser->getNickName(), channelName) == false)
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_NOTONCHANNEL(nickName, channelName));
+        _logger.ServertoClient(ERR_NOTONCHANNEL(nickName, channelName));
         // sendResponse(fd, ":" + currUser->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
     }
 
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(nickName, channelName));
+        _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(nickName, channelName));
         // sendResponse(fd, ":" + currUser->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
         // sendResponse(fd, ERR_CHANOPRIVSNEEDED(nickName, channelName) + "\n");
     }

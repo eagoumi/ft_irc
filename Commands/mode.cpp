@@ -35,12 +35,12 @@ void Commands::mode()
 
     if (currChannel == NULL)
     {
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
+        _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
         return;
     }
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+        _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
         return;
     }
     else
@@ -74,7 +74,7 @@ void Commands::mode()
                         User *Operator = db->existUser(modeArg);
                         if (!Operator)
                         {
-                            currUser->ServertoClients(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
                             continue;
                         }
                         else if (currChannel->isNickExist(modeArg) == false)
@@ -101,7 +101,7 @@ void Commands::mode()
                         User *Operator = db->existUser(modeArg);
                         if (!Operator)
                         {
-                            currUser->ServertoClients(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
                             continue;
                         }
                         else if (currChannel->isNickExist(modeArg) == false)
@@ -166,7 +166,7 @@ void Commands::mode()
     //     // if(getMode("k", channelName) == true)
     //     //     mode.append("k");
     //     std::cout << "mode = "<< mode << std::endl;
-    //     currUser->ServertoClients(RPL_UMODEIS(currUser->getNickName(), mode));
+    //     _logger.ServertoClient(RPL_UMODEIS(currUser->getNickName(), mode));
     // }
 
     /**************************/

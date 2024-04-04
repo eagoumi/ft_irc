@@ -31,10 +31,12 @@ SRC_FILES	=	Server/server.cpp \
 				Commands/whois.cpp Commands/location.cpp \
 				Commands/logtime.cpp \
 				Commands/PRIVMSG.cpp \
-				Commands/Part.cpp
+				Commands/Part.cpp \
+				Logger/logger.cpp
 
 INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \
+				Logger/logger.hpp \
 				Channels/channel.hpp \
 				Users/user.hpp \
 				error_request.hpp \

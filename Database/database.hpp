@@ -12,7 +12,6 @@
 
 # define DEBUG false
 
-/* Meyers' Singleton */
 class Database
 {
     private:
@@ -39,8 +38,8 @@ class Database
         User  *existUser(std::string nick);
         std::map<size_t, User *> const& getUsers();
 
-        void    debug();
         // ~Database();
+        void    debug();
 
 };
 

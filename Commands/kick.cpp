@@ -36,18 +36,16 @@ void Commands::kick()
         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(nickName, channelName));
         return ;
     }
-     if (currChannel->isNickExist(nickName) == false)
+    if (currChannel->isNickExist(nickName) == false)
     {
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :They aren't on that channel\n");
         return ;
     }
-
     else if (currChannel->isUserOperator(nickUser->getUserId()) == true)
     {
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :You can't KICK the operator\n");
         return ;
     }
-
     else
     {
         User* kickedUser =db->existUser(nickName);

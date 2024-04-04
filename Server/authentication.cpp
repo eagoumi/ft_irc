@@ -60,7 +60,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                         // _logger.ServertoClient(ERR_CORRECTPASS(std::string("*")));
                     }
                     else if (pass.empty() || len_param_command == 1)
-                        _logger.ServertoClient(ERR_NEEDMOREPARAMS(std::string("*"), Command));
+                        _logger.ServertoClient(ERR_NEEDMOREPARAMS(std::string("*")));
                     else 
                         _logger.ServertoClient(ERR_PASSWDMISMATCH(std::string("*")));
                 }
@@ -133,7 +133,7 @@ void Server::WelcomeClient(User *currUser)
     {
         std::cout << currUser->getNickName() << " Is Logged in!" << std::endl;
         _logger.ServertoClient(RPL_WELCOME(currUser->getNickName(), "IRC",currUser->getUserName(), _IPHostAdress));
-        _logger.ServertoClient(RPL_YOURHOST(currUser->getNickName(), _IPHostAdress, "IBA7LAWN N IRC"));
+        _logger.ServertoClient(RPL_YOURHOST(currUser->getNickName(), _IPHostAdress));
         _logger.ServertoClient(RPL_MOTDSTART(currUser->getNickName()));
         _logger.ServertoClient(RPL_MOTD(currUser->getNickName(), " ██╗██████╗  █████╗ ███████╗██╗      █████╗ ██╗    ██╗███╗   ██╗    ███╗   ██╗    ██╗██████╗  ██████╗  "));
         _logger.ServertoClient(RPL_MOTD(currUser->getNickName(), " ██║██╔══██╗██╔══██╗╚════██║██║     ██╔══██╗██║    ██║████╗  ██║    ████╗  ██║    ██║██╔══██╗██╔════╝  "));

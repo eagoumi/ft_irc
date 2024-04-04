@@ -53,8 +53,7 @@ void Commands::kick()
     //     return;
     // }
     if (currChannel == NULL)
-        // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
-            currUser->ServertoClients(ERR_NOSUCHCHANNEL(nickName, channelName));
+        sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
     // else if (existMemberChannel(currUser->getNickName(), channelName) == false)
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {

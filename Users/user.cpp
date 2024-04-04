@@ -137,16 +137,30 @@ void User::IRCPrint(size_t fd, std::string string)
 
 void User::ServertoClients(std::string string)
 {
-    IRCPrint(_Id, ":" + getServerIP() + " " + string);
+    IRCPrint(_Id, ":" + GetIpAddress() + " " + string);
 }
 
 //Send Client To Client
 void    User::CleintToClient(int id, std::string msg)
 {
-    std::string mess = ": " + getNickName() + "!" + getUserName() + "@" + "127.0.0.1" + " " + msg;
+    std::string mess = ": " + getNickName() + "!" + getUserName() + "@" + getServerIP() + " " + msg;
 
     IRCPrint(id, mess);
 }
+
+//getHostIp Address Again
+std::string User::GetIpAddress()
+{
+
+	std::string GetIP;
+	/*std::istringstream string(*/std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log")/*)*/;
+	std::fstream OpenIpFile;
+	OpenIpFile.open(".log");
+	std::getline(OpenIpFile, GetIP);
+	std::system("rm -rf .log");
+	return GetIP;
+}
+
 
 User::~User() {
     //here I think I'll have to ... nothing srsly

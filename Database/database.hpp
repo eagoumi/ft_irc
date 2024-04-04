@@ -5,8 +5,12 @@
 # include "../Users/user.hpp"
 # include "../Channels/channel.hpp"
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <istream>
 #include <sys/socket.h>
 
+# define DEBUG false
 
 /* Meyers' Singleton */
 class Database
@@ -35,6 +39,7 @@ class Database
         User  *existUser(std::string nick);
         std::map<size_t, User *> const& getUsers();
 
+        void    debug();
         // ~Database();
 
 };

@@ -22,7 +22,7 @@ CUT			=	\033[K
 SRC_FILES	=	Server/server.cpp \
                 Server/authentication.cpp \
                 Server/main.cpp \
-				Database/database.cpp \
+				Database/database.cpp Database/debug.cpp \
 				Channels/channel.cpp \
 				Users/user.cpp \
 				Commands/Commands.cpp Commands/kick.cpp \
@@ -37,6 +37,7 @@ INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \
 				Channels/channel.hpp \
 				Users/user.hpp \
+				error_request.hpp \
 				Commands/Commands.hpp
 
 

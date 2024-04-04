@@ -148,6 +148,7 @@ void Server::ServerStarting()
 			// puts("here");
 			//check for if the connection was lost or some error for connection from the clients
 	   }
+	   _db->debug();
 	}
 }
 

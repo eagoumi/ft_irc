@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 // #include "../Commands/Commands.hpp"
@@ -28,10 +29,10 @@ class Channel
         std::pair<bool, std::string>	_key;
 
         //added
-        std::map<std::string, bool> modeSeted;
+        std::map<char, bool> modeSeted;
         // std::vector<std::string> invitedList;
         std::string newTopic;
-        std::string modeS;
+        std::set<char> _modeSet;
         size_t limitMembers;
 
     public:
@@ -42,15 +43,19 @@ class Channel
         bool isUserOperator(USER_ID);
         User *getMember(USER_ID);
         CHANNEL_NAME const & getChannelName();
+        void setMode(const char& modeLetter);
+        void removeMode(const char& modeLetter);
+        bool getMode(const char& modeLetter);
+        std::string getModeStr();
 
         //added
         std::map<USER_ID, User *> const& getMembers();
         std::map<USER_ID, User *> const& getOperators();
-        std::map<std::string, bool> 	 gettingModes(std::string toFind);
+        // std::map<std::string, bool> 	 gettingModes(std::string toFind);
         std::string                 	 getTopic();
         void                        	 deleteMember(User* userToDelete);
         void                        	 setTopic(std::string nTopic);
-        void                        	 initializeModes(std::string modeStr);
+        // void                        	 initializeModes(std::string modeStr);
         void                        	 setLimit(size_t limitMembers);
         void                             addOperator(size_t fdo);
         void                             deleteOperator(User *operatorToDelete);

@@ -1,0 +1,11 @@
+*Server Channels* :
+
+	#hello: [ +t, TOPIC:""
+		Operaters: a, 
+		Members: a, 
+	]
+
+=================================================================
+
+*Server Users* :
+	a, YOUSRA, 

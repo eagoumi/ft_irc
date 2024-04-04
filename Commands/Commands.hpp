@@ -66,6 +66,7 @@ private:
     std::pair<std::string, std::vector<std::string> > getNextParam(OPTION option = NANDA);
     void checkTokensListSyntax();
     token_type  determineToken(char sep, token_type cmdType);
+    bool isEnoughParam(token_type cmd);
     std::string get42Token();
     // std::string command;
     // std::vector<std::string> command;
@@ -114,7 +115,7 @@ public:
     // void seTopic(std::string newTopic);
     void    sendResponse(int userfd, std::string msg);
     void    displayMember(std::string channelName);
-    bool    getMode(std::string letter, std::string channelName);
+    // bool    getMode(std::string letter, std::string channelName);
     void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
 
 

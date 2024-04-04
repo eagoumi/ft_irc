@@ -1,15 +1,11 @@
 *Server Channels* :
 
 	#hh: [ +t, TOPIC:""
-		Operaters: agoumi, 
-		Members: agoumi, 
-	#hello: [ +t, TOPIC:""
-		Operaters: a, 
-		Members: a, 
+		Operaters: agou, 
+		Members: agou, 
 	]
 
 =================================================================
 
 *Server Users* :
-	agoumi, 
-	a, b, 
+	agou, 

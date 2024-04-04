@@ -15,131 +15,55 @@
 
 
 //=======================================================================****LIMECHAT****============================================================================//
-//Errors
-#define ERR_NOSUCHNICK(Client, Name)			"401 " + Client + " " + Name + " : No such nick/channel"
-// #define ERR_NOSUCHSERVER		402
-#define ERR_NOSUCHCHANNEL(NickName, Chanel)            "403 " + NickName + " " + Chanel + " :No such channel"
-#define ERR_CANNOTSENDTOCHAN(NickName,chanel)	"404 " + NickName + " " + chanel + " :Cannot send to channel"
-#define ERR_TOOMANYCHANNELS(chanel)		"405 " + chanel + " :You have joined too many channels"
-#define ERR_WASNOSUCHNICK		406
-#define ERR_TOOMANYTARGETS		407
-#define ERR_NOORIGIN			409
-#define ERR_NORECIPIENT			411
-#define ERR_NOTEXTTOSEND(NickName)                  "412 " + NickName + " :No text to send"
-#define ERR_NOTOPLEVEL			413
-#define ERR_WILDTOPLEVEL		414
-#define ERR_UNKNOWNCOMMAND(Client, Command)		"421 " + Client + " " + Command + " :Unknown command!"
-#define ERR_NOMOTD				422
-#define ERR_NOADMININFO			423
-#define ERR_FILEERROR			424
-#define ERR_NONICKNAMEGIVEN(Client)		"431 " + Client + " :No nickname given"
-#define ERR_ERRONEUSNICKNAME(NickName)	"432 " + nickname + " :Erroneus nickname!"
-#define ERR_NICKNAMEINUSE(NickName)		"433 " + NickName + " :Nickname is already in use!"
-#define ERR_NICKCOLLISION		436
-#define ERR_USERNOTINCHANNEL(NickNme,NickNme2,chanel)	"441 " + NickName + " " + NickName2 + " " + Chanl + 
-#define ERR_NOTONCHANNEL(NickName, Chanl)              "442 " + NickName + " " + Chanl + " :You're not on that Channel"
-#define ERR_USERONCHANNEL(NickName, Chanl)		"443 " + NickName + " " + Chanl + " :is already on channel"
-#define ERR_NOLOGIN				444
-#define ERR_SUMMONDISABLED		445
-#define ERR_USERSDISABLED		446
-#define ERR_NOTREGISTERED(Client)		"451 " + Client + " :You have not registered"
-#define ERR_NEEDMOREPARAMS(NickName, Parameter)		"461 " + NickName + " " + Parameter + " :Not enough parameters, Please try again!"
-#define ERR_ALREADYREGISTRED	462
-#define ERR_NOPERMFORHOST		463
-#define ERR_PASSWDMISMATCH(Client)		"464 " + Client + " :Password Incorrect, Please try again!"
-#define ERR_YOUREBANNEDCREEP	465
-#define ERR_KEYSET				467
-#define ERR_CHANNELISFULL(NickName, chanel)             "471 " + NickName + " " + chanel + " :Cannot join channel (+l)"
-#define ERR_UNKNOWNMODE(NickName, char)             "472 " + nick + " " + char + " :is unknown mode char"
-#define ERR_INVITEONLYCHAN(NickName,chanel)		"473 " + NickName + " " + chanel + " :Cannot join channel (+i)"
-#define ERR_BANNEDFROMCHAN(NickName,chanel)		"474 " + NickName + " " + chanel + " :Cannot join channel (+b)"
-#define ERR_BADCHANNELKEY(NickName,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
-#define ERR_BADCHANNELKEY(NickName,chanel)		"475 " + NickName + " " + chanel + " :Cannot join channel (+k)"
-#define ERR_BADCHANMASK(NickName,chanel)		"476 " + NickName + " " + chanel + " :Bad Channel Mask"
-#define ERR_NOPRIVILEGES		481
-#define ERR_CHANOPRIVSNEEDED(NickName, channel)  "482 " + NickName + " " + channelName + " :You're not channel operator"
-#define ERR_CANTKILLSERVER		483
-#define ERR_NOOPERHOST			491
-#define ERR_UMODEUNKNOWNFLAG(NickName)	"501 " + Nick + " " + " :Unknown MODE flag"
-#define ERR_USERSDONTMATCH(NickName)		"502 " + " :Cant change mode for other users"
-
-//Reply s
-#define RPL_WELCOME(Nickname, Network, user, Host)  "001 " + Nickname + " :Welcome to the " + Network + " Network, " + Nickname + "!" + " [ " + user + "@" + Host + " ]"
-#define RPL_YOURHOST(Nickname, Host, Version)		    "002 " + Nickname + " :Your host is " + Host + ", running version " + Version + "!"
-#define RPL_NONE				300
-#define RPL_USERHOST			302
-#define RPL_ISON				303
-#define RPL_AWAY				301
-#define RPL_UNAWAY				305
-#define RPL_NOWAWAY				306
-#define RPL_WHOISUSER			311
-#define RPL_WHOISSERVER			312
-#define RPL_WHOISOPERATOR		313
-#define RPL_WHOISIDLE			317
-#define RPL_ENDOFWHOIS			318
-#define RPL_WHOISCHANNELS		319
-#define RPL_WHOWASUSER			314
-#define RPL_ENDOFWHOWAS			369
-#define RPL_LISTSTART			321
-#define RPL_LIST				322
-#define RPL_LISTEND				323
-#define RPL_CHANNELMODEIS		324
-#define RPL_NOTOPIC(nick,chanel)			"331 " + nick + " " + chanel + ":No topic is set"
-#define RPL_TOPIC(nickName,chanel,topic)				"332 " + nickName + " " + chanel + " :" + topic
-#define RPL_INVITING(client,NickName,Chanel)			"341 " + client + " " + NickName + " " + channel
-#define RPL_SUMMONING			342
-#define RPL_VERSION				351
-#define RPL_WHOREPLY			352
-#define RPL_ENDOFWHO			315
-#define RPL_NAMREPLY(NickName, channel, membs) "353 " + NickName + " = " + channel + " :" + membs
-#define RPL_ENDOFNAMES(NickName, chanel)			"366 " + NickName + " " + chanel + " :End of /NAMES list"
-#define RPL_LINKS				364
-#define RPL_ENDOFLINKS			365
-#define RPL_BANLIST				367
-#define RPL_ENDOFBANLIST		368
-#define RPL_INFO				371
-#define RPL_ENDOFINFO			374
-#define RPL_MOTDSTART(Nickname) 	"375 " + Nickname + " :- <Iba7lawn n irc> Message of the day - "
-#define RPL_MOTD(Nickname, MessageLine)				"372 " + Nickname + " :" + MessageLine
-#define RPL_ENDOFMOTD(Nickname)			"376 " + Nickname + " :End of /MOTD command."
-#define RPL_YOUREOPER			381
-#define RPL_REHASHING			382
-#define RPL_TIME				391
-#define RPL_USERSSTART			392
-#define RPL_USERS				393
-#define RPL_ENDOFUSERS			394
-#define RPL_NOUSERS(NickName,chanel)				"395 " + NickName + " " + chanel + " :User does not exist"
-#define RPL_TRACELINK			200
-#define RPL_TRACECONNECTING		201
-#define RPL_TRACEHANDSHAKE		202
-#define RPL_TRACEUNKNOWN		203
-#define RPL_TRACEOPERATOR		204
-#define RPL_TRACEUSER			205
-#define RPL_TRACESERVER			206
-#define RPL_TRACENEWTYPE		208
-#define RPL_TRACELOG			261
-#define RPL_STATSLINKINFO		211
-#define RPL_STATSCOMMANDS		212
-#define RPL_STATSCLINE			213
-#define RPL_STATSNLINE			214
-#define RPL_STATSILINE			215
-#define RPL_STATSKLINE			216
-#define RPL_STATSYLINE			218
-#define RPL_ENDOFSTATS			219
-#define RPL_UMODEIS(Nickname, Mode)				"221 " + Nickname + " " + Mode
-#define RPL_STATSLLINE			241
-#define RPL_STATSUPTIME			242
-#define RPL_STATSOLINE			243
-#define RPL_STATSHLINE			244
-#define RPL_LUSERCLIENT			251
-#define RPL_LUSEROP				252
-#define RPL_LUSERUNKNOWN		253
-#define RPL_LUSERCHANNELS		254
-#define RPL_LUSERME				255
-#define RPL_ADMINME				256
-#define RPL_ADMINLOC1			257
-#define RPL_ADMINLOC2			258
-#define RPL_ADMINEMAIL			259
+#define RPL_WELCOME(nick, network, user, host)  "001 " + nick + " :Welcome to the " + network + " Network, " + nick + "!" + user + "@" + host
+#define RPL_YOURHOST(nick, server_name)         "002 " + nick + " :Your host is " + server_name
+#define RPL_CREATED(nick, date)                 "003 " + nick + " :This server was created " + date
+#define RPL_MOTDSTART(Nickname) 	            "375 " + Nickname + " :- <Iba7lawn n irc> Message of the day - "
+#define ERR_NOTREGISTERED(Client)		        "451 " + Client + " :You have not registered"
+#define RPL_NOUSERS(NickName,chanel)			"395 " + NickName + " " + chanel + " :User does not exist"
+#define RPL_MOTD(nick, line)                    "372 " + nick + " :" + line
+#define RPL_ENDOFMOTD(nick)                     "376 " + nick + " :End of /MOTD command"
+#define ERR_NEEDMOREPARAMS(nick)                "461 " + nick + " :Not enough parameters"
+#define ERR_PASSWDMISMATCH(nick)                "464 " + nick + " :Incorrect password"
+#define ERR_UNKNOWNCOMMAND(nick, cmd)           "421 " + nick + " " + cmd + " :Unknown command"
+#define ERR_ERRONEUSNICKNAME(nick)              "432 " + nick + " :Erroneus nickname"
+#define ERR_NICKNAMEINUSE(nick)                 "433 " + nick + " :Nickname is already in use"
+#define ERR_ALREADYREGISTRED(nick)              "462 " + nick + " :You may not reregister"
+#define ERR_CANNOTSENDTOCHAN(nick)              "404 " + nick + " :Cannot send to channel"
+#define ERR_NOTEXTTOSEND(nick)                  "412 " + nick + " :No text to send"
+#define ERR_NOSUCHNICK(nick,nick_channel)       "401 " + nick + " " + nick_channel + " :No such nick/channel"
+#define ERR_BADCHANNAME(nick)                   "479 " + nick + " :Invalid channel name"
+#define ERR_USERONCHANNEL(nick, ch)             "443 " + nick + " " + ch + " :is already on channel"
+#define RPL_NAMREPLY(nick, ch, members)         "353 " + nick + " = " + ch + " :" + members
+#define RPL_ENDOFNAMES(nick, ch)                "366 " + nick + " " + ch + " :End of /NAMES list"
+#define ERR_NOSUCHCHANNEL(nick, ch)             "403 " + nick + " " + ch + " :No such channel"
+#define RPL_TOPIC(nick, ch, topic)              "332 " + nick + " " + ch + " :" + topic
+#define ERR_NOTONCHANNEL(nick, ch)              "442 " + nick + " " + ch + " :You're not on that channel"
+#define RPL_NOTOPIC(nick, ch)                   "331 " + nick + " " + ch + " :No topic is set"
+#define ERR_UNKNOWNMODE(nick, char)             "472 " + nick + " " + char + " :is unknown mode char to me"
+#define ERR_CHANNELISFULL(nick, ch)             "471 " + nick + " " + ch + " :Cannot join channel (+l)"
+#define ERR_INVITEONLYCHAN(nick, ch)            "473 " + nick + " " + ch + " :Cannot join channel (+i)"
+#define ERR_BADCHANNELKEY(nick, ch)             "475 " + nick + " " + ch + " :Cannot join channel (+k)"
+#define ERR_CHANOPRIVSNEEDED(nick, ch)          "482 " + nick + " " + ch + " :You're not channel operator"
+#define ERR_USERNOTINCHANNEL(nick, nick2, ch)   "441 " + nick + " " + nick2 + " " + ch + " :They aren't on that channel"
+#define RPL_INVITING(rec, sen, ch)              "341 " + rec + " " + sen + " " + ch
+#define ERR_NOSUCHSERVER(nick, ser)             "402 " + nick + " " + ser + " :No such server"
+#define ERR_NOORIGIN(nick)                      "409 " + nick + " :No origin specified"
+#define RPL_YOUREOPER(nick)                     "381 " + nick + " :You are now an IRC operator"
+#define ERR_NOOPERHOST(nick)                    "491 " + nick + " :No O-lines for your host"
+#define ERR_USERSDONTMATCH(nick)                "502 " + nick + " :Cant change mode for other users"
+#define RPL_UMODEIS(nick, mode)                 "221 " + nick + " " + mode
+#define ERR_NOTEXTTOSEND(nick)                  "412 " + nick + " :No text to send"
+#define ERR_NOPRIVILEGES(nick)                  "481 " + nick + " :Permission Denied- You're not an IRC operator"
+#define ERR_NONICKNAMEGIVEN(nick)               "431 " + nick + " :No nickname given"
+#define RPL_LISTSTART(nick)                     "321 " + nick + " Channel :Users Name"
+#define RPL_LIST(nick, ch, nb, topic)           "322 " + nick + " " + ch + " " + nb + " :" + topic
+#define RPL_LISTEND(nick)                       "323 " + nick + " :End of /LIST"
+#define RPL_WHOISUSER(nick1,nick2,user,host,realname)  "311 " + nick1 + " " + nick2 + " " + user + " " + host + " * :" + realname
+#define RPL_WHOISCHANNELS(nick1,nick2, channels)       "319 " + nick1 + " " + nick2 + " :" + channels
+#define RPL_WHOISSERVER(nick1, nick2, ser, infos)      "312 " + nick1 + " " + nick2 + " " + ser + " :" + infos
+#define RPL_WHOISIDLE(nick1, nick2, diff, int)         "317 " + nick1 + " " + nick2 + " " + diff + " " + int + " :seconds idle"
+#define RPL_ENDOFWHOIS(nick1,nick2)                    "318 " + nick1 + " " + nick2 + " :End of /WHOIS list"
 
 
 #endif

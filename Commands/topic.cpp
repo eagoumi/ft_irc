@@ -8,22 +8,29 @@ void Commands::topic()
     std::string channelName = getNextParam().first;
     std::string theTopic = getNextParam().first;
     std::cout << "TOPIC1 = " << theTopic << std::endl;
+    currChannel = db->getChannel(channelName);
 
     // if (command.size() < 2)
     // {
     //     sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
     //     return;
     // }
-
+    puts("1");
     if (db->getChannel(channelName) == NULL)
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
             currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
     // else if (existMemberChannel(db->getUser(fd)->getNickName(), channelName) == false)
-    else if (currChannel->isUserMember(currUser->getUserId()) == false)
-        currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
+    puts("2");
+    if (currChannel->isUserMember(currUser->getUserId()) == false)
+    {
+    puts("3");
+     currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
+    puts("4");
 
-    else if (theTopic == "")
+    }   
+
+    if (theTopic == "")
     {
         puts("empty topic");
         if(db->getChannel(channelName)->getTopic() != "")
@@ -51,7 +58,7 @@ void Commands::topic()
     }
     else if (theTopic[0] == ':')
     {
-        // puts("set topic");
+        puts("set topic");
         if (currChannel->isUserOperator(currUser->getUserId()) == false && this->getMode("t", channelName) == true)
         {
             currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));

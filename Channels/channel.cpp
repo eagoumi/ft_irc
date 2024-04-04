@@ -67,16 +67,34 @@ bool Channel::isUserInvited(USER_ID Id) {
 bool Channel::isUserOperator(USER_ID Id) {
 
     UserIter it = this->_operators.find(Id);
+    // std::cout << "cause of segfaulting = " << Id << "  itFirst  = " << it->first << "  itSecond  " << it->second->getNickName() << std::endl;
     if (it != this->_operators.end())
-        return true;
+    {
+        // puts("it's here ");
+     return true;
+    }   
     return false;
 }
 
+// bool Channel::isUserMember(std::string nick)
+// {
+//     // UserIter it = this->_members.find(nick);
+//     for(std::map<size_t, User *>::iterator it = _members.begin(); it != _members.end(); it++)
+//     { 
+//         if (nick == it->second->getNickName())
+//         {
+//             return true;
+//         }
+//    }
+//     return false;
+// }
 bool Channel::isUserMember(USER_ID Id)
 {
     UserIter it = this->_members.find(Id);
     if (it != this->_members.end())
-        return true;
+    {
+      return true;
+    }
     return false;
 }
 

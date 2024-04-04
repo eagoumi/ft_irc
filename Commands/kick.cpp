@@ -41,9 +41,9 @@ void Commands::kick()
     std::string channelName = getNextParam().first;
     std::string nickName = getNextParam().first;
     std::string reason = getNextParam().first;
-    std::cout << "REASON = " << reason << std::endl; 
-    if(reason[0] == ':')
-        reason.erase(0, 1);
+    // std::cout << "REASON = " << reason << std::endl; 
+    // if(reason[0] == ':')
+    //     reason.erase(0, 1);
     currChannel = db->getChannel(channelName);
     User* nickUser = db->existUser(nickName);
     // if (command.size() < 3)
@@ -52,7 +52,7 @@ void Commands::kick()
     //     // sendResponse(fd, ":" + currUser->getNickName() + " " + getCommand() + " :Not enough parameters\n");
     //     return;
     // }
-    if (db->getChannel(channelName) == NULL)
+    if (currChannel == NULL)
         // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
             currUser->ServertoClients(ERR_NOSUCHCHANNEL(nickName, channelName));
     // else if (existMemberChannel(currUser->getNickName(), channelName) == false)
@@ -61,17 +61,21 @@ void Commands::kick()
         currUser->ServertoClients(ERR_NOTONCHANNEL(nickName, channelName));
         // sendResponse(fd, ":" + currUser->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
     }
-
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(nickName, channelName));
         // sendResponse(fd, ":" + currUser->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
         // sendResponse(fd, ERR_CHANOPRIVSNEEDED(nickName, channelName) + "\n");
     }
+    // std::cout << "SEGVVV = " << currChannel->isUserMember(nickUser->getUserId()) << std::endl;
     // else if (existMemberChannel(nickName, channelName) == false)
-    else if (currChannel->isUserMember(nickUser->getUserId()) == false)
+        puts("1");
+    // std::cout << "NICHNAME = "  << nickName << std::endl;
+     if (currChannel->isUserMember(nickUser->getUserId()) == false)
     {
+        puts("2");
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :They aren't on that channel\n");
+        puts("3");
     }
 
     // else if (existOperatorChannel(nickName, channelName) == true)

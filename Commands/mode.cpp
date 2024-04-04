@@ -16,8 +16,9 @@ bool Commands::getMode(std::string letter, std::string channelName)
 std::map<std::string, bool> Channel::gettingModes(std::string toFind)
 {
 
-    std::string::size_type it = modeS.find(toFind);
-
+    size_t it = modeS.find(toFind);
+    // std::string::size_type it = modeS.find(toFind);
+    puts("heeeee");
     if (it != std::string::npos)
     {
         it--;

@@ -24,8 +24,6 @@ void Commands::join()
             std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
             sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " JOIN " + channelNamesList[channelIndex]+ "\n");
-            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt" + channelNamesList[channelIndex] + "\n");//MODE #blahmeow +nt
-            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt " + channelNamesList[channelIndex]+ '\n');
             sendResponse(fd, ":" + getHostName() + " MODE " + channelNamesList[channelIndex] + " +nt\n");
             sendResponse(fd, ":" + getHostName() + " 353 " + db->getUser(fd)->getNickName() + " @ " + channelNamesList[channelIndex] + " :" + "@tofa7A, agoumi, yousra\n");
             sendResponse(fd, ":" + getHostName() + " 366 " + db->getUser(fd)->getNickName() + channelNamesList[channelIndex] + " :End of /NAMES list.\n");

@@ -16,7 +16,7 @@
 
 //=======================================================================****LIMECHAT****============================================================================//
 //Errors
-#define ERR_NOSUCHNICK(Nickname)			"401 " + Nickname + ": No such nick/channel"
+#define ERR_NOSUCHNICK(Client, Name)			"401 " + Client + " " + Name + " : No such nick/channel"
 // #define ERR_NOSUCHSERVER		402
 #define ERR_NOSUCHCHANNEL(NickName, Chanel)            "403 " + NickName + " " + Chanel + " :No such channel"
 #define ERR_CANNOTSENDTOCHAN(NickName,chanel)	"404 " + NickName + " " + chanel + " :Cannot send to channel"
@@ -28,7 +28,7 @@
 #define ERR_NOTEXTTOSEND(NickName)                  "412 " + NickName + " :No text to send"
 #define ERR_NOTOPLEVEL			413
 #define ERR_WILDTOPLEVEL		414
-#define ERR_UNKNOWNCOMMAND(Client, Command)		"421 " + Client + Command + " :Unknown command!"
+#define ERR_UNKNOWNCOMMAND(Client, Command)		"421 " + Client + " " + Command + " :Unknown command!"
 #define ERR_NOMOTD				422
 #define ERR_NOADMININFO			423
 #define ERR_FILEERROR			424

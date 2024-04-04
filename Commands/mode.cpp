@@ -1,6 +1,9 @@
 #include "Commands.hpp"
 #include <cstddef>
 
+//+t not seted at the begining of join
+// user does not exist in -o
+
 /******************************/
 /* MODIFIED BY TOFA7A SRY     */
 /* I think This method        */
@@ -24,87 +27,99 @@
 
 void Commands::mode()
 {
-    puts("1");
-    std::cout << "param number = " << _paramCounter << std::endl;
-
     std::string channelName = getNextParam().first;
     std::string modesStr = getNextParam().first;
     std::string modeArg;
 
     currChannel = db->getChannel(channelName);
 
-
-    // if (command.size() < 2)
-    // {
-    //     sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + getCommand() + " :Not enough parameters\n");
-    //     return;
-    // }
     if (currChannel == NULL)
     {
         _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
-        return ;
-        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
+        return;
     }
-    // else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
-        // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
+        return;
     }
-    else {
+    else
+    {
+        puts("beg");
         // currChannel->setModes(modesStr);
-        char sign = '+'; //by default if no sign is specified within given modeStr
-        for (size_t i = 0; i < modesStr.length(); i++) {
+        char sign = '+'; // by default if no sign is specified within given modeStr
+        for (size_t i = 0; i < modesStr.length(); i++)
+        {
 
             modesStr[i] == '+' ? sign = '+' : (modesStr[i] == '-' ? sign = '-' : sign);
 
             char currModeLetter = modesStr[i];
+            if (currModeLetter == 'i' || currModeLetter == 'k' || currModeLetter == 'l' || currModeLetter == 'o' || currModeLetter == 't')
+            {
+                if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k'))
+                {
 
-            if (currModeLetter == 'i' || currModeLetter == 'k' || currModeLetter == 'l' || currModeLetter == 'o' || currModeLetter == 't') {
-
-                if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k')) {
-                    if (currModeLetter == 'k') {
-
+                    if (currModeLetter == 'k')
+                    {
                     }
-                    else if (currModeLetter == 'l') {
-
+                    else if (currModeLetter == 'l')
+                    {
                         modeArg = getNextParam().first;
                         size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
                         currChannel->setLimit(limit > 0 ? limit : 1);
                     }
-                    else if (currModeLetter == 'o') {
+                    else if (currModeLetter == 'o')
+                    {
                         modeArg = getNextParam().first;
-                        User* Operator = db->existUser(modeArg);
-                        if (!Operator) 
-                            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :User does not exist\n");
+                        User *Operator = db->existUser(modeArg);
+                        if (!Operator)
+                        {
+                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                            continue;
+                        }
+                        else if (currChannel->isNickExist(modeArg) == false)
+                        {
+                            sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
+                            continue;
+                        }
                         else
+                        {
                             currChannel->addOperator(Operator->getUserId());
+                        }
                     }
 
                     currChannel->setMode(currModeLetter);
                 }
-                else if (sign == '-' && currChannel->getMode(currModeLetter) == true) {
-                    if (currModeLetter == 'k') {
-
+                else if (sign == '-' && currChannel->getMode(currModeLetter) == true)
+                {
+                    if (currModeLetter == 'k')
+                    {
                     }
-                    else if (currModeLetter == 'o') {
-                        User* Operator = db->existUser(modeArg);
-                        if (!Operator) 
-                            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :User does not exist\n");
-                        else {
-                            if (currChannel->isUserOperator(Operator->getUserId()) == true &&
-                                    currChannel->isUserOperator(currUser->getUserId()) == true)
+                    else if (currModeLetter == 'o')
+                    {
+                        modeArg = getNextParam().first;
+                        User *Operator = db->existUser(modeArg);
+                        if (!Operator)
+                        {
+                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                            continue;
+                        }
+                        else if (currChannel->isNickExist(modeArg) == false)
+                        {
+                            sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
+                            continue;
+                        }
+                        else
+                        {
+                            if (currChannel->isUserOperator(Operator->getUserId()) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
                                 currChannel->deleteOperator(Operator);
                         }
                     }
-
                     currChannel->removeMode(currModeLetter);
                 }
             }
         }
     }
-
-
 
     /**************************/
     /* MODIFIED BY TOFA7A SRY */
@@ -162,53 +177,53 @@ void Commands::mode()
     /* */
     /**************************/
     // if (_paramCounter > 2) {
-        // if (getMode("l", channelName) == true)
-        // {
-        //     size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-        //     if (limit > 0)
-        //         currChannel->setLimit(limit);
-        //     else
-        //         currChannel->setLimit(1);
-        // }
+    // if (getMode("l", channelName) == true)
+    // {
+    //     size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
+    //     if (limit > 0)
+    //         currChannel->setLimit(limit);
+    //     else
+    //         currChannel->setLimit(1);
+    // }
 
-        // if (currChannel->getMode('l') == true) {
+    // if (currChannel->getMode('l') == true) {
 
-        //     size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-        //     if (limit > 0)
-        //         currChannel->setLimit(limit);
-        //     else
-        //         currChannel->setLimit(1);
-        // }
-        
-        // if (currChannel->getMode('o') == true) {
+    //     size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
+    //     if (limit > 0)
+    //         currChannel->setLimit(limit);
+    //     else
+    //         currChannel->setLimit(1);
+    // }
 
-        //     User* Operator = db->existUser(modeArg);
-        //     if (currChannel->isUserOperator(currUser->getUserId()) == false)
-        //         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
-        //     else if (currChannel->isUserOperator(currUser->getUserId()) == true)
-        //         currChannel->addOperator(Operator->getUserId());
-        // }
-        // else if (currChannel->getMode('o') == false) {
+    // if (currChannel->getMode('o') == true) {
 
-        //     User* Operator = db->existUser(modeArg);
-        //     if (currChannel->isUserOperator(Operator->getUserId()) == true &&
-        //             currChannel->isUserOperator(currUser->getUserId()) == true)
-        //         currChannel->deleteOperator(Operator);
-        //     // currChannel->addOperator(modeArg);
-        // }
+    //     User* Operator = db->existUser(modeArg);
+    //     if (currChannel->isUserOperator(currUser->getUserId()) == false)
+    //         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+    //     else if (currChannel->isUserOperator(currUser->getUserId()) == true)
+    //         currChannel->addOperator(Operator->getUserId());
+    // }
+    // else if (currChannel->getMode('o') == false) {
 
-        // User* fdOperator = db->existUser(modeArg);
-        // if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == false)
-        //     _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
-        // else if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
-        // {
-        //     currChannel->addOperator(fdOperator->getUserId());
-        // }
-        // else if (getMode("o", channelName) == false && currChannel->isUserOperator(currUser->getUserId()) == true && currChannel->isUserOperator(fdOperator->getUserId()) == true)
-        // {
-        //     currChannel->deleteOperator(fdOperator);
-        //     // currChannel->addOperator(modeArg);
-        // }
+    //     User* Operator = db->existUser(modeArg);
+    //     if (currChannel->isUserOperator(Operator->getUserId()) == true &&
+    //             currChannel->isUserOperator(currUser->getUserId()) == true)
+    //         currChannel->deleteOperator(Operator);
+    //     // currChannel->addOperator(modeArg);
+    // }
+
+    // User* fdOperator = db->existUser(modeArg);
+    // if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == false)
+    //     currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+    // else if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
+    // {
+    //     currChannel->addOperator(fdOperator->getUserId());
+    // }
+    // else if (getMode("o", channelName) == false && currChannel->isUserOperator(currUser->getUserId()) == true && currChannel->isUserOperator(fdOperator->getUserId()) == true)
+    // {
+    //     currChannel->deleteOperator(fdOperator);
+    //     // currChannel->addOperator(modeArg);
+    // }
     // }
 
     // if(getMode("l") == true)

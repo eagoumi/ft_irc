@@ -17,6 +17,7 @@ void Commands::PRIVMSG()
 {
     std::vector<std::string> get_param = getNextParam().second;
     std::string Message = getNextParam().first;
+    std::cout << Message << std::endl;
     for(size_t i = 0; i < get_param.size(); i++)
     {
         if ((get_param[i][0] == '@' || get_param[i][0] == '%'))
@@ -39,27 +40,39 @@ void Commands::PRIVMSG()
                 puts("ss3");
             }
             else
+            {
                 _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), good_str));
+                return ;
+            }
         }
         else
         {
             Channel *ch = db->getChannel(get_param[i]);
-            if (ch)
+            if (ch && get_param[i][0] == '#')
             {
-                if (get_param[i][0] == '#' && ch->getMember(fd))
+                if (ch->getMember(fd))
                     SendMessageToMembers(ch, currUser, Message); // check for message syntax
                 else
+                {
                     _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
+                    return ;
+                }
             }
             else
             {
                 User *reciver_msg = db->existUser(get_param[i]);
                 if (reciver_msg)
-                    _logger.CleintToClient(reciver_msg->getUserId(), Message);
+                {
+                    if (Message[0] != ':')
+                        Message.insert(0, ":");
+                    _logger.CleintToClient(reciver_msg->getUserId(), getCommand() + " " + get_param[i] + " " + Message);
+                }
                 else
                 {
                     puts("i am here");
-                    _logger.ServertoClient(ERR_NOSUCHNICK(get_param[i]));
+                    std::cout << get_param[i] << std::endl;
+                    _logger.ServertoClient(ERR_NOSUCHNICK(db->getUser(fd)->getNickName(),get_param[i]));
+                    return ;
                 }
             }
         }

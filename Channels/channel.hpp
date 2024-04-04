@@ -63,6 +63,8 @@ class Channel
         bool                             isUserMember(USER_ID Id);
         void                             setKey(std::string const& givenKey);
         bool                             isKeyMatch(std::string const& givenKey);
+        bool                             isNickExist(std::string nick);
+
 
         // std::string                 channelTopic(int fd);
 

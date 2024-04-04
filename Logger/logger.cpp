@@ -44,7 +44,7 @@ void Logger::ServertoClient(std::string string) {
 //Send Client To Client
 void Logger::CleintToClient(int id, std::string msg) {
 
-    std::string mess = ": " + _nickname + "!" + _username + "@" + _serverIp + " " + msg;
+    std::string mess = ": " + _nickname + "!~" + _username + "@" + _serverIp + " " + msg;
 
     IRCPrint(id, mess);
 }

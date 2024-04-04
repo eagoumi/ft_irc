@@ -41,17 +41,20 @@ void Commands::invite()
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {
         currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
+        return ;
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
     }
     // else if (existOperatorChannel(db->getUser(fd)->getNickName(), channelName) == false)
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
+        return ;
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not channel operator\n");
     }
     else if(currChannel->isUserMember(nickUser->getUserId()) == true)
     {
         currUser->ServertoClients(RPL_ALREADYONCHANNEL(db->getUser(fd)->getNickName(), nickName, channelName));
+        return ;
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + " :is already on channel\n");
     }
     else{

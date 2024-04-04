@@ -17,17 +17,13 @@ void Commands::topic()
     //     return;
     // }
     if (db->getChannel(channelName) == NULL)
+        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No such channel\n");
-            currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
     // else if (existMemberChannel(db->getUser(fd)->getNickName(), channelName) == false)
-    if (currChannel->isUserMember(currUser->getUserId()) == false)
-    {
-     currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
+    else if (currChannel->isUserMember(currUser->getUserId()) == false) //checking if the member are on the channel use this "currChannel->getMember(currUser->getUserId())"
+        currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
         // sendResponse(fd, ":" + db->getUser(fd)->getNickName() /*client*/ + " " + channelName + " :You're not on that channel\n");
-
-    }   
-
-    if (theTopic == "")
+    else if (theTopic == "")
     {
         if(db->getChannel(channelName)->getTopic() != "")
         {
@@ -35,8 +31,8 @@ void Commands::topic()
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + db->getChannel(channelName)->getTopic() + "\n");
         }
         else if (db->getChannel(channelName)->getTopic() == "")
-            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No topic is set\n");
             currUser->ServertoClients(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName));
+            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " :No topic is set\n");
     }
     else if (theTopic == ":")
     {
@@ -63,6 +59,7 @@ void Commands::topic()
         else
         {
             db->getChannel(channelName)->setTopic(theTopic);
+            currUser->IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " TOPIC " + channelName + " :" + db->getChannel(channelName)->getTopic());
             currUser->ServertoClients(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " " + db->getChannel(channelName)->getTopic() + "\n");
         }

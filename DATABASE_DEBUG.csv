@@ -1,11 +1,11 @@
 *Server Channels* :
 
-	#a: [ +t, TOPIC:"qsd"
-		Operaters: a, 
-		Members: a, 
+	#gg: [ +t, TOPIC:""
+		Operaters: agoumi420, 
+		Members: agoumi420, 
 	]
 
 =================================================================
 
 *Server Users* :
-	a, 
+	agoumi420, 

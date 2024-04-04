@@ -144,7 +144,7 @@ void User::ServertoClients(std::string string)
 //Send Client To Client
 void    User::CleintToClient(int id, std::string msg)
 {
-    std::string mess = ": " + getNickName() + "!" + getUserName() + "@" + getServerIP() + " " + msg;
+    std::string mess = ":" + getNickName() + "!~" + getUserName() + "@" + GetIpAddress() + " " + msg;
 
     IRCPrint(id, mess);
 }

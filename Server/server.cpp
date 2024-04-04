@@ -1,6 +1,7 @@
 #include "server.hpp"
 #include "../Commands/Commands.hpp"
 #include <unistd.h>
+#include "../Logger/logger.hpp"
 
 
 void Server::Quit(size_t i, std::string reason)
@@ -8,12 +9,12 @@ void Server::Quit(size_t i, std::string reason)
 	// :dan-!d@localhost QUIT :Quit: Bye for now!
 	std::cout << "Nick : " << _User->getNickName() << std::endl;
 	if (_User->getNickName().empty())
-		_User->IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
+		_logger.IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
 	else if (reason.at(0) == ':')
-		_User->IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
+		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
 	else
-		_User->IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
-	_User->IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
+		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
+	_logger.IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
 	//send Message to all channels
 
 	std::cout << "Client DISCONNECTED." << std::endl;
@@ -45,6 +46,7 @@ void Server::CheckForConnectionClients()
         		User *getuser = _db->getUser(_Storeusersfd[i].fd);
 				data.fd = _Storeusersfd[i].fd;
 				data.line = buffer; // PROBLEM HERE
+				_logger.setCurrUser(getuser);
 				// data.nick = User->getNickName();
 				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
@@ -91,7 +93,7 @@ void Server::CheckForConnectionClients()
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
+Server::Server(const int &port, const std::string &password) : _logger(Logger::GetInstance()), _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
 {
 	_db = Database::GetInstance();
 }
@@ -116,6 +118,7 @@ void Server::ServerStarting()
 	struct pollfd srvpollfd;
 
 	_IPHostAdress = HostIPADress(); // take IP Host of Machine
+	_logger.setServerIp(_IPHostAdress);
 	std::cout << "dd: " << _IPHostAdress << std::endl;
 	createSockets();
 	setSocketsopt();
@@ -231,7 +234,7 @@ void Server::accept_connection()
 		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
 		_Storeusersfd.push_back(_pollfds);
 		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
-		_User = new User(_pollfds.fd);
+		_User = new User(newSocketfd);
 		_db->addNewUser(_User);
 		// _db->getUser(_pollfds.fd);
 		// std::cout << _db << std::endl;

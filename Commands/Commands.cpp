@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <vector>
 
-Commands::Commands()
+Commands::Commands() : _logger(Logger::GetInstance())
 {
     db = Database::GetInstance();
 }
@@ -12,7 +12,7 @@ Commands::~Commands()
 {
 }
 
-Commands::Commands(const Commands &obj)
+Commands::Commands(const Commands &obj) : _logger(Logger::GetInstance())
 {
     *this = obj;
 }
@@ -24,8 +24,7 @@ Commands &Commands::operator=(const Commands &obj)
     return *this;
 }
 
-token_type determine_cmd(std::string token)
-{
+token_type determine_cmd(std::string token) {
 
     std::transform(token.begin(), token.end(), token.begin(), ::toupper);
     if (token == "JOIN")
@@ -53,32 +52,33 @@ token_type determine_cmd(std::string token)
 
 token_type    Commands::determineToken(char sep, token_type cmdType) {
 
-    /* Command:             PRIVMSG         Parameters: <target>{,<target>}             <text to be sent>                       */
     /* Command:             JOIN            Parameters: <channel>{,<channel>}           [<key>{,<key>}]                         */
-    /* Command:             KICK            Parameters: <channel>                       <user> *( "," <user> ) [<comment>]      */
+    /* Command:             MODE            Parameters: <target>                        [<modestring> [<mode arguments>...]]    */
     /* Command:             PART            Parameters: <channel>{,<channel>}           [<reason>]                              */
+    /* Command:             KICK            Parameters: <channel>                       <user> *( "," <user> ) [<comment>]      */
+    /* Command:             PRIVMSG         Parameters: <target>{,<target>}             <text to be sent>                       */
     /* Command:             TOPIC           Parameters: <channel>                       [<topic>]                               */
     /* Command:             INVITE          Parameters: <nickname>                      <channel>                               */
-    /* Command:             MODE            Parameters: <target>                        [<modestring> [<mode arguments>...]]    */
+
     token_type tokenType(NONE);
     if (sep == ',') {
         if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
-        else if (cmdType == PRIVMSG_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
         else if (cmdType == PART_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
         else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = NONE    : (_paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
+        else if (cmdType == PRIVMSG_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
+        else if (cmdType == MODE_CMD)       tokenType = NONE;
         else if (cmdType == TOPIC_CMD)      tokenType = NONE;
         else if (cmdType == INVITE_CMD)     tokenType = NONE;
-        else if (cmdType == MODE_CMD)       tokenType = NONE;
         else if (cmdType == LOGTIME_CMD)    tokenType = NONE;
     }
     else if (isspace(sep)) {
         if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY       : tokenType = NONE);
-        else if (cmdType == PRIVMSG_CMD)    _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = MSG       : tokenType = NONE);
+        else if (cmdType == MODE_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = MODE_ARG);
         else if (cmdType == PART_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = REASON    : tokenType = NONE);
         else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = NICK      : (_paramCounter == 3 ? tokenType = COMMENT  : tokenType = NONE));
         else if (cmdType == TOPIC_CMD)      _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = TOPIC_MSG : tokenType = NONE);
         else if (cmdType == INVITE_CMD)     _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = CHANNEL   : tokenType = NONE);
-        else if (cmdType == MODE_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = MODE_STR  : tokenType = MODE_ARG);
+        else if (cmdType == PRIVMSG_CMD)    _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = MSG       : tokenType = NONE);
         else if (cmdType == LOGTIME_CMD)    _paramCounter == 1 ? tokenType = NICK    : (_paramCounter == 2 ? tokenType = LOG_BEG   : (_paramCounter == 3 ? tokenType = LOG_END  : tokenType = NONE));
         else if (cmdType == WHOIS_CMD)      _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
         else if (cmdType == LOCATION_CMD)   _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
@@ -185,80 +185,56 @@ void   Commands::tokenize(std::string const& cmdLine) {
     getNextParam(RESET);
 }
 
-bool Commands::isEnoughParam(token_type cmd) {
-    
-    if (cmd == JOIN_CMD)
-        if (_paramCounter < 2) return false;
+bool Commands::isEnoughParam(token_type const& cmd) {
+
+    if      (cmd == JOIN_CMD     && _paramCounter < 2) return false;
+    else if (cmd == MODE_CMD     && _paramCounter < 2) return false;
+    else if (cmd == PART_CMD     && _paramCounter < 2) return false;
+    else if (cmd == KICK_CMD     && _paramCounter < 3) return false;
+    else if (cmd == TOPIC_CMD    && _paramCounter < 2) return false;
+    else if (cmd == WHOIS_CMD    && _paramCounter < 2) return false;
+    else if (cmd == INVITE_CMD   && _paramCounter < 3) return false;
+    else if (cmd == PRIVMSG_CMD  && _paramCounter < 2) return false;
+    else if (cmd == LOGTIME_CMD  && _paramCounter < 2) return false;
+    else if (cmd == LOCATION_CMD && _paramCounter < 2) return false;
+
     return true;
 }
 
-void Commands::checkTokensListSyntax()
+bool Commands::checkTokensListSyntax()
 {
-	std::list<token>::iterator ListIt = _tokensList.begin();
     token_type cmd = _tokensList.front().type;
-    /**************************************************** THIS LINE WILL BE REMOVED ****************************************************/
+	std::list<token>::iterator ListIt = _tokensList.begin();
+
+    /**************************************************** -DEBUG- THOSE LINES WILL BE REMOVED -DEBUG- ****************************************************/
     char justFordebug[42][42] = { "NONE", "COMMA ", "PRIVMSG", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END"};
+    for (std::list<token>::iterator it = _tokensList.begin(); it != _tokensList.end(); it++)
+        std::cout << "[" + (*ListIt).data + "]" + " : [" + justFordebug[(*ListIt).type] + "]" << std::endl;
     /***********************************************************************************************************************************/
-    _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
-    // if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n");
-    //ServertoClients(std::string string)
+    
+    if (_tokensList.size() == 0) { return false; }
+    if (cmd == NONE) { sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n"); return false; }
+    if (isEnoughParam(cmd) == false) { sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName(), getCommand()) + "\n"); return false; }
+
 	while (ListIt != _tokensList.end())
 	{
         if ((*ListIt).type == CHANNEL)
             if ((*ListIt).data[0] != '#') (*ListIt).data.insert(0, 1, '#');
-        
-        std::cout << "[" + (*ListIt).data + "]" + " : [" + justFordebug[(*ListIt).type] + "]" << std::endl;
         ListIt++;
 	}
+    return true;
 }
 
 void Commands::CommandMapinit(cmdData dataCmd)
 {
-    // std::cout << "command : " << getCommand() << std::endl;
     fd = dataCmd.fd;
     currUser = db->getUser(fd);
-    // std::cout << "LINE = " << dataCmd.line << std::endl;
-    /***********************************************************************************/
     line = dataCmd.line;
+
     tokenize(dataCmd.line);
-    try {
-        checkTokensListSyntax();
-    }
-    catch(std::string err) {
-        std::cout << err << std::endl;
+    if (checkTokensListSyntax() == false)
         return ;
-    }
-    // puts("1");
-    /* Here I need to verfiy of tokens List has a true sytnax, If not I'll print error */
-    /* SO YOU WILL NEED TO ENTER COMMANDS THAT ARE WELL SYNTAXED FOR NOW */
-    /***********************************************************************************/
 
-    // std::vector<std::string> tokenParam;
-    // std::vector<std::string>::iterator it;
-    // std::list<token> input = tokenize(dataCmd.line);
-    // tokenParam = getNextParam(input);
-    // for(it = tokenParam.begin(); it != tokenParam.end(); it++)
-    //     std::cout << "[" << *it << "]" << std::endl;
-    // Channel cObj;
-
-    // std::cout << line << dataCmd.line << std::endl;
-    // std::cout << "what" << std::endl;
-    // std::string token;
-    // std::istringstream iss(dataCmd.line);
-    // std::cout << "LIIINE = " << dataCmd.line;
-    // while (iss >> token)
-    // {
-    //     command.push_back(token);
-    //     // std::cout << "[" << token << "]" << std::endl;
-    // }
-
-
-    // for (itV = command.begin(); itV != command.end(); itV++)
-    //     std::cout << *itV << " ";
-    // std::cout << std::endl;
-    // if (currUser == NULL)   
-    //     std::cout << "user is null within commandMapINit()" << std::endl;
-    // User *currUser = db->getUser(fd);
     std::string cmd = getCommand();
     if (cmd == "NICK")
     {}
@@ -288,8 +264,6 @@ void Commands::CommandMapinit(cmdData dataCmd)
         part();
     else if (cmd == "PRIVMSG")
         PRIVMSG();
-    else
-        sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), cmd) + "\n");
 }
 
 void Commands::sendResponse(int userfd, std::string message)

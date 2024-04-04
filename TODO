@@ -50,7 +50,7 @@ USER uwu
 # TOFA7A: I THINK I Can Improve `invited users within the Channel Class`
 # TOFA7A: InvitedNick get and set, would be better if it takes a user class, AM JUST SAYING I MIGHT BE WRONG
 # TOFA7A: Operators too
-# TOFA7A: ServertoClients and ClientToClient and thingToThing will be moved out The User Class, User is not responsible for that
+# TOFA7A: ServertoClient and ClientToClient and thingToThing will be moved out The User Class, User is not responsible for that
 # TOFA7A: User.getMembers() & User.getOperators() will be removed, instead it will be getMember(NICKname), getMember(FD) is already there, no need to get the whole list
 # TOFA7A: getInvitedNick() Which is see if the nickname associated with a user, is invited or not, has to add an alphabet case validation
 # TOFA7A: I mean it will be better if we user isUserInvited(fd) instead of getInvitedNick(Nickname) since no validation is required 

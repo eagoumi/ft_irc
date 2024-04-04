@@ -23,17 +23,17 @@ void Commands::kick()
     if (currChannel == NULL)
     {    
         // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
-        currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
+        _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
         return ;
     }
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_NOTONCHANNEL(nickName, channelName));
+        _logger.ServertoClient(ERR_NOTONCHANNEL(nickName, channelName));
         return ;
     }
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
-        currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(nickName, channelName));
+        _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(nickName, channelName));
         return ;
     }
      if (currChannel->isNickExist(nickName) == false)

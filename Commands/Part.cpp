@@ -10,7 +10,7 @@ void Commands::SendMessageToMembers(Channel *Channel_name, User *user_fds, std::
     std::map<USER_ID, User *>::iterator iter_map = checkUsers.begin();
     for(; iter_map != checkUsers.end(); iter_map++)
     {
-        user_fds->IRCPrint(iter_map->first, command);
+        _logger.IRCPrint(iter_map->first, command);
     }
 }
 
@@ -25,12 +25,12 @@ void Commands::part()
         // std::cout << All_channels[i] << std::endl;
         if (Store_channel == NULL)
         {
-            currUser->ServertoClients(ERR_NOSUCHCHANNEL(db->getUser(fd)->getNickName(), "PART"));
+            _logger.ServertoClient(ERR_NOSUCHCHANNEL(db->getUser(fd)->getNickName(), "PART"));
             return ;
         }
         else if (Store_channel->getMember(fd) == NULL)
         {
-            currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), "PART"));
+            _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), "PART"));
             return ;
         }
         SendMessageToMembers(Store_channel, currUser, "PART " + db->getUser(fd)->getNickName() + " " + All_channels[i]);

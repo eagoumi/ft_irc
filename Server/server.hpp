@@ -3,6 +3,7 @@
 
 
 # include "../Database/database.hpp"
+# include "../Logger/logger.hpp"
 # include "../error_request.hpp"
 // #include <i386/types.h>
 #include <string>
@@ -25,6 +26,7 @@ class Server
 {
     private:
         Database*                       _db;
+        Logger&                         _logger;
         int                             _Port;
         std::string                     _Password;
         std::string                     _IPHostAdress;
@@ -74,7 +76,7 @@ class Server
 
         // //Send
         // void IRCPrint(size_t fd, std::string string);
-        // void ServertoClients(std::string string);
+        // void ServertoClient(std::string string);
 
         //Command Quit 
         void Quit(size_t i, std::string reason);

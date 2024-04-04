@@ -15,11 +15,12 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include "../Database/database.hpp"
+#include "../Logger/logger.hpp"
 #include "../error_request.hpp"
 
 enum OPTION
 {
-    NANDA,
+    NADA,
     RESET
 };
 
@@ -53,8 +54,9 @@ private:
     // std::map<std::string, bool> modes;
     static std::string newTopic;
     static std::string invitedNick;
-    std::string modeStr;
+    // std::string modeStr;
     Database *db;
+    Logger& _logger;
     // std::string channelName;
     // std::string nickName;
     // std::vector<std::string> channelNamesList;
@@ -63,10 +65,10 @@ private:
     std::list<token> _tokensList;
     size_t _paramCounter;
     void tokenize(std::string const&);
-    std::pair<std::string, std::vector<std::string> > getNextParam(OPTION option = NANDA);
-    void checkTokensListSyntax();
+    std::pair<std::string, std::vector<std::string> > getNextParam(OPTION option = NADA);
+    bool checkTokensListSyntax();
     token_type  determineToken(char sep, token_type cmdType);
-    bool isEnoughParam(token_type cmd);
+    bool isEnoughParam(token_type const& cmd);
     std::string get42Token();
     // std::string command;
     // std::vector<std::string> command;

@@ -35,13 +35,13 @@ void Commands::PRIVMSG()
                 {
                     puts("ss11");
                     std::cout << "Operators = " << IT_OPER->second->getNickName() << std::endl;
-                    currUser->CleintToClient( IT_OPER->first, Message); // check for message syntax
+                    _logger.CleintToClient( IT_OPER->first, Message); // check for message syntax
                 }
                 puts("ss3");
             }
             else
             {
-                currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), good_str));
+                _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), good_str));
                 return ;
             }
         }
@@ -54,7 +54,7 @@ void Commands::PRIVMSG()
                     SendMessageToMembers(ch, currUser, Message); // check for message syntax
                 else
                 {
-                    currUser->ServertoClients(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
+                    _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
                     return ;
                 }
             }
@@ -65,13 +65,13 @@ void Commands::PRIVMSG()
                 {
                     if (Message[0] != ':')
                         Message.insert(0, ":");
-                    currUser->CleintToClient(reciver_msg->getUserId(), getCommand() + " " + get_param[i] + " " + Message);
+                    _logger.CleintToClient(reciver_msg->getUserId(), getCommand() + " " + get_param[i] + " " + Message);
                 }
                 else
                 {
                     puts("i am here");
                     std::cout << get_param[i] << std::endl;
-                    currUser->ServertoClients(ERR_NOSUCHNICK(db->getUser(fd)->getNickName(),get_param[i]));
+                    _logger.ServertoClient(ERR_NOSUCHNICK(db->getUser(fd)->getNickName(),get_param[i]));
                     return ;
                 }
             }

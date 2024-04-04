@@ -23,11 +23,12 @@ void Commands::join()
         {
             std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN " + channelNamesList[channelIndex] + "\n");
+            currUser->IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN " + channelNamesList[channelIndex] + "\n");
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt" + channelNamesList[channelIndex] + "\n");//MODE #blahmeow +nt
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt " + channelNamesList[channelIndex]+ '\n');
             
             // sendResponse(fd, ":" + currUser->GetIpAddress() + " MODE " + channelNamesList[channelIndex] + " +t\n");
+            currUser->IRCPrint(fd,":" + currUser->GetIpAddress() + " MODE " + channelNamesList[channelIndex] + " +t");
             currUser->ServertoClients(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],"@" + db->getUser(fd)->getNickName()));
             currUser->ServertoClients(RPL_ENDOFNAMES(db->getUser(fd)->getNickName(), channelNamesList[channelIndex]));
 
@@ -43,24 +44,29 @@ void Commands::join()
             // std::cout << "getMode = " << getMode("i") << " getInvited = " << currChannel->getInvitedNick(currUser->getNickName()) << std::endl;
             if (currChannel->getMember(fd) != NULL)
             {
-                sendResponse(fd, "User already in channel\n");
+
+                currUser->ServertoClients(ERR_USERONCHANNEL(db->getUser(fd)->getNickName(),channelNamesList[channelIndex]));
                 continue;
+                // sendResponse(fd, "User already in channel\n");
             }
             else if (currChannel->getMode('i') == true && currChannel->isUserInvited(currUser->getUserId()) == false)
             {
                 currUser->ServertoClients(ERR_INVITEONLYCHAN(db->getUser(fd)->getNickName(),channelNamesList[channelIndex]));
+                return ;
                 // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+i)\n");
             }
             else if(currChannel->getMode('l') == true && currChannel->getLimit() <= currChannel->getMembers().size())
             {
                 currUser->ServertoClients(ERR_CHANNELISFULL(db->getUser(fd)->getNickName(),channelNamesList[channelIndex]));
+                return ;
                 // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelNamesList[channelIndex] + " :Cannot join channel (+l)\n");
             }
             else
             {
                 // std::cout << "TEST = " << currChannel->getChannelName() << std::endl;
                 currChannel->addMember(currUser);
-
+                
+                // Loop on all members joined to channel to print them and disply them on Limechat
                 std::map<USER_ID, User *> Members = currChannel->getMembers();
                 std::map<USER_ID, User *>::iterator It_Members = Members.begin();
                 std::string MemberStr;
@@ -76,8 +82,8 @@ void Commands::join()
                     //     MemberStr.pop_back();
                 }
                 SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN :" + channelNamesList[channelIndex]);
-                // sendResponse(fd, ":" + MemberStr + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN :" + channelNamesList[channelIndex] + "\n");
                 currUser->ServertoClients(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],MemberStr)); //how to pranting all list of members on the channel 
+                // sendResponse(fd, ":" + MemberStr + "!~" + db->getUser(fd)->getUserName() + "@" + currUser->GetIpAddress() + " JOIN :" + channelNamesList[channelIndex] + "\n");
                 // sendResponse(fd, db->getUser(fd)->getNickName() + " Joined successfully\n");
             }
         }

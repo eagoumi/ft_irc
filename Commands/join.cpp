@@ -58,7 +58,6 @@ void Commands::join()
                 std::map<USER_ID, User *> Members = currChannel->getMembers();
                 std::map<USER_ID, User *>::iterator It_Members = Members.begin();
                 std::string MemberStr;
-                int i = 0;
                 for (; It_Members != Members.end(); ++It_Members)
                 {
                     if (currChannel->isUserOperator(It_Members->first))

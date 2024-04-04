@@ -22,7 +22,6 @@ void Commands::kick()
    
     if (currChannel == NULL)
     {    
-        // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
         currUser->ServertoClients(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
         return ;
     }
@@ -51,7 +50,7 @@ void Commands::kick()
     else
     {
         User* kickedUser =db->existUser(nickName);
-        displayMember(channelName);
+        // displayMember(channelName);
         std::cout << std::endl;
         if (reason != "")
         {
@@ -69,6 +68,7 @@ void Commands::kick()
             sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
         }
         db->getChannel(channelName)->deleteMember(kickedUser);
-        displayMember(channelName);
+        db->getChannel(channelName)->deleteInvited(kickedUser);
+        // displayMember(channelName);
     }
 }

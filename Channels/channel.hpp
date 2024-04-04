@@ -62,6 +62,8 @@ class Channel
         size_t                      	 getLimit();
         bool                             isUserMember(USER_ID Id);
         bool                             isNickExist(std::string nick);
+        void    deleteInvited(User *userToDelete);
+
 
 
         // std::string                 channelTopic(int fd);

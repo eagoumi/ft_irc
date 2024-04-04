@@ -61,6 +61,8 @@ class Channel
         void                             deleteOperator(User *operatorToDelete);
         size_t                      	 getLimit();
         bool                             isUserMember(USER_ID Id);
+        bool                             isNickExist(std::string nick);
+
 
         // std::string                 channelTopic(int fd);
 

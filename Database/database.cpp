@@ -141,7 +141,9 @@ User *Database::existUser(std::string nick)
         std::string currUserNick = it->second->getNickName();
         std::transform(currUserNick.begin(), currUserNick.end(), std::back_inserter(currUserNickCapitilized), ::toupper);
         if(currUserNickCapitilized == nick)
+        {
             return it->second;
+        }
     }
     return 0;
 }

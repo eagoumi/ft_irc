@@ -200,7 +200,7 @@ void Commands::checkTokensListSyntax()
     char justFordebug[42][42] = { "NONE", "COMMA ", "PRIVMSG", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END"};
     /***********************************************************************************************************************************/
     _tokensList.size() == 0 ? throw std::string("TokenList is empty => cmdLine is empty") : NULL;
-    if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n");
+    // if (cmd == NONE) sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n");
     //ServertoClients(std::string string)
 	while (ListIt != _tokensList.end())
 	{
@@ -260,7 +260,15 @@ void Commands::CommandMapinit(cmdData dataCmd)
     //     std::cout << "user is null within commandMapINit()" << std::endl;
     // User *currUser = db->getUser(fd);
     std::string cmd = getCommand();
-    if (cmd == "JOIN")
+    if (cmd == "NICK")
+    {}
+    else if (cmd == "PASS")
+    {}
+    else if (cmd == "USER")
+    {}
+    else if (cmd == "PONG")
+    {}
+    else if (cmd == "JOIN")
         join();
     else if (cmd == "KICK")
         kick();

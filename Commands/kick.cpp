@@ -49,7 +49,7 @@ void Commands::kick()
     else
     {
         User* kickedUser =db->existUser(nickName);
-        displayMember(channelName);
+        // displayMember(channelName);
         std::cout << std::endl;
         if (reason != "")
         {
@@ -67,6 +67,7 @@ void Commands::kick()
             sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
         }
         db->getChannel(channelName)->deleteMember(kickedUser);
-        displayMember(channelName);
+        db->getChannel(channelName)->deleteInvited(kickedUser);
+        // displayMember(channelName);
     }
 }

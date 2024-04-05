@@ -18,17 +18,9 @@ void Commands::join()
             std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
             _logger.IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt" + channelNamesList[channelIndex] + "\n");//MODE #blahmeow +nt
-            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + getHostName() + " MODE +nt " + channelNamesList[channelIndex]+ '\n');
-            // sendResponse(fd, ":" + currUser->GetIpAddress() + " MODE " + channelNamesList[channelIndex] + " +t\n");
             _logger.IRCPrint(fd,":" + _logger.getServerIP() + " MODE " + channelNamesList[channelIndex] + " +t");
             _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],"@" + db->getUser(fd)->getNickName()));
             _logger.ServertoClient(RPL_ENDOFNAMES(db->getUser(fd)->getNickName(), channelNamesList[channelIndex]));
-
-            db->addNewChannel(channelNamesList[channelIndex], currUser);
-            sendResponse(fd, ":" + currUserNickname + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            _logger.ServertoClient(RPL_NAMREPLY(currUserNickname, channelNamesList[channelIndex], "@" + currUserNickname));
-            _logger.ServertoClient(RPL_ENDOFNAMES(currUserNickname, channelNamesList[channelIndex]));
         }
         else {
 

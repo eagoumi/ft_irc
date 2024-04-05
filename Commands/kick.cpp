@@ -36,22 +36,20 @@ void Commands::kick()
         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(nickName, channelName));
         return ;
     }
-     if (currChannel->isNickExist(nickName) == false)
+    if (currChannel->isNickExist(nickName) == false)
     {
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :They aren't on that channel\n");
         return ;
     }
-
     else if (currChannel->isUserOperator(nickUser->getUserId()) == true)
     {
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :You can't KICK the operator\n");
         return ;
     }
-
     else
     {
         User* kickedUser =db->existUser(nickName);
-        displayMember(channelName);
+        // displayMember(channelName);
         std::cout << std::endl;
         if (reason != "")
         {
@@ -69,6 +67,7 @@ void Commands::kick()
             sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
         }
         db->getChannel(channelName)->deleteMember(kickedUser);
-        displayMember(channelName);
+        db->getChannel(channelName)->deleteInvited(kickedUser);
+        // displayMember(channelName);
     }
 }

@@ -214,7 +214,7 @@ bool Commands::checkTokensListSyntax()
     
     if (_tokensList.size() == 0) { return false; }
     if (cmd == NONE) { sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n"); return false; }
-    if (isEnoughParam(cmd) == false) { sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName(), getCommand()) + "\n"); return false; }
+    if (isEnoughParam(cmd) == false) { sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName() + "\n")); return false; }
 
 	while (ListIt != _tokensList.end())
 	{

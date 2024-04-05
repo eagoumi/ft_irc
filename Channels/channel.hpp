@@ -64,6 +64,8 @@ class Channel
         void                             setKey(std::string const& givenKey);
         bool                             isKeyMatch(std::string const& givenKey);
         bool                             isNickExist(std::string nick);
+        void    deleteInvited(User *userToDelete);
+
 
 
         // std::string                 channelTopic(int fd);

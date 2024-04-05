@@ -58,11 +58,12 @@ void Server::CheckForConnectionClients()
 				if (cmdquit == "QUIT" || cmdquit == "quit")
 				{
 					std::string reason = buffer;
-					int C = reason.find(" ");
-					reason = reason.substr(C, reason.length());
+					size_t C = reason.find(" ");
+					if (C != std::string::npos)
+						reason = reason.substr(C + 1, reason.length());
 					// std::cout << skipSpace(reason) << std::endl;
 					// QUITCMD >> reason;
-					// Quit(i, skipSpace(reason) + "\r\n");
+					Quit(i, reason + "\r\n");
 
 					_db->deleteUser(_Storeusersfd.at(i).fd);
 					close(_Storeusersfd.at(i).fd);

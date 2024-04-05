@@ -27,7 +27,7 @@ static bool isStrContains(std::string const &str, std::string const &charSet) {
 //     return false;
 // }
 
-Channel::Channel(CHANNEL_NAME channelName, User *creator) {
+Channel::Channel(CHANNEL_NAME channelName, User *creator) : _name(channelName) {
 
     // db = Database::GetInstance();
     creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;

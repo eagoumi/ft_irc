@@ -16,59 +16,48 @@ void Commands::kick()
     std::string channelName = getNextParam().first;
     std::string nickName = getNextParam().first;
     std::string reason = getNextParam().first;
-
     currChannel = db->getChannel(channelName);
-    User* nickUser = db->existUser(nickName);
-   
+    User *nickUser = db->existUser(nickName);
+    if (reason == "")
+        reason = currUser->getNickName();
+
     if (currChannel == NULL)
-    {    
+    {
         // sendResponse(fd, ":" + currUser->getNickName() + " " + channelName + " :No such channel\n");
         _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
-        return ;
+        return;
     }
     else if (currChannel->isUserMember(currUser->getUserId()) == false)
     {
         _logger.ServertoClient(ERR_NOTONCHANNEL(nickName, channelName));
-        return ;
+        return;
     }
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(nickName, channelName));
-        return ;
+        return;
     }
     if (currChannel->isNickExist(nickName) == false)
     {
         _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), nickName, channelName));
-        return ;
+        return;
     }
     else if (currChannel->isUserOperator(nickUser->getUserId()) == true)
     {
-        // _logger.ServertoClient(ERR_CANNOTKICKOP(currUser->getNickName(), channelName));
-        sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :You can't KICK the operator\n");
-        return ;
+        _logger.ServertoClient(ERR_CANNOTKICKOP(currUser->getNickName(), channelName));
+        return;
     }
     else
     {
-        User* kickedUser =db->existUser(nickName);
-        // displayMember(channelName);
-        std::cout << std::endl;
-        if (reason != "")
-        {
-            // std::cout << "REASON = " << reason << std::endl;
-            // SendMessageToMembers(currChannel, currUser, ERR_NOSUCHCHANNEL(nickName, channelName));
-            SendMessageToMembers(currChannel, currUser, reason);
-
-            // sendResponse(kickedFd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
-            // sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + " " + reason + "\n");
-            sendResponse(fd, "user kicked succefully");
-        }
-        else
-        {
-            sendResponse(kickedUser->getUserId(), ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
-            sendResponse(fd, ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + "\n");
-        }
+        User *kickedUser = db->existUser(nickName);
+        SendMessageToMembers(currChannel, currUser, reason);
+        // sendResponse(kickedUser->getUserId(), ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + reason + "\n");
+        // :yousra!~0@oq7f3s33.btgd4imj.mjbqqhjk.ip KICK #hello sara :yousra
+        _logger.ServertoClient(":" + currUser->getNickName() + "!~@" + _logger.getServerIP() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
+        // sendResponse(fd, ":" + currUser->getNickName() + "!~@" + _logger.getServerIP() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
         db->getChannel(channelName)->deleteMember(kickedUser);
         db->getChannel(channelName)->deleteInvited(kickedUser);
-        // displayMember(channelName);
     }
 }
+
+// delete displayy members function

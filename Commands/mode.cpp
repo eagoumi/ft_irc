@@ -45,7 +45,6 @@ void Commands::mode()
     }
     else
     {
-        puts("beg");
         // currChannel->setModes(modesStr);
         char sign = '+'; // by default if no sign is specified within given modeStr
         for (size_t i = 0; i < modesStr.length(); i++)
@@ -58,9 +57,10 @@ void Commands::mode()
             {
                 if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k'))
                 {
-
                     if (currModeLetter == 'k')
                     {
+                        modeArg = getNextParam().first;
+                        currChannel->setKey(modeArg);
                     }
                     else if (currModeLetter == 'l')
                     {
@@ -85,6 +85,8 @@ void Commands::mode()
                         else
                         {
                             currChannel->addOperator(Operator->getUserId());
+                            _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelName,"@" + db->getUser(fd)->getNickName()));
+                            
                         }
                     }
 
@@ -94,6 +96,7 @@ void Commands::mode()
                 {
                     if (currModeLetter == 'k')
                     {
+                        currChannel->clearKey();
                     }
                     else if (currModeLetter == 'o')
                     {

@@ -37,7 +37,9 @@ void Server::CheckForConnectionClients()
 			std::string cmdquit; // PROBLEM HERE
 			std::istringstream QUITCMD(buffer); // PROBLEM HERE
 
-			std::string cmdLine(buffer);
+        	User *client = _db->getUser(_Storeusersfd[i].fd);
+			client->appendToCmdLine(buffer);
+			std::string cmdLine = client->getCmdLine();
 			std::cout << "cmdLine : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
 			// puts(buffer);
 			if (recive > 0)
@@ -47,11 +49,10 @@ void Server::CheckForConnectionClients()
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
 				// std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
-        		User *getuser = _db->getUser(_Storeusersfd[i].fd);
 				data.fd = _Storeusersfd[i].fd;
 				data.line = buffer; // PROBLEM HERE
 				data.serverPass = _Password;
-				_logger.setCurrUser(getuser);
+				_logger.setCurrUser(client);
 				// data.nick = User->getNickName();
 				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
@@ -107,7 +108,7 @@ void Server::CheckForConnectionClients()
 				else {
 
 					std::string line;
-					std::istringstream bufferStream((std::string(buffer)));
+					std::istringstream bufferStream(cmdLine);
 					while (std::getline(bufferStream, line, '\n')) {
 
 						size_t pos;
@@ -116,7 +117,8 @@ void Server::CheckForConnectionClients()
 						data.line = line;
 						cmdObj.CommandMapinit(data);
 					}
-				}	
+					client->clearCmdLine();
+				}
 				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}

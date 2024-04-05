@@ -16,7 +16,8 @@ std::string Logger::getServerIP() {
 }
 
 void Logger::setCurrUser(User* currUser) {
-
+    if (!_currUser)
+        return ;
     _currUser = currUser;
     _userFd = _currUser->getUserId();
     _nickname = _currUser->getNickName();
@@ -32,8 +33,7 @@ void Logger::IRCPrint(size_t fd, std::string string) {
 
     std::string buffer = string + "\r\n";
     //catch erro
-    if (send(fd, buffer.c_str(), buffer.length(), 0) < 0)
-        throw std::runtime_error("Error On Sending a Message to the Client.\n");
+    send(fd, buffer.c_str(), buffer.length(), 0);
 }
 
 void Logger::ServertoClient(std::string string) {

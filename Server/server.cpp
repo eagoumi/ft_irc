@@ -40,7 +40,7 @@ void Server::CheckForConnectionClients()
         	User *client = _db->getUser(_Storeusersfd[i].fd);
 			client->appendToCmdLine(buffer);
 			std::string cmdLine = client->getCmdLine();
-			std::cout << "cmdLine : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
+			std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
 			// puts(buffer);
 			if (recive > 0)
 			{

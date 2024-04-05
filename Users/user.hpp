@@ -15,6 +15,7 @@
 # define CHANNEL_NAME std::string
 # define USER_NAME std::string
 # define NICK_NAME std::string
+# define CND_LINE std::string
 # define USER_AUTH bool
 
 class Channel;
@@ -31,6 +32,7 @@ class   User
         bool                                _isNickInserted;
         bool                                _isUserNameInserted;
         std::string                         _IPServer;//this is will be removed
+        std::string                         _cmdLine;
 
     public:
         User();
@@ -40,6 +42,9 @@ class   User
         USER_NAME const& getUserName();
         void setNickName(NICK_NAME const &);
         NICK_NAME const& getNickName();
+        void appendToCmdLine(CND_LINE const &);
+        CND_LINE const& getCmdLine();
+        void clearCmdLine();
         bool isStrContains(std::string const& str, std::string const& charSet);
         bool isStrStartWith(std::string const& str, std::string const& charSet);
         //by agoumi

@@ -115,6 +115,19 @@ std::map<std::string, Channel *> const& User::getJoinedChannels() {
     return this->_joinedChannels;
 }
 
+void User::appendToCmdLine(CND_LINE const &bufferToAppend) {
+   this->_cmdLine += bufferToAppend;
+}
+
+CND_LINE const& User::getCmdLine() {
+    return _cmdLine;
+}
+
+void User::clearCmdLine() {
+    _cmdLine.clear();
+}
+
+
 // void User::setServerIP(std::string const &ServerIP) //this is not called anywhere
 // {
 //     // std::cout << _IPServer << std::endl;

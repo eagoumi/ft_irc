@@ -122,7 +122,8 @@ public:
     void    displayMember(std::string channelName);
     // bool    getMode(std::string letter, std::string channelName);
     void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
-
+    void sendToClientsExisted(size_t reciver, User *sender, std::string Message);
+    bool check_connection(size_t user_fd);
 
 };
 

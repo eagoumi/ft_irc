@@ -16,8 +16,8 @@ std::string Logger::getServerIP() {
 }
 
 void Logger::setCurrUser(User* currUser) {
-    if (!_currUser)
-        return ;
+    // if (!_currUser)
+    //     return ;
     _currUser = currUser;
     _userFd = _currUser->getUserId();
     _nickname = _currUser->getNickName();
@@ -39,6 +39,19 @@ void Logger::IRCPrint(size_t fd, std::string string) {
 void Logger::ServertoClient(std::string string) {
 
     IRCPrint(_userFd, ":" + _serverIp + " " + string);
+}
+
+void Logger::SendJoinedMembers(Channel *Channel_name, std::string command)
+{
+    //getNickname() + "!" + getUsername() + "@" + getHostIp() + " "
+    std::map<USER_ID, User *> checkUsers = Channel_name->getMembers();
+    std::map<USER_ID, User *>::iterator iter_map = checkUsers.begin();
+    for(; iter_map != checkUsers.end(); iter_map++)
+    {
+        if (iter_map->first != _currUser->getUserId())
+            IRCPrint(iter_map->first, command);
+    }
+    // Database::GetInstance()->getChannel()
 }
 
 //Send Client To Client

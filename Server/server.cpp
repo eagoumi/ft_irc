@@ -34,19 +34,25 @@ void Server::CheckForConnectionClients()
 			// std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
 			std::cout << recive << std::endl;
-			std::cout << "Buffer : " << buffer << std::endl; // PROBLEM HERE
 			std::string cmdquit; // PROBLEM HERE
 			std::istringstream QUITCMD(buffer); // PROBLEM HERE
+
+        	User *client = _db->getUser(_Storeusersfd[i].fd);
+			client->appendToCmdLine(buffer);
+			std::string cmdLine = client->getCmdLine();
+			std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
 			// puts(buffer);
 			if (recive > 0)
 			{
+				if (cmdLine.find('\n') == std::string::npos)
+					continue;
 				//data Received
 				// std::cout << "goooo gooo gooo" << std::endl;
 				// std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
-        		User *getuser = _db->getUser(_Storeusersfd[i].fd);
 				data.fd = _Storeusersfd[i].fd;
 				data.line = buffer; // PROBLEM HERE
-				_logger.setCurrUser(getuser);
+				data.serverPass = _Password;
+				_logger.setCurrUser(client);
 				// data.nick = User->getNickName();
 				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
@@ -54,9 +60,9 @@ void Server::CheckForConnectionClients()
 					std::string reason = buffer;
 					int C = reason.find(" ");
 					reason = reason.substr(C, reason.length());
-					std::cout << skipSpace(reason) << std::endl;
+					// std::cout << skipSpace(reason) << std::endl;
 					// QUITCMD >> reason;
-					Quit(i, skipSpace(reason) + "\r\n");
+					// Quit(i, skipSpace(reason) + "\r\n");
 
 					_db->deleteUser(_Storeusersfd.at(i).fd);
 					close(_Storeusersfd.at(i).fd);
@@ -64,45 +70,57 @@ void Server::CheckForConnectionClients()
 					i--;
 					std::cout << "sd :" << i << std::endl;
 				}
-				else if (getuser->isAuthenticated() == false)
-				{
-					size_t posq;
-					std::string bufferStr(buffer);
-					if ((posq = bufferStr.find("\r")) != std::string::npos)
-					{
-						puts("xx");
-						// Split the buffer into lines/commands
-						buffer[recive] = '\0'; // Ensure null-termination
-						std::istringstream bufferStream(bufferStr);
-						std::string line;
-						while (std::getline(bufferStream, line)) 
-						{
-							std::cout << "[" << line << "]" << std::endl;
-							size_t pos;
-							if ((pos = line.find('\r')) != std::string::npos) 
-							{
-								line.erase(pos);
-								std::cout << "1[" << line << "]" << std::endl;
-							}
-							Authentication(i, line.c_str());	
-						}
-					}
-					else
-					{
-						if ((posq = bufferStr.find('\n')) != std::string::npos) 
-						{
+				// else if (getuser->isAuthenticated() == false)
+				// {
+				// 	size_t posq;
+				// 	std::string bufferStr(buffer);
+				// 	if ((posq = bufferStr.find("\r")) != std::string::npos)
+				// 	{
+				// 		puts("xx");
+				// 		// Split the buffer into lines/commands
+				// 		buffer[recive] = '\0'; // Ensure null-termination
+				// 		std::istringstream bufferStream(bufferStr);
+				// 		std::string line;
+				// 		while (std::getline(bufferStream, line)) 
+				// 		{
+				// 			std::cout << "[" << line << "]" << std::endl;
+				// 			size_t pos;
+				// 			if ((pos = line.find('\r')) != std::string::npos) 
+				// 			{
+				// 				line.erase(pos);
+				// 				std::cout << "1[" << line << "]" << std::endl;
+				// 			}
+				// 			Authentication(i, line.c_str());	
+				// 		}
+				// 	}
+				// 	else
+				// 	{
+				// 		if ((posq = bufferStr.find('\n')) != std::string::npos) 
+				// 		{
 
-							bufferStr.erase(posq);
-							std::cout << "3[" << bufferStr << "]" << std::endl;
-						}
-						puts("ff");
-						Authentication(i, bufferStr.c_str());	
+				// 			bufferStr.erase(posq);
+				// 			std::cout << "3[" << bufferStr << "]" << std::endl;
+				// 		}
+				// 		puts("ff");
+				// 		Authentication(i, bufferStr.c_str());	
+				// 	}
+				// }
+				else {
+
+					std::string line;
+					std::istringstream bufferStream(cmdLine);
+					while (std::getline(bufferStream, line, '\n')) {
+
+						size_t pos;
+						if ((pos = line.find('\r')) != std::string::npos)
+							line.erase(pos);
+						data.line = line;
+						std::cout << data.line << std::endl;
+						cmdObj.CommandMapinit(data);
+						line.clear();
 					}
+					client->clearCmdLine();
 				}
-				else
-				{
-					cmdObj.CommandMapinit(data);
-				}	
 				// Authentication(i, buffer, false, false, false, false);
 					// std::cout << "Wrong Password" << std::endl;
 			}

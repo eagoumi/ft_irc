@@ -24,7 +24,7 @@ enum OPTION
     RESET
 };
 
-enum token_type { NONE, COMMA , PRIVMSG_CMD, JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, WHOIS_CMD, LOCATION_CMD, CHANNEL, KEY, NICK, MSG, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END};
+enum token_type { NONE, COMMA , PASS_CMD, NICK_CMD, USER_CMD, PRIVMSG_CMD, JOIN_CMD, KICK_CMD, PART_CMD, TOPIC_CMD, INVITE_CMD, MODE_CMD, LOGTIME_CMD, WHOIS_CMD, LOCATION_CMD, CHANNEL, KEY, NICK, MSG, TOPIC_MSG, COMMENT, MODE_STR, REASON, MODE_ARG, LOG_BEG, LOG_END, PASS, USER};
 struct token
 {
     token_type type;
@@ -42,8 +42,9 @@ class Database;
 typedef struct s_comData
 {
     std::string line;
-    std::string nick;
+    // std::string nick;
     int fd;
+    std::string serverPass;
 
 } cmdData;
 
@@ -98,6 +99,8 @@ public:
 
     void part();
     void PRIVMSG();
+    void Authentication(std::string const& serverPass);
+    void WelcomeClient();
 
     std::map<std::string, std::string> splitInput(std::string input);
     // bool existMemberChannel(std::string member, std::string channelName);

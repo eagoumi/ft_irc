@@ -1,4 +1,5 @@
 #include "./Commands.hpp"
+#include <algorithm>
 #include <cctype>
 #include <cstddef>
 #include <vector>
@@ -31,6 +32,12 @@ token_type determine_cmd(std::string token) {
         return JOIN_CMD;
     else if (token == "PRIVMSG")
         return PRIVMSG_CMD;
+    else if (token == "PASS")
+        return PASS_CMD;
+    else if (token == "NICK")
+        return NICK_CMD;
+    else if (token == "USER")
+        return USER_CMD;
     else if (token == "TOPIC")
         return TOPIC_CMD;
     else if (token == "KICK")
@@ -122,6 +129,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
     size_t              tokenCounter = 0;
 
     this->_paramCounter = 0;
+    getNextParam(RESET);
     for (size_t i = 0; i < cmdLine.length(); i++) {
         /************************************/
         /*			skip spaces				*/
@@ -133,15 +141,14 @@ void   Commands::tokenize(std::string const& cmdLine) {
             /*  store word to the end of line if tokenType is a MSG  */
             /*********************************************************/
             if (tokenType == COMMENT || tokenType == TOPIC_MSG || tokenType == REASON || tokenType == MSG) {
-
-                word += cmdLine.substr(i); i = cmdLine.length();
-                if (word.back() == '\n') word.pop_back();
-                if (word.back() == '\r') word.pop_back();
+                
+                size_t spacePos = cmdLine.find(' ', i);
+                cmdLine[i] == ':' ? word += cmdLine.substr(i + 1) : word += cmdLine.substr(i, spacePos - i);
                 tokenNode.data = word;
                 tokenNode.type = tokenType;
                 _tokensList.push_back(tokenNode);
                 word.clear();
-                break ;
+                return ;
             }
 
             /*********************************************************/
@@ -170,7 +177,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
                     tokenNode.type = tokenType;
                     _tokensList.push_back(tokenNode);
                 }
-                else if (isspace(cmdLine[i]))
+                else if (isspace(cmdLine[i]) || cmdLine[i] == '\0')
                     _paramCounter++;
 
                 // determine next token type
@@ -182,7 +189,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
             word += cmdLine[i++];
         }
     }
-    getNextParam(RESET);
+    
 }
 
 bool Commands::isEnoughParam(token_type const& cmd) {
@@ -207,14 +214,18 @@ bool Commands::checkTokensListSyntax()
 	std::list<token>::iterator ListIt = _tokensList.begin();
 
     /**************************************************** -DEBUG- THOSE LINES WILL BE REMOVED -DEBUG- ****************************************************/
-    char justFordebug[42][42] = { "NONE", "COMMA ", "PRIVMSG", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END"};
+    char justFordebug[42][42] = { "NONE", "COMMA", "PASS_CMD", "NICK_CMD", "USER_CMD", "PRIVMSG_CMD", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END", "PASS", "USER"};
+    std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
+    std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒CMD TOKEN LIST▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
+    std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
     for (std::list<token>::iterator it = _tokensList.begin(); it != _tokensList.end(); it++)
-        std::cout << "[" + (*ListIt).data + "]" + " : [" + justFordebug[(*ListIt).type] + "]" << std::endl;
+        std::cout << "▒ " << "[" + (*it).data + "]" + " : [" + justFordebug[(*it).type] + "]" << std::endl;
+    std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl << std::endl;
     /***********************************************************************************************************************************/
     
     if (_tokensList.size() == 0) { return false; }
     if (cmd == NONE) { sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n"); return false; }
-    if (isEnoughParam(cmd) == false) { sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName() + "\n")); return false; }
+    if (isEnoughParam(cmd) == false) { sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName()) + "\n"); return false; }
 
 	while (ListIt != _tokensList.end())
 	{
@@ -236,14 +247,14 @@ void Commands::CommandMapinit(cmdData dataCmd)
         return ;
 
     std::string cmd = getCommand();
-    if (cmd == "NICK")
-    {}
-    else if (cmd == "PASS")
-    {}
-    else if (cmd == "USER")
-    {}
-    else if (cmd == "PONG")
-    {}
+    if ((cmd == "PASS" || cmd == "NICK" || cmd == "USER") && currUser->isAuthenticated() == false)
+        Authentication(dataCmd.serverPass);
+    // else if (cmd == "PASS")
+    // {}
+    // else if (cmd == "USER")
+    // {}
+    // else if (cmd == "PONG")
+    // {}
     else if (cmd == "JOIN")
         join();
     else if (cmd == "KICK")

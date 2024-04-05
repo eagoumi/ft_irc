@@ -52,19 +52,21 @@ class Channel
         std::map<USER_ID, User *> const& getMembers();
         std::map<USER_ID, User *> const& getOperators();
         // std::map<std::string, bool> 	 gettingModes(std::string toFind);
-        std::string                 	 getTopic();
-        void                        	 deleteMember(User* userToDelete);
-        void                        	 setTopic(std::string nTopic);
+        std::string	getTopic();
+        void		deleteMember(User* userToDelete);
+        void		setTopic(std::string nTopic);
         // void                        	 initializeModes(std::string modeStr);
-        void                        	 setLimit(size_t limitMembers);
-        void                             addOperator(size_t fdo);
-        void                             deleteOperator(User *operatorToDelete);
-        size_t                      	 getLimit();
-        bool                             isUserMember(USER_ID Id);
-        void                             setKey(std::string const& givenKey);
-        bool                             isKeyMatch(std::string const& givenKey);
-        bool                             isNickExist(std::string nick);
-        void    deleteInvited(User *userToDelete);
+        void		setLimit(size_t limitMembers);
+        void		addOperator(size_t fdo);
+        void		deleteOperator(User *operatorToDelete);
+        size_t		getLimit();
+        bool		isUserMember(USER_ID Id);
+        void		setKey(std::string const& givenKey);
+
+        bool		isKeyMatch(std::string const& givenKey);
+        bool		isNickExist(std::string nick);
+        void		deleteInvited(User *userToDelete);
+        void		clearKey();
 
 
 

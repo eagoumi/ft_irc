@@ -3,11 +3,12 @@
 
 //Special case For Iba7lawn n IRC
 //Errors
-#define ERR_TOOMANYPARAM(Client)			"4001 " + Client + " :Too Many Paramatre, Please try again!"
-#define ERR_ALLREADYENTERPASS(Client)			"4002 " + Client + " :You have already entered the password!"
-#define ERR_CORRECTPASS(Client)			"4003 " + Client + " :Your password is correct ✅"
-#define ERR_MISSPASS(Client)			"4004 " + Client + " :Please enter the password to connect to the server first. 🚫"
-#define RPL_ALREADYONCHANNEL(NickName,invNickName,Chanel)			"112 " + NickName + " " + invNickName + " " + Chanel + " :is already on channel"
+#define ERR_TOOMANYPARAM(Client)                            "4001 " + Client + " :Too Many Paramatre, Please try again!"
+#define ERR_ALLREADYENTERPASS(Client)			            "4002 " + Client + " :You have already entered the password!"
+#define ERR_CORRECTPASS(Client)			                    "4003 " + Client + " :Your password is correct ✅"
+#define ERR_MISSPASS(Client)			                    "4004 " + Client + " :Please enter the password to connect to the server first. 🚫"
+#define RPL_ALREADYONCHANNEL(NickName,invNickName,Chanel)   "112 " + NickName + " " + invNickName + " " + Chanel + " :is already on channel"
+#define ERR_CANNOTKICKOP(NickName,channel)                  "901" + NickName + " " channel + " :You can't KICK the operator\n"
 
 
 //Replys

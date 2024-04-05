@@ -1,21 +1,11 @@
 *Server Channels* :
 
-<<<<<<< HEAD
-	#hello: [ +it, TOPIC:""
-		Operaters: a, 
-		Members: a, 
-=======
-	#hh: [ +t, TOPIC:""
-		Operaters: agou, 
-		Members: agou, 
->>>>>>> production
+	#hello: [ +t, TOPIC:""
+		Operaters: YOUSRA, 
+		Members: YOUSRA, 
 	]
 
 =================================================================
 
 *Server Users* :
-<<<<<<< HEAD
-	b, 
-=======
-	agou, 
->>>>>>> production
+	YOUSRA, , 

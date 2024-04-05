@@ -58,8 +58,9 @@ void Commands::join()
                         MemberStr += "@";
                     MemberStr += It_Members->second->getNickName() + " ";
                 }
-                SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
-                _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(), channelNamesList[channelIndex], MemberStr)); // how to pranting all list of members on the channel
+                _logger.IRCPrint(currUser->getUserId(),  ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
+                _logger.SendJoinedMembers(currChannel, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
+                _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],MemberStr)); //how to pranting all list of members on the channel 
             }
         }
     }

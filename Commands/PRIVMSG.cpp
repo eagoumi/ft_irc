@@ -1,4 +1,23 @@
 #include "Commands.hpp"
+bool Commands::check_connection(size_t user_fd)
+{
+    std::map<size_t, User *> user = db->getUsers();
+    std::map<size_t, User *>::iterator it_user = user.begin();
+    for (; it_user != user.end() ; it_user++)
+    {
+        if (it_user->first == user_fd)
+            return true;
+    }
+    return false;
+}
+
+void Commands::sendToClientsExisted(size_t reciver, User *sender, std::string Message)
+{
+    std::string msg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + _logger.getServerIP() + " " + Message + "\r\n";
+    if (check_connection(reciver)) //check if the clients still connected then shend the message
+        send(reciver, msg.c_str(), msg.length(), 0);
+    msg.clear();
+}
 
 std::string eraseOpertorSymbole(std::string Channel_Name)
 {
@@ -35,7 +54,7 @@ void Commands::PRIVMSG()
                 {
                     puts("ss11");
                     std::cout << "Operators = " << IT_OPER->second->getNickName() << std::endl;
-                    _logger.CleintToClient( IT_OPER->first, Message); // check for message syntax
+                    _logger.CleintToClient(IT_OPER->first, Message); // check for message syntax
                 }
                 puts("ss3");
             }
@@ -51,7 +70,7 @@ void Commands::PRIVMSG()
             if (ch && get_param[i][0] == '#')
             {
                 if (ch->getMember(fd))
-                    SendMessageToMembers(ch, currUser, Message); // check for message syntax
+                    _logger.SendJoinedMembers(ch, "PRIVMSG " + ch->getChannelName() + " :" + Message); // check for message syntax
                 else
                 {
                     _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
@@ -63,9 +82,11 @@ void Commands::PRIVMSG()
                 User *reciver_msg = db->existUser(get_param[i]);
                 if (reciver_msg)
                 {
-                    if (Message[0] != ':')
-                        Message.insert(0, ":");
-                    _logger.CleintToClient(reciver_msg->getUserId(), getCommand() + " " + get_param[i] + " " + Message);
+                    // if (Message[0] != ':')
+                    //     Message.insert(0, ":");
+                    std::cout << " ID = " << reciver_msg->getUserId() << std::endl;
+                    std::cout << " NICK = " << get_param[i] << std::endl;
+                    sendToClientsExisted(reciver_msg->getUserId(), reciver_msg, "PRIVMSG " + get_param[i] + " :" + Message);
                 }
                 else
                 {

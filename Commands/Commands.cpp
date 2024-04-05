@@ -129,6 +129,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
     size_t              tokenCounter = 0;
 
     this->_paramCounter = 0;
+    _tokensList.clear();
     getNextParam(RESET);
     for (size_t i = 0; i < cmdLine.length(); i++) {
         /************************************/

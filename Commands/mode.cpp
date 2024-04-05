@@ -51,6 +51,7 @@ void Commands::mode()
                     {
                         modeArg = getNextParam().first;
                         User *Operator = db->existUser(modeArg);
+                        std::cout << "fing operator = " << Operator->getNickName() << std::endl;
                         if (!Operator)
                         {
                             _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
@@ -65,8 +66,7 @@ void Commands::mode()
                         else
                         {
                             currChannel->addOperator(Operator->getUserId());
-                            _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelName,"@" + db->getUser(fd)->getNickName()));
-                            
+                            SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);                            
                         }
                     }
 
@@ -82,15 +82,15 @@ void Commands::mode()
                     {
                         modeArg = getNextParam().first;
                         User *Operator = db->existUser(modeArg);
-                        if (!Operator)
-                        {
-                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
-                            continue;
-                        }
-                        else if (currChannel->isNickExist(modeArg) == false)
+                        if (currChannel->isNickExist(modeArg) == false)
                         {
                             _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
                             // sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
+                            continue;
+                        }
+                        else if (!Operator)
+                        {
+                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
                             continue;
                         }
                         else

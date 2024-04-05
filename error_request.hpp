@@ -8,8 +8,7 @@
 #define ERR_CORRECTPASS(Client)			                    "4003 " + Client + " :Your password is correct ✅"
 #define ERR_MISSPASS(Client)			                    "4004 " + Client + " :Please enter the password to connect to the server first. 🚫"
 #define RPL_ALREADYONCHANNEL(NickName,invNickName,Chanel)   "112 " + NickName + " " + invNickName + " " + Chanel + " :is already on channel"
-#define ERR_CANNOTKICKOP(NickName,channel)                  "901" + NickName + " " channel + " :You can't KICK the operator\n"
-
+#define ERR_CANNOTKICKOP(NickName,channel)                  "113"  + NickName + " " + channel + " :You can't KICK the operator"
 
 //Replys
 

@@ -4,27 +4,6 @@
 //+t not seted at the begining of join
 // user does not exist in -o
 
-/******************************/
-/* MODIFIED BY TOFA7A SRY     */
-/* I think This method        */
-/* has to be moved to         */
-/* Channel Class better       */
-/* I moved the others too     */
-/* that have `Channel::`      */
-/******************************/
-// bool Commands::getMode(std::string letter, std::string channelName)
-// {
-//     std::map<std::string, bool> modes;
-//     modes = db->getChannel(channelName)->gettingModes(letter);
-//     for (std::map<std::string, bool>::iterator it = modes.begin(); it != modes.end(); it++)
-//     {
-//         std::cout << it->first << "       " << it->second << std::endl;
-//     }
-//     if (!modes.empty() && modes[letter] == true)
-//         return true;
-//     return false;
-// }
-
 void Commands::mode()
 {
     std::string channelName = getNextParam().first;
@@ -79,7 +58,8 @@ void Commands::mode()
                         }
                         else if (currChannel->isNickExist(modeArg) == false)
                         {
-                            sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
+                            _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
+                            // sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
                             continue;
                         }
                         else
@@ -109,7 +89,8 @@ void Commands::mode()
                         }
                         else if (currChannel->isNickExist(modeArg) == false)
                         {
-                            sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
+                            _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
+                            // sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
                             continue;
                         }
                         else
@@ -123,121 +104,4 @@ void Commands::mode()
             }
         }
     }
-
-    /**************************/
-    /* MODIFIED BY TOFA7A SRY */
-    /* this one I think is    */
-    /* Like a setter set modes*/
-    /* it can be done in the  */
-    /* Channel() constructer  */
-    /* just once created      */
-    /**************************/
-    // else
-    // {
-    //     currChannel->initializeModes(modeStr);
-    //     currChannel->gettingModes("t");
-    //     currChannel->gettingModes("i");
-    //     currChannel->gettingModes("o");
-    //     currChannel->gettingModes("l");
-    //     currChannel->gettingModes("k");
-    // }
-
-    /**************************/
-    /* MODIFIED BY TOFA7A SRY */
-    /* instead of appending   */
-    /* here, the channel mode */
-    /* string will be get from*/
-    /* the channel            */
-    /* and btw this seems     */
-    /* setting modes without  */
-    /* checking on operater   */
-    /* permisions             */
-    /**************************/
-    // if(_paramCounter == 2) {
-
-    //     // RPL_UMODEIS(Nickname, Mode)
-    //     std::string mode = currChannel->getModeStr();
-    //     //     mode = "+";
-    //     // if(getMode("t", channelName) == true)
-    //     //     mode.append("t");
-    //     // if(getMode("i", channelName) == true)
-    //     //     mode.append("i");
-    //     // if(getMode("o", channelName) == true)
-    //     //     mode.append("o");
-    //     // if(getMode("l", channelName) == true)
-    //     //     mode.append("l");
-    //     // if(getMode("k", channelName) == true)
-    //     //     mode.append("k");
-    //     std::cout << "mode = "<< mode << std::endl;
-    //     _logger.ServertoClient(RPL_UMODEIS(currUser->getNickName(), mode));
-    // }
-
-    /**************************/
-    /* MODIFIED BY TOFA7A SRY */
-    /* */
-    /* */
-    /* */
-    /* */
-    /**************************/
-    // if (_paramCounter > 2) {
-    // if (getMode("l", channelName) == true)
-    // {
-    //     size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-    //     if (limit > 0)
-    //         currChannel->setLimit(limit);
-    //     else
-    //         currChannel->setLimit(1);
-    // }
-
-    // if (currChannel->getMode('l') == true) {
-
-    //     size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
-    //     if (limit > 0)
-    //         currChannel->setLimit(limit);
-    //     else
-    //         currChannel->setLimit(1);
-    // }
-
-    // if (currChannel->getMode('o') == true) {
-
-    //     User* Operator = db->existUser(modeArg);
-    //     if (currChannel->isUserOperator(currUser->getUserId()) == false)
-    //         currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
-    //     else if (currChannel->isUserOperator(currUser->getUserId()) == true)
-    //         currChannel->addOperator(Operator->getUserId());
-    // }
-    // else if (currChannel->getMode('o') == false) {
-
-    //     User* Operator = db->existUser(modeArg);
-    //     if (currChannel->isUserOperator(Operator->getUserId()) == true &&
-    //             currChannel->isUserOperator(currUser->getUserId()) == true)
-    //         currChannel->deleteOperator(Operator);
-    //     // currChannel->addOperator(modeArg);
-    // }
-
-    // User* fdOperator = db->existUser(modeArg);
-    // if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == false)
-    //     currUser->ServertoClients(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
-    // else if (getMode("o", channelName) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
-    // {
-    //     currChannel->addOperator(fdOperator->getUserId());
-    // }
-    // else if (getMode("o", channelName) == false && currChannel->isUserOperator(currUser->getUserId()) == true && currChannel->isUserOperator(fdOperator->getUserId()) == true)
-    // {
-    //     currChannel->deleteOperator(fdOperator);
-    //     // currChannel->addOperator(modeArg);
-    // }
-    // }
-
-    // if(getMode("l") == true)
-    // {
-    // db->getChannel(this->channelName)->setLimit(get)
-    // }
-    // for (std::map<std::string, bool>::iterator it = modeSeted.begin(); it != modeSeted.end(); it++)
-    // {
-    //     std::cout << it->first << "       " << it->second << std::endl;
-    // }
-    // if(gettingModes('t', mode, modeSeted) == true){
-
-    // }
 }

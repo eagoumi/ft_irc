@@ -173,7 +173,7 @@ void Channel::setKey(std::string const& givenKey) {
 }
 
 bool Channel::isKeyMatch(std::string const& givenKey) {
-
+    std::cout << "givenkey = " << givenKey << " key = " << _key << std::endl;
     if (givenKey == _key) return true;
     return false;
 }
@@ -193,7 +193,6 @@ void Channel::deleteOperator(User *operatorToDelete) {
 }
 
 bool Channel::getMode(const char& modeLetter) {
-
     if (_modeSet.find(modeLetter) != _modeSet.end())
         return true;
     return (false);
@@ -201,8 +200,9 @@ bool Channel::getMode(const char& modeLetter) {
 
 void Channel::setMode(const char& modeLetter) {
 
-    if (_modeSet.empty())   _modeSet.insert('+');
-                            _modeSet.insert(modeLetter);
+    if (_modeSet.empty())   
+        _modeSet.insert('+');
+    _modeSet.insert(modeLetter);
 }
 
 void Channel::removeMode(const char& modeLetter) {

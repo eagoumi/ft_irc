@@ -1,11 +1,16 @@
 *Server Channels* :
 
 	#hello: [ +t, TOPIC:""
-		Operaters: YOUSRA, 
-		Members: YOUSRA, 
+		Operaters: me, 
+		Members: me, 
+	]
+
+	#test: [ +t, TOPIC:""
+		Operaters: a, 
+		Members: a, 
 	]
 
 =================================================================
 
 *Server Users* :
-	YOUSRA, , 
+	a, me, 

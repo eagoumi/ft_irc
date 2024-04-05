@@ -38,11 +38,12 @@ void Commands::kick()
     }
     if (currChannel->isNickExist(nickName) == false)
     {
-        sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :They aren't on that channel\n");
+        _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), nickName, channelName));
         return ;
     }
     else if (currChannel->isUserOperator(nickUser->getUserId()) == true)
     {
+        // _logger.ServertoClient(ERR_CANNOTKICKOP(currUser->getNickName(), channelName));
         sendResponse(fd, ":" + currUser->getNickName() + " " + nickName /*client*/ + " " + channelName + " :You can't KICK the operator\n");
         return ;
     }
@@ -53,7 +54,7 @@ void Commands::kick()
         std::cout << std::endl;
         if (reason != "")
         {
-            std::cout << "REASON = " << reason << std::endl;
+            // std::cout << "REASON = " << reason << std::endl;
             // SendMessageToMembers(currChannel, currUser, ERR_NOSUCHCHANNEL(nickName, channelName));
             SendMessageToMembers(currChannel, currUser, reason);
 

@@ -16,6 +16,8 @@ void Commands::join()
         if (currChannel == NOT_FOUND)
         {
             std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
+            // if(!channelkeysList.empty())
+            //     currChannel->setKey(channelkeysList[channelIndex]);
             db->addNewChannel(channelNamesList[channelIndex], currUser);
             _logger.IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN " + channelNamesList[channelIndex] + "\n");
             _logger.IRCPrint(fd,":" + _logger.getServerIP() + " MODE " + channelNamesList[channelIndex] + " +t");
@@ -23,9 +25,8 @@ void Commands::join()
             _logger.ServertoClient(RPL_ENDOFNAMES(db->getUser(fd)->getNickName(), channelNamesList[channelIndex]));
         }
         else {
-
             if (currChannel->getMember(fd) != NULL)
-                sendResponse(fd, "User already in channel\n");
+                _logger.ServertoClient(ERR_USERONCHANNEL(currUserNickname, channelNamesList[channelIndex]));
             else if (currChannel->getMode('i') == true && currChannel->isUserInvited(currUser->getUserId()) == false)
                 _logger.ServertoClient(ERR_INVITEONLYCHAN(currUserNickname, channelNamesList[channelIndex]));
             else if (currChannel->getMode('l') == true && currChannel->getLimit() <= currChannel->getMembers().size())
@@ -33,7 +34,6 @@ void Commands::join()
             else if (currChannel->getMode('k') == true && channelIndex < channelkeysList.size() && currChannel->isKeyMatch(channelkeysList[channelIndex]))
                 _logger.ServertoClient(ERR_BADCHANNELKEY(currUserNickname, channelNamesList[channelIndex]));
             else {
-
                 currChannel->addMember(currUser);
 
                 std::string MemberStr;

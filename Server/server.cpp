@@ -65,7 +65,40 @@ void Server::CheckForConnectionClients()
 					std::cout << "sd :" << i << std::endl;
 				}
 				else if (getuser->isAuthenticated() == false)
-					Authentication(i, buffer);	
+				{
+					size_t posq;
+					std::string bufferStr(buffer);
+					if ((posq = bufferStr.find("\r")) != std::string::npos)
+					{
+						puts("xx");
+						// Split the buffer into lines/commands
+						buffer[recive] = '\0'; // Ensure null-termination
+						std::istringstream bufferStream(bufferStr);
+						std::string line;
+						while (std::getline(bufferStream, line)) 
+						{
+							std::cout << "[" << line << "]" << std::endl;
+							size_t pos;
+							if ((pos = line.find('\r')) != std::string::npos) 
+							{
+								line.erase(pos);
+								std::cout << "1[" << line << "]" << std::endl;
+							}
+							Authentication(i, line.c_str());	
+						}
+					}
+					else
+					{
+						if ((posq = bufferStr.find('\n')) != std::string::npos) 
+						{
+
+							bufferStr.erase(posq);
+							std::cout << "3[" << bufferStr << "]" << std::endl;
+						}
+						puts("ff");
+						Authentication(i, bufferStr.c_str());	
+					}
+				}
 				else
 				{
 					cmdObj.CommandMapinit(data);

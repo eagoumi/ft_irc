@@ -5,7 +5,7 @@ std::string Server::skipSpace(std::string string)
 {
     std::string skiip;
     int i= 0;
-    while (string[i] == ' ')
+    if (string[0] == ' ')
         i++;
     skiip = string.substr(i, string.length());
     return skiip;
@@ -26,13 +26,13 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
 {
     std::string dataStr(data);
 
-    //check for the newline when applying command
-    size_t CmdNewLine = dataStr.find_first_of("\r\n");
-    if (CmdNewLine != std::string::npos)
-    {
+    // check for the newline when applying command
+    // size_t CmdNewLine = dataStr.find_first_of("\n");
+    // if (CmdNewLine != std::string::npos)
+    // {
         User *currUser = _db->getUser(_Storeusersfd[index].fd);
         std::string Command;
-        std::string cmd = dataStr.substr(0, CmdNewLine);
+        std::string cmd = dataStr;
         size_t len_param_command = Parameter_number(cmd);
         // std::cout << "param len: " << len_param_command << std::endl;
         size_t cmddoubledot = cmd.find(':');
@@ -49,12 +49,13 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
                 if (currUser->hasInsertedPass() == false)
                 {
                     std::string pass;
-                    pass = skipSpace(cmd.substr(Command.length(), CmdNewLine));
+                    pass = skipSpace(cmd.substr(Command.length()));
                     // GetCmd >> pass;
-                    // std::cout << "here'" << _Password << "'here" << std::endl;
+                    // std::cout << "here'{" << _Password << "}'here" << std::endl;
+                    // std::cout << "here'{" << pass << "}'here" << std::endl;
                     // std::cout << "here'" << pass << "'here" << std::endl;
                     // std::cout << _Password << std::endl;
-                    if (pass == skipSpace(_Password)) //&& len_param_command == 2)
+                    if (pass == _Password) //&& len_param_command == 2)
                     {
                         currUser->insertedPassSuccessfully();
                         // _logger.ServertoClient(ERR_CORRECTPASS(std::string("*")));
@@ -122,7 +123,7 @@ void Server::Authentication(int index, const char* data)//, bool& _IsAuth, bool&
             else
                 _logger.ServertoClient(ERR_UNKNOWNCOMMAND(std::string("*"), Command));
         }
-    }
+    // }
 }
 
 void Server::WelcomeClient(User *currUser)

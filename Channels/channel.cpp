@@ -75,6 +75,14 @@ bool Channel::isUserInvited(USER_ID Id) {
     return false;
 }
 
+void Channel::deleteInvited(User *userToDelete) {
+    std::map<USER_ID, User *>::iterator it = _invited.find(userToDelete->getUserId());
+
+    if(it != _invited.end())
+        _invited.erase(it);
+}
+
+
 bool Channel::isUserOperator(USER_ID Id) {
 
     UserIter it = this->_operators.find(Id);
@@ -179,38 +187,6 @@ void Channel::deleteOperator(User *operatorToDelete) {
     
 }
 
-
-/******************************/
-/* MODIFIED BY TOFA7A SRY     */
-/* This method does two       */
-/* things : set and get       */
-/* I'll try to split it       */
-/******************************/
-
-// std::map<std::string, bool> Channel::gettingModes(std::string toFind)
-// {
-//     std::string::size_type it = modeS.find(toFind);
-
-//     if (it != std::string::npos)
-//     {
-//         it--;
-//         if (modeS[it] == '+' || (modeS[0] == '+' && modeS[it] != '-'))
-//         {
-//             modeSeted[toFind] = true;
-//         }
-//         else
-//         {
-//             puts("test4");
-//             modeSeted[toFind] = false;
-//         }
-//     }
-//     return modeSeted;
-// }
-
-/*************************/
-/* updated version of    */
-/* both get and set      */
-/*************************/
 bool Channel::getMode(const char& modeLetter) {
 
     if (_modeSet.find(modeLetter) != _modeSet.end())
@@ -236,24 +212,6 @@ std::string Channel::getModeStr() {
     std::copy(_modeSet.begin(), _modeSet.end(), std::ostream_iterator<char>(stream));
     return stream.str();
 }
-
-/*****************************/
-/* MODIFIED BY TOFA7A SRY    */
-/* I think no need for it    */
-/* since we can create a     */
-/* set method for that       */
-/* which will parse modeStr  */
-/* then set the right values */
-/*****************************/
-// void Channel::initializeModes(std::string modeStr)
-// {
-//     modeS = modeStr;
-    // modeSeted["i"]; <<<<<<<< those moved to Channel() Param constructer
-    // modeSeted["t"]; <<
-    // modeSeted["k"]; <<
-    // modeSeted["o"]; <<
-    // modeSeted["l"]; <<
-// }
 
 Channel::~Channel()
 {

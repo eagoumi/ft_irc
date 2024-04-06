@@ -53,6 +53,7 @@ void Commands::mode()
                     {
                         modeArg = getNextParam().first;
                         User *Operator = db->existUser(modeArg);
+                        std::cout << "fing operator = " << Operator->getNickName() << std::endl;
                         if (!Operator)
                         {
                             _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));

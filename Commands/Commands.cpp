@@ -69,7 +69,7 @@ token_type    Commands::determineToken(char sep, token_type cmdType) {
 
     token_type tokenType(NONE);
     if (sep == ',') {
-        if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = NICK    : tokenType = NONE;
+        if      (cmdType == JOIN_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : tokenType = NONE;
         else if (cmdType == PART_CMD)       _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
         else if (cmdType == KICK_CMD)       _paramCounter == 1 ? tokenType = NONE    : (_paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
         else if (cmdType == PRIVMSG_CMD)    _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY  : tokenType = NONE);
@@ -256,26 +256,29 @@ void Commands::CommandMapinit(cmdData dataCmd)
     // {}
     // else if (cmd == "PONG")
     // {}
-    else if (cmd == "JOIN")
-        join();
-    else if (cmd == "KICK")
-        kick();
-    else if (cmd == "LOGTIME")
-        logtime();
-    else if (cmd == "INVITE")
-        invite();
-    else if (cmd == "TOPIC")
-        topic();
-    else if (cmd == "MODE")
-        mode();
-    else if (cmd == "LOCATION")
-        location();
-    else if (cmd == "WHOIS")
-        whois();
-    else if (cmd == "PART")
-        part();
-    else if (cmd == "PRIVMSG")
-        PRIVMSG();
+    if (currUser->isAuthenticated() == true)
+    {
+        if (cmd == "JOIN")
+            join();
+        else if (cmd == "KICK")
+            kick();
+        else if (cmd == "LOGTIME")
+            logtime();
+        else if (cmd == "INVITE")
+            invite();
+        else if (cmd == "TOPIC")
+            topic();
+        else if (cmd == "MODE")
+            mode();
+        else if (cmd == "LOCATION")
+            location();
+        else if (cmd == "WHOIS")
+            whois();
+        else if (cmd == "PART")
+            part();
+        else if (cmd == "PRIVMSG")
+            PRIVMSG();
+    }
 }
 
 void Commands::sendResponse(int userfd, std::string message)

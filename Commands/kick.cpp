@@ -54,7 +54,6 @@ void Commands::kick()
         // sendResponse(kickedUser->getUserId(), ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + reason + "\n");
         // :yousra!~0@oq7f3s33.btgd4imj.mjbqqhjk.ip KICK #hello sara :yousra
         _logger.ServertoClient(":" + currUser->getNickName() + "!~@" + _logger.getServerIP() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
-        // sendResponse(fd, ":" + currUser->getNickName() + "!~@" + _logger.getServerIP() + " KICK " + channelName + " " + nickName + ":" + reason + "\n");
         db->getChannel(channelName)->deleteMember(kickedUser);
         db->getChannel(channelName)->deleteInvited(kickedUser);
     }

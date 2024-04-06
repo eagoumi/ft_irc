@@ -84,14 +84,14 @@ void Commands::PRIVMSG()
                 {
                     // if (Message[0] != ':')
                     //     Message.insert(0, ":");
-                    std::cout << " ID = " << reciver_msg->getUserId() << std::endl;
-                    std::cout << " NICK = " << get_param[i] << std::endl;
-                    sendToClientsExisted(reciver_msg->getUserId(), reciver_msg, "PRIVMSG " + get_param[i] + " :" + Message);
+                    // std::cout << " ID = " << reciver_msg->getUserId() << std::endl;
+                    // std::cout << " NICK = " << get_param[i] << std::endl;
+                    sendToClientsExisted(reciver_msg->getUserId(), reciver_msg, "PRIVMSG " + reciver_msg->getNickName() + " :" + Message);
                 }
                 else
                 {
-                    puts("i am here");
-                    std::cout << get_param[i] << std::endl;
+                    // puts("i am here");
+                    // std::cout << get_param[i] << std::endl;
                     _logger.ServertoClient(ERR_NOSUCHNICK(db->getUser(fd)->getNickName(),get_param[i]));
                     return ;
                 }

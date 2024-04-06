@@ -24,6 +24,7 @@ void Commands::mode()
     }
     else
     {
+        puts("0");
         // currChannel->setModes(modesStr);
         char sign = '+'; // by default if no sign is specified within given modeStr
         for (size_t i = 0; i < modesStr.length(); i++)
@@ -34,7 +35,8 @@ void Commands::mode()
             char currModeLetter = modesStr[i];
             if (currModeLetter == 'i' || currModeLetter == 'k' || currModeLetter == 'l' || currModeLetter == 'o' || currModeLetter == 't')
             {
-                if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k'))
+                puts("1");
+                if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k' || currModeLetter == 'o'))
                 {
                     if (currModeLetter == 'k')
                     {
@@ -60,13 +62,14 @@ void Commands::mode()
                         else if (currChannel->isNickExist(modeArg) == false)
                         {
                             _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
-                            // sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
                             continue;
                         }
                         else
                         {
                             currChannel->addOperator(Operator->getUserId());
-                            SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);                            
+                            SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
+                            // SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
+                            // _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
                         }
                     }
 
@@ -85,7 +88,6 @@ void Commands::mode()
                         if (currChannel->isNickExist(modeArg) == false)
                         {
                             _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
-                            // sendResponse(fd, ":" + currUser->getNickName() + " " + modeArg /*client*/ + " " + channelName + " :They aren't on that channel\n");
                             continue;
                         }
                         else if (!Operator)
@@ -96,7 +98,11 @@ void Commands::mode()
                         else
                         {
                             if (currChannel->isUserOperator(Operator->getUserId()) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
+                            {
                                 currChannel->deleteOperator(Operator);
+                                SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg); 
+                                _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg);
+                            }
                         }
                     }
                     currChannel->removeMode(currModeLetter);

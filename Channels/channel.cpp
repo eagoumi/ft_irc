@@ -179,9 +179,10 @@ bool Channel::isKeyMatch(std::string const& givenKey) {
 }
 
 void Channel::addOperator(size_t fdo){
+    
     this->_operators[fdo] = getMember(fdo);
-    // for(std::__1::map<size_t, User *>::iterator it = _operators.begin(); it != _operators.end(); it++)
-        // std::cout << "operator fd  = " << it->first << " nickname =  " << it->second->getNickName() << std::endl;
+    for(std::__1::map<size_t, User *>::iterator it = _operators.begin(); it != _operators.end(); it++)
+        std::cout << "operator fd  = " << it->first << " nickname =  " << it->second->getNickName() << std::endl;
 }
 
 void Channel::deleteOperator(User *operatorToDelete) {

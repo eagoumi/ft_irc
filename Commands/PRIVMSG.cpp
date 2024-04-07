@@ -13,7 +13,7 @@ bool Commands::check_connection(size_t user_fd)
 
 void Commands::sendToClientsExisted(size_t reciver, User *sender, std::string Message)
 {
-    std::string msg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + _logger.getServerIP() + " " + Message + "\r\n";
+    std::string msg = ":" + _logger.PrefixLogs() + Message + "\r\n";
     if (check_connection(reciver)) //check if the clients still connected then shend the message
         send(reciver, msg.c_str(), msg.length(), 0);
     msg.clear();
@@ -54,7 +54,8 @@ void Commands::PRIVMSG()
                 {
                     puts("ss11");
                     std::cout << "Operators = " << IT_OPER->second->getNickName() << std::endl;
-                    _logger.CleintToClient(IT_OPER->first, Message); // check for message syntax
+                    _logger.SendJoinedMembers(ch1, "PRIVMSG " + IT_OPER->second->getNickName() + " :" + Message); // check for message syntax
+                    // _logger.CleintToClient(IT_OPER->first, Message); // check for message syntax
                 }
                 puts("ss3");
             }
@@ -86,7 +87,7 @@ void Commands::PRIVMSG()
                     //     Message.insert(0, ":");
                     // std::cout << " ID = " << reciver_msg->getUserId() << std::endl;
                     // std::cout << " NICK = " << get_param[i] << std::endl;
-                    sendToClientsExisted(reciver_msg->getUserId(), reciver_msg, "PRIVMSG " + reciver_msg->getNickName() + " :" + Message);
+                    sendToClientsExisted(reciver_msg->getUserId(), currUser, "PRIVMSG " + reciver_msg->getNickName() + " :" + Message);
                 }
                 else
                 {

@@ -19,10 +19,10 @@ void Commands::topic()
     {
         if(db->getChannel(channelName)->getTopic() != "")
         {
-            _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
+            _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic())); // Problem Here A Yousra
         }
         else if (db->getChannel(channelName)->getTopic() == "")
-            _logger.ServertoClient(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName));
+            _logger.ServertoClient(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName)); // // Problem Here A Yousra
     }
     else if (theTopic == ":")
     {
@@ -33,7 +33,8 @@ void Commands::topic()
         }   
         else{
             db->getChannel(channelName)->setTopic("");
-            sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " " + "topic cleared successfully\n");
+            SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " " + db->getChannel(channelName)->getTopic());
+            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " " + "topic cleared successfully\n");
         }
     }
     else// if (theTopic[0] == ':')
@@ -45,8 +46,9 @@ void Commands::topic()
         else
         {
             db->getChannel(channelName)->setTopic(theTopic);
-            _logger.IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " TOPIC " + channelName + " :" + db->getChannel(channelName)->getTopic());
+            SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " " + db->getChannel(channelName)->getTopic());
             _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
+            // _logger.IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " TOPIC " + channelName + " :" + db->getChannel(channelName)->getTopic());
         }
     }
 }

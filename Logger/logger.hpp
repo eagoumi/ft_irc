@@ -33,9 +33,10 @@ class   Logger
         std::string GetUserName();
         std::string GetNickName();
         std::string getServerIP();
-        void IRCPrint(size_t fd, std::string string);
+        std::string PrefixLogs();
+        void IRCPrint(std::string string);
         void ServertoClient(std::string string);
-        void CleintToClient(int id, std::string msg);
+        void CleintToClient(std::string msg);
         void SendJoinedMembers(Channel *Channel_name, std::string command);
 
 };

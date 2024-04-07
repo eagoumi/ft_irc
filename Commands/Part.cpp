@@ -12,7 +12,7 @@ void Commands::SendMessageToMembers(Channel *Channel_name, User *user_fds, std::
     std::string message = ":" + user_fds->getNickName() + "!" + user_fds->getUserName() + "@" + _logger.getServerIP() + " " + command + "\r\n";
     for(; iter_map != checkUsers.end(); iter_map++)
     {
-        // if (iter_map->first != user_fds->getUserId())
+        if (iter_map->first != user_fds->getUserId())
             send(iter_map->first, message.c_str(), message.length(), 0);
         // _logger.IRCPrint(iter_map->first, command);
     }

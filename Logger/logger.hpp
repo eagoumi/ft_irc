@@ -30,6 +30,8 @@ class   Logger
         static Logger& GetInstance();
         void setCurrUser(User* userFd);
         void setServerIp(std::string const& serverIp);
+        std::string GetUserName();
+        std::string GetNickName();
         std::string getServerIP();
         void IRCPrint(size_t fd, std::string string);
         void ServertoClient(std::string string);

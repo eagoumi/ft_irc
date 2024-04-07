@@ -4,21 +4,21 @@
 #include "../Logger/logger.hpp"
 
 
-void Server::Quit(size_t i, std::string reason)
-{
-	// :dan-!d@localhost QUIT :Quit: Bye for now!
-	std::cout << "Nick : " << _User->getNickName() << std::endl;
-	if (_User->getNickName().empty())
-		_logger.IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
-	else if (reason.at(0) == ':')
-		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
-	else
-		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
-	_logger.IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
-	//send Message to all channels
+// void Server::Quit(size_t i, std::string reason)
+// {
+// 	// :dan-!d@localhost QUIT :Quit: Bye for now!
+// 	std::cout << "Nick : " << _User->getNickName() << std::endl;
+// 	if (_User->getNickName().empty())
+// 		_logger.IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
+// 	else if (reason.at(0) == ':')
+// 		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
+// 	else
+// 		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
+// 	_logger.IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
+// 	//send Message to all channels
 
-	std::cout << "Client DISCONNECTED." << std::endl;
-}
+// 	std::cout << "Client DISCONNECTED." << std::endl;
+// }
 
 
 void Server::CheckForConnectionClients()
@@ -63,7 +63,7 @@ void Server::CheckForConnectionClients()
 						reason = reason.substr(C + 1, reason.length());
 					// std::cout << skipSpace(reason) << std::endl;
 					// QUITCMD >> reason;
-					Quit(i, reason + "\r\n");
+					// Quit(i, reason + "\r\n");
 
 					_db->deleteUser(_Storeusersfd.at(i).fd);
 					close(_Storeusersfd.at(i).fd);

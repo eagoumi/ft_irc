@@ -57,6 +57,7 @@ void Channel::addMember(User *member) {
     member->joinedChannel(this);
 }
 
+//Problem when we invite user twice
 void Channel::inviteUser(User *user) {
 
     USER_ID userId = user->getUserId();

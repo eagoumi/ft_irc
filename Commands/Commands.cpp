@@ -225,8 +225,8 @@ bool Commands::checkTokensListSyntax()
     /***********************************************************************************************************************************/
     
     if (_tokensList.size() == 0) { return false; }
-    if (cmd == NONE) { sendResponse(fd, ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n"); return false; }
-    if (isEnoughParam(cmd) == false) { sendResponse(fd, ERR_NEEDMOREPARAMS(currUser->getNickName()) + "\n"); return false; }
+    if (cmd == NONE) { _logger.ServertoClient(ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n"); return false; }
+    if (isEnoughParam(cmd) == false) { _logger.ServertoClient(ERR_NEEDMOREPARAMS(currUser->getNickName()) + "\n"); return false; }
 
 	while (ListIt != _tokensList.end())
 	{

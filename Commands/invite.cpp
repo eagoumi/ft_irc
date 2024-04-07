@@ -33,9 +33,17 @@ void Commands::invite()
             _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
         else
         {
-            _logger.ServertoClient(RPL_INVITING(db->getUser(fd)->getNickName(), nickName, channelName));
-            // sendResponse(invitedUser->getUserId(), ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n"); //LOGS STILL HERE WITH ME
             currChannel->inviteUser(invitedUser);
+            _logger.ServertoClient(RPL_INVITING(db->getUser(fd)->getNickName(), invitedUser->getNickName(), currChannel->getChannelName()));
+            _logger.ServertoClient("NOTICE @"+currChannel->getChannelName() + " :" + db->getUser(fd)->getNickName() + " invited " + invitedUser->getNickName() + " into channel " + currChannel->getChannelName());
+                /****************************************************************************************/
+                /*			Send To All Members on the Channel that this user are invited				*/
+                /****************************************************************************************/
+            std::map<size_t, User *> ExistedUserCh = db->getUsers();
+            std::map<size_t, User *>::iterator it_ExistedUserCh = ExistedUserCh.begin();
+            for (; it_ExistedUserCh != ExistedUserCh.end(); it_ExistedUserCh++)
+                sendToClientsExisted(invitedUser->getUserId(), it_ExistedUserCh->second, "INVITE " + invitedUser->getNickName() + " :" + currChannel->getChannelName());
+            // sendResponse(invitedUser->getUserId(), ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n"); //LOGS STILL HERE WITH ME
         }
     }
 }

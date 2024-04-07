@@ -67,7 +67,7 @@ void Commands::mode()
                         else
                         {
                             currChannel->addOperator(Operator->getUserId());
-                            SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
+                            SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg);
                             // SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
                             // _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
                         }
@@ -100,8 +100,9 @@ void Commands::mode()
                             if (currChannel->isUserOperator(Operator->getUserId()) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
                             {
                                 currChannel->deleteOperator(Operator);
-                                SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg); 
-                                _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg);
+                                SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg);
+                                // SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg); 
+                                // _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg);
                             }
                         }
                     }

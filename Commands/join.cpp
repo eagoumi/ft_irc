@@ -5,6 +5,28 @@
 
 std::string Commands::invitedNick;
 
+std::string GetLogsUsersChannel(Channel *ch)
+{
+    std::string MemberStr;
+    std::map<USER_ID, User *> Members = ch->getMembers();
+    for (std::map<USER_ID, User *>::iterator It_Members = Members.begin(); It_Members != Members.end(); ++It_Members)
+    {
+        if (ch->isUserOperator(It_Members->first))
+            MemberStr += "@";
+        MemberStr += It_Members->second->getNickName() + " ";
+    }
+    return MemberStr;
+}
+
+void Commands::PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel)
+{
+    if (!Channel.getTopic().empty())
+        _logger.ServertoClient(RPL_TOPIC(Client.getNickName(), Channel.getChannelName(), Channel.getTopic()));
+    _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(), Channel.getChannelName(), ClientChannel));
+    _logger.ServertoClient(RPL_ENDOFNAMES(db->getUser(fd)->getNickName(), Channel.getChannelName()));
+
+}
+
 void Commands::join()
 {
     std::string currUserNickname = currUser->getNickName();
@@ -25,10 +47,10 @@ void Commands::join()
                 currChannel->setKey(channelkeysList[channelIndex]);
                 currChannel->setMode('k');
             }
-            _logger.IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN " + channelNamesList[channelIndex] + "\n");
-            _logger.IRCPrint(fd, ":" + _logger.getServerIP() + " MODE " + channelNamesList[channelIndex] + " +t");
-            _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(), channelNamesList[channelIndex], "@" + db->getUser(fd)->getNickName()));
-            _logger.ServertoClient(RPL_ENDOFNAMES(db->getUser(fd)->getNickName(), channelNamesList[channelIndex]));
+            // _logger.IRCPrint(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN " + channelNamesList[channelIndex]);
+            SendMessageToMembers(currChannel, db->getUser(fd), "JOIN :" + currChannel->getChannelName());
+            _logger.IRCPrint(":" + _logger.getServerIP() + " MODE " + channelNamesList[channelIndex] + " +t");
+            PrintLogsAfterJoined(GetLogsUsersChannel(currChannel), *db->getUser(fd), *currChannel);
         }
         else
         {
@@ -49,18 +71,11 @@ void Commands::join()
                     }
                 }
                 currChannel->addMember(currUser);
-
-                std::string MemberStr;
-                std::map<USER_ID, User *> Members = currChannel->getMembers();
-                for (std::map<USER_ID, User *>::iterator It_Members = Members.begin(); It_Members != Members.end(); ++It_Members)
-                {
-                    if (currChannel->isUserOperator(It_Members->first))
-                        MemberStr += "@";
-                    MemberStr += It_Members->second->getNickName() + " ";
-                }
-                _logger.IRCPrint(currUser->getUserId(),  ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
-                _logger.SendJoinedMembers(currChannel, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
-                _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex],MemberStr)); //how to pranting all list of members on the channel 
+                SendMessageToMembers(currChannel, db->getUser(fd), "JOIN :" + currChannel->getChannelName());
+                PrintLogsAfterJoined(GetLogsUsersChannel(currChannel), *db->getUser(fd), *currChannel);
+                // _logger.IRCPrint(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
+                // _logger.SendJoinedMembers(currChannel, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " JOIN :" + channelNamesList[channelIndex]);
+                // _logger.ServertoClient(RPL_NAMREPLY(db->getUser(fd)->getNickName(),channelNamesList[channelIndex], GetLogsUsersChannel(currChannel))); //how to pranting all list of members on the channel 
             }
         }
     }

@@ -124,6 +124,8 @@ public:
     void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
     void sendToClientsExisted(size_t reciver, User *sender, std::string Message);
     bool check_connection(size_t user_fd);
+    void PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel);
+
 
 };
 

@@ -43,8 +43,8 @@ USER_NAME const & User::getUserName() {
 
 void User::setNickName(NICK_NAME const& name) {
     //welp I think I'll have to check if name is empty, I need to test it
-    isStrStartWith(name, "$:#&+~%") == true ? throw  std::string("uWu nickname is wrong") : NULL;
-    isStrContains(name, " ,*?!@.") == true ? throw std::string("uWu nickname is wrong") : NULL;
+    // isStrStartWith(name, "$:#&+~%") == true ? throw  std::string("uWu nickname is wrong") : NULL;
+    // isStrContains(name, " ,*?!@.") == true ? throw std::string("uWu nickname is wrong") : NULL;
     _nickname = name;
     // std::transform(_nickname.begin(), _nickname.end(), _nickname.begin(), ::toupper);
     _isNickInserted = true;

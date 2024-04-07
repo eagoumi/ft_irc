@@ -56,7 +56,7 @@ void Commands::mode()
                         std::cout << "fing operator = " << Operator->getNickName() << std::endl;
                         if (!Operator)
                         {
-                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                            _logger.ServertoClient(ERR_NOUSERS(db->getUser(fd)->getNickName(), channelName));
                             continue;
                         }
                         else if (currChannel->isNickExist(modeArg) == false)
@@ -92,7 +92,7 @@ void Commands::mode()
                         }
                         else if (!Operator)
                         {
-                            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                            _logger.ServertoClient(ERR_NOUSERS(db->getUser(fd)->getNickName(), channelName));
                             continue;
                         }
                         else

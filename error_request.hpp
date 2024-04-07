@@ -9,6 +9,7 @@
 #define ERR_MISSPASS(Client)			                    "4004 " + Client + " :Please enter the password to connect to the server first. 🚫"
 #define RPL_ALREADYONCHANNEL(NickName,invNickName,Chanel)   "112 " + NickName + " " + invNickName + " " + Chanel + " :is already on channel"
 #define ERR_CANNOTKICKOP(NickName,channel)                  "113"  + NickName + " " + channel + " :You can't KICK the operator"
+#define ERR_NOUSERS(NickName,chanel)			"395 " + NickName + " " + chanel + " :User does not exist"
 
 //Replys
 
@@ -20,7 +21,6 @@
 #define RPL_CREATED(nick, date)                 "003 " + nick + " :This server was created " + date
 #define RPL_MOTDSTART(Nickname) 	            "375 " + Nickname + " :- <Iba7lawn n irc> Message of the day - "
 #define ERR_NOTREGISTERED(Client)		        "451 " + Client + " :You have not registered"
-#define RPL_NOUSERS(NickName,chanel)			"395 " + NickName + " " + chanel + " :User does not exist"
 #define RPL_MOTD(nick, line)                    "372 " + nick + " :" + line
 #define RPL_ENDOFMOTD(nick)                     "376 " + nick + " :End of /MOTD command"
 #define ERR_NEEDMOREPARAMS(nick)                "461 " + nick + " :Not enough parameters"

@@ -30,7 +30,7 @@ static bool isStrContains(std::string const &str, std::string const &charSet) {
 Channel::Channel(CHANNEL_NAME channelName, User *creator) : _name(channelName) {
 
     // db = Database::GetInstance();
-    creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;
+    // creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;
     // welp I think I'll add some extra work for checking name syntax
     isStrContains(channelName, " ,\a");
     // here I'll have to assign the creator to this channel
@@ -50,8 +50,8 @@ void Channel::addMember(User *member) {
 
     USER_ID memberId = member->getUserId();
 
-    member == NULL ? throw std::string("Channel::addMember() -> member cannot be NULL") : NULL;
-    getMember(memberId) != NOT_FOUND ? throw std::string("Channel::addMember() -> member already exist") : NULL;
+    // member == NULL ? throw std::string("Channel::addMember() -> member cannot be NULL") : NULL;
+    // getMember(memberId) != NOT_FOUND ? throw std::string("Channel::addMember() -> member already exist") : NULL;
 
     this->_members[memberId] = member;
     member->joinedChannel(this);
@@ -62,10 +62,12 @@ void Channel::inviteUser(User *user) {
 
     USER_ID userId = user->getUserId();
 
-    user == NULL ? throw std::string("Channel::inviteUser() -> user cannot be NULL") : NULL;
-    isUserInvited(userId) == true ? throw std::string("Channel::inviteUser() -> user already invited") : NULL;
+    // user == NULL ? throw std::string("Channel::inviteUser() -> user cannot be NULL") : NULL;
+    // isUserInvited(userId) == true ? throw std::string("Channel::inviteUser() -> user already invited") : NULL;
 
     this->_invited[userId] = user;
+    for(std::map<size_t, User *>::iterator it = _invited.begin(); it != _invited.end(); it++)
+        std::cout << "INVITED = " << it->second->getNickName() << std::endl;
 }
 
 bool Channel::isUserInvited(USER_ID Id) {

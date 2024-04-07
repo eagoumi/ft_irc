@@ -24,8 +24,8 @@ User *Database::addNewUser(User *user) {
 
     USER_ID userId = user->getUserId();
 
-    user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
-    getUser(userId) != NOT_FOUND ?  throw std::string("db->addNewUser() -> user already exist") : NULL;
+    // user == NULL ? throw std::string("db->addNewUser() -> user cannot be NULL") : NULL;
+    // getUser(userId) != NOT_FOUND ?  throw std::string("db->addNewUser() -> user already exist") : NULL;
 
     this->_users[userId] = user;
     return user;
@@ -34,8 +34,8 @@ User *Database::addNewUser(User *user) {
 Channel *Database::addNewChannel(CHANNEL_NAME name, User *user) {
 
     Channel *createdChannel;
-    user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
-    getChannel(name) != NOT_FOUND ?  throw std::string("db->addNewChannel() -> channel already exist") : NULL;
+    // user == NULL ? throw std::string("db->addNewChannel() -> user cannot be NULL") : NULL;
+    // getChannel(name) != NOT_FOUND ?  throw std::string("db->addNewChannel() -> channel already exist") : NULL;
 
     // since the channel take a user in its constructor, it has to assign that user as its operator
     createdChannel = new Channel(name, user);

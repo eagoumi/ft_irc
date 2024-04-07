@@ -149,6 +149,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
                 tokenNode.type = tokenType;
                 _tokensList.push_back(tokenNode);
                 word.clear();
+                _paramCounter++;
                 return ;
             }
 

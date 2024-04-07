@@ -53,6 +53,7 @@ void Commands::mode()
                     {
                         modeArg = getNextParam().first;
                         User *Operator = db->existUser(modeArg);
+                        std::cout << "fing operator = " << Operator->getNickName() << std::endl;
                         if (!Operator)
                         {
                             _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
@@ -66,7 +67,7 @@ void Commands::mode()
                         else
                         {
                             currChannel->addOperator(Operator->getUserId());
-                            SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
+                            SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg);
                             // SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
                             // _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " +o " + modeArg);
                         }
@@ -99,8 +100,9 @@ void Commands::mode()
                             if (currChannel->isUserOperator(Operator->getUserId()) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
                             {
                                 currChannel->deleteOperator(Operator);
-                                SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg); 
-                                _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg);
+                                SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg);
+                                // SendMessageToMembers(currChannel, currUser, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg); 
+                                // _logger.ServertoClient(":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " MODE " + channelName + " -o " + modeArg);
                             }
                         }
                     }

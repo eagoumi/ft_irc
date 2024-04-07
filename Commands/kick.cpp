@@ -19,7 +19,7 @@ void Commands::kick()
     currChannel = db->getChannel(channelName);
     User *nickUser = db->existUser(nickName);
     if (reason == "")
-        reason = currUser->getNickName(); // maybe hoka reason = ":" + currUser->getNickName();
+        reason = ":" + currUser->getNickName(); // maybe hoka reason = ":" + currUser->getNickName();
 
     if (currChannel == NULL)
     {
@@ -49,10 +49,9 @@ void Commands::kick()
     }
     else
     {
-        User *kickedUser = db->existUser(nickName);
-        SendMessageToMembers(currChannel, currUser, "KICK " + currChannel->getChannelName() + " " + kickedUser->getNickName() + " " + reason);
-        db->getChannel(channelName)->deleteMember(kickedUser);
-        db->getChannel(channelName)->deleteInvited(kickedUser);
+        SendMessageToMembers(currChannel, currUser, "KICK " + currChannel->getChannelName() + " " + nickUser->getNickName() + " " + reason);
+        db->getChannel(channelName)->deleteMember(nickUser);
+        db->getChannel(channelName)->deleteInvited(nickUser);
         // SendMessageToMembers(currChannel, currUser, reason);
         // sendResponse(kickedUser->getUserId(), ":" + currUser->getNickName() + " KICK " + channelName + " " + nickName + reason + "\n");
         // :yousra!~0@oq7f3s33.btgd4imj.mjbqqhjk.ip KICK #hello sara :yousra

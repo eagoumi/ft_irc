@@ -39,7 +39,7 @@ void Commands::join()
         currChannel = db->getChannel(channelNamesList[channelIndex]);
         if (currChannel == NOT_FOUND)
         {
-            std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
+            // std::cout << "channel not found, creating by " << currUser->getNickName() << " ...\n";
             db->addNewChannel(channelNamesList[channelIndex], currUser);
             currChannel = db->getChannel(channelNamesList[channelIndex]);
             if (!channelkeysList.empty())

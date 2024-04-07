@@ -30,7 +30,7 @@ void Commands::invite()
     {
         User *invitedUser = db->existUser(nickName);
         if (!invitedUser)
-            _logger.ServertoClient(RPL_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+            _logger.ServertoClient(ERR_NOUSERS(db->getUser(fd)->getNickName(), channelName));
         else
         {
             currChannel->inviteUser(invitedUser);

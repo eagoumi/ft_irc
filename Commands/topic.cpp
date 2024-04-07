@@ -15,25 +15,24 @@ void Commands::topic()
         _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
     else if (currChannel->isUserMember(currUser->getUserId()) == false) //checking if the member are on the channel use this "currChannel->getMember(currUser->getUserId())"
         _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
-    else if (theTopic == "")
+    else if (_paramCounter == 2)
     {
         if(db->getChannel(channelName)->getTopic() != "")
         {
             _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic())); // Problem Here A Yousra
         }
         else if (db->getChannel(channelName)->getTopic() == "")
-            _logger.ServertoClient(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName)); // // Problem Here A Yousra
+            _logger.ServertoClient(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName)); // Problem Here A Yousra
     }
-    else if (theTopic == ":")
+    else if (theTopic == "" && _paramCounter == 3)
     {
-        puts("clear topic");
         if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
             _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
         }   
         else{
             db->getChannel(channelName)->setTopic("");
-            SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " " + db->getChannel(channelName)->getTopic());
+            SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " :");
             // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " " + "topic cleared successfully\n");
         }
     }

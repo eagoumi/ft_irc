@@ -72,7 +72,7 @@ Channel *Database::getChannel(CHANNEL_NAME nameToFind) {
         const std::string& currChanName = currChanIt->first;
         // currChanNameUpperCase = currChanName;
         std::transform(currChanName.begin(), currChanName.end(), std::back_inserter(currChanNameUpperCase), ::toupper);
-        std::cout << currChanNameUpperCase + " =? " + nameToFind << std::endl;
+        // std::cout << currChanNameUpperCase + " =? " + nameToFind << std::endl;
         if (currChanNameUpperCase == nameToFind)
             return currChanIt->second;
         currChanIt++;

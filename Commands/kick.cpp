@@ -19,7 +19,7 @@ void Commands::kick()
     currChannel = db->getChannel(channelName);
     User *nickUser = db->existUser(nickName);
     if (reason == "")
-        reason = currUser->getNickName(); // maybe hoka reason = ":" + currUser->getNickName();
+        reason = ":" + currUser->getNickName(); // maybe hoka reason = ":" + currUser->getNickName();
 
     if (currChannel == NULL)
     {

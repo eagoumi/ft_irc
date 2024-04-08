@@ -19,6 +19,7 @@ void Commands::mode()
     }
     else if (currChannel->isUserOperator(currUser->getUserId()) == false)
     {
+        //The Problem Was Here for that message "you are not the operator"
         _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
         return;
     }

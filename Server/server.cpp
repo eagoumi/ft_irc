@@ -4,21 +4,19 @@
 #include "../Logger/logger.hpp"
 
 
-// void Server::Quit(size_t i, std::string reason)
-// {
-// 	// :dan-!d@localhost QUIT :Quit: Bye for now!
-// 	std::cout << "Nick : " << _User->getNickName() << std::endl;
-// 	if (_User->getNickName().empty())
-// 		_logger.IRCPrint(_Storeusersfd[i].fd, ":*@localhost.IRC QUIT :Quit:" + reason);
-// 	else if (reason.at(0) == ':')
-// 		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
-// 	else
-// 		_logger.IRCPrint(_Storeusersfd[i].fd, ":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
-// 	_logger.IRCPrint(_Storeusersfd[i].fd,"ERROR: Quit:" + reason);
-// 	//send Message to all channels
-
-// 	std::cout << "Client DISCONNECTED." << std::endl;
-// }
+void Server::Quit(std::string reason)
+{
+	std::cout << "Nick : " << _User->getNickName() << std::endl;
+	if (_User->getNickName().empty())
+		_logger.IRCPrint(":*@localhost.IRC QUIT :Quit:" + reason);
+	else if (reason.at(0) == ':')
+		_logger.IRCPrint(":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
+	else
+		_logger.IRCPrint(":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
+	_logger.IRCPrint("ERROR: Quit:" + reason);
+	//send Message to all channels
+	std::cout << "Client DISCONNECTED." << std::endl;
+}
 
 
 void Server::CheckForConnectionClients()
@@ -31,29 +29,23 @@ void Server::CheckForConnectionClients()
 		if (_Storeusersfd.at(i).revents & POLLIN)
 		{
 			bzero(buffer, sizeof(buffer));
-			// std::cout << _Storeusersfd.at(i).fd << std::endl;
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
 			std::cout << recive << std::endl;
 			std::string cmdquit; // PROBLEM HERE
 			std::istringstream QUITCMD(buffer); // PROBLEM HERE
-
         	User *client = _db->getUser(_Storeusersfd[i].fd);
 			client->appendToCmdLine(buffer);
 			std::string cmdLine = client->getCmdLine();
-			std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
-			// puts(buffer);
+			// std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
 			if (recive > 0)
 			{
 				if (cmdLine.find('\n') == std::string::npos)
 					continue;
 				//data Received
-				// std::cout << "goooo gooo gooo" << std::endl;
-				// std::cout << "user to create : " << _Storeusersfd[i].fd << std::endl;
 				data.fd = _Storeusersfd[i].fd;
 				data.line = buffer; // PROBLEM HERE
 				data.serverPass = _Password;
 				_logger.setCurrUser(client);
-				// data.nick = User->getNickName();
 				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
 				{
@@ -61,57 +53,28 @@ void Server::CheckForConnectionClients()
 					size_t C = reason.find(" ");
 					if (C != std::string::npos)
 						reason = reason.substr(C + 1, reason.length());
-					// std::cout << skipSpace(reason) << std::endl;
-					// QUITCMD >> reason;
-					// Quit(i, reason + "\r\n");
+					QUITCMD >> reason;
+					Quit(reason);
+					//================================Send Notice To All Channel Joined =========//
+					std::map<std::string, Channel *> JoinedCh = client->getJoinedChannels();
+					if (!JoinedCh.empty())
+					{
+						std::map<std::string, Channel *>::iterator itJC = JoinedCh.begin();
+						_logger.SendJoinedMembers(itJC->second , "QUIT :Quit" + reason);
+					}
+					//===========================================================================//
 
 					_db->deleteUser(_Storeusersfd.at(i).fd);
 					close(_Storeusersfd.at(i).fd);
 					_Storeusersfd.erase(_Storeusersfd.begin() + i);
 					i--;
-					std::cout << "sd :" << i << std::endl;
 				}
-				// else if (getuser->isAuthenticated() == false)
-				// {
-				// 	size_t posq;
-				// 	std::string bufferStr(buffer);
-				// 	if ((posq = bufferStr.find("\r")) != std::string::npos)
-				// 	{
-				// 		puts("xx");
-				// 		// Split the buffer into lines/commands
-				// 		buffer[recive] = '\0'; // Ensure null-termination
-				// 		std::istringstream bufferStream(bufferStr);
-				// 		std::string line;
-				// 		while (std::getline(bufferStream, line)) 
-				// 		{
-				// 			std::cout << "[" << line << "]" << std::endl;
-				// 			size_t pos;
-				// 			if ((pos = line.find('\r')) != std::string::npos) 
-				// 			{
-				// 				line.erase(pos);
-				// 				std::cout << "1[" << line << "]" << std::endl;
-				// 			}
-				// 			Authentication(i, line.c_str());	
-				// 		}
-				// 	}
-				// 	else
-				// 	{
-				// 		if ((posq = bufferStr.find('\n')) != std::string::npos) 
-				// 		{
-
-				// 			bufferStr.erase(posq);
-				// 			std::cout << "3[" << bufferStr << "]" << std::endl;
-				// 		}
-				// 		puts("ff");
-				// 		Authentication(i, bufferStr.c_str());	
-				// 	}
-				// }
-				else {
-
+				else 
+				{
 					std::string line;
 					std::istringstream bufferStream(cmdLine);
-					while (std::getline(bufferStream, line, '\n')) {
-
+					while (std::getline(bufferStream, line, '\n')) 
+					{
 						size_t pos;
 						if ((pos = line.find('\r')) != std::string::npos)
 							line.erase(pos);
@@ -122,8 +85,6 @@ void Server::CheckForConnectionClients()
 					}
 					client->clearCmdLine();
 				}
-				// Authentication(i, buffer, false, false, false, false);
-					// std::cout << "Wrong Password" << std::endl;
 			}
 			else
 			{
@@ -139,29 +100,26 @@ void Server::CheckForConnectionClients()
 				close(_Storeusersfd.at(i).fd); // Close Socket
 				_Storeusersfd.erase(_Storeusersfd.begin() + i); // Remove Poll Set on Vector
 				i--; //Cerrection index ater Removal
-				// puts("jj");
 			}
 		}
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _logger(Logger::GetInstance()), _Port(port), _Password(password)//, _IsAuth(false), _correct_pass(false), _NickCheck(false), _UserCheck(false)
+Server::Server(const int &port, const std::string &password) : _logger(Logger::GetInstance()), _Port(port), _Password(password)
 {
 	_db = Database::GetInstance();
 }
 
-// #define MAX_CLIENTS _Storeusersfd.size() // Assume MAX_CLIENTS + 1 for the server socket
 std::string Server::HostIPADress()
 {
 
 	std::string iphost;
-	/*std::istringstream string(*/std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log")/*)*/;
+	std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log");
 	std::fstream ipfile;
 	ipfile.open(".log");
 	std::getline(ipfile, iphost);
 	std::system("rm -rf .log");
-	// string >> iphost;
-	// std::cout << iphost << std::endl;
+
 	return iphost;
 }
 
@@ -179,13 +137,11 @@ void Server::ServerStarting()
 	srvpollfd.events = POLLIN;
 	srvpollfd.revents = 0;
 	_Storeusersfd.push_back(srvpollfd);
-	// std::cout << &_Socketsfd << std::endl;
 	
 	while(1)
 	{
-		// std::cout << _Storeusersfd[0].fd << std::endl;
 		// Wait indefinitely for an event
-		int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), -1); // Assume MAX_CLIENTS + 1 for the server socket
+		int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), -1);
 	   if (ret < 0)
 	   {
 			std::cerr << "Error: Poll() Failed to Call System!!!!!!!!" << std::endl;
@@ -197,12 +153,8 @@ void Server::ServerStarting()
 			accept_connection();
 	   }
 	   else
-	   {
-			// std::cout << "waaaa laaaaa" << std::endl;
 			CheckForConnectionClients();
-			// puts("here");
 			//check for if the connection was lost or some error for connection from the clients
-	   }
 	   _db->debug();
 	}
 }
@@ -268,11 +220,9 @@ void Server::listtenSock()
 void Server::accept_connection()
 {
 	//Accept Request Connection
-	// std::cout << _Socketsfd << std::endl;
 	size_t lensockadd = sizeof(_Sockaddclient);
 	// memset(&_Sockaddclient, 0, lensockadd);
 	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
-	// std::cout << newSocketfd << std::endl;
 	if (newSocketfd >= 0)
 	{
 		//inet_ntoa() only supports IPv4 addresses. 
@@ -289,10 +239,6 @@ void Server::accept_connection()
 		_User = new User(newSocketfd);
 		_db->addNewUser(_User);
 		// _db->getUser(_pollfds.fd);
-		// std::cout << _db << std::endl;
-
-		// _db = Database::GetInstance();
-		// std::cout << &_db << std::endl;
 	}
 	else if (newSocketfd < 0)
 	{

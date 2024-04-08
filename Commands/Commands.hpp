@@ -125,6 +125,7 @@ public:
     void sendToClientsExisted(size_t reciver, User *sender, std::string Message);
     bool check_connection(size_t user_fd);
     void PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel);
+    // void PrintLogsAfterJoined(std::string ClientChannel, User *Client, Channel *Channel);
 
 
 };

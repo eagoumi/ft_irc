@@ -208,8 +208,8 @@ std::string Channel::getModes(){
 }
 
 bool Channel::getMode(const char& modeLetter) {
-    for(std::set<char>::iterator it = _modeSet.begin(); it != _modeSet.end(); it++)
-        std::cout << "MOOOODE = " << *it << std::endl;
+    // for(std::set<char>::iterator it = _modeSet.begin(); it != _modeSet.end(); it++)
+    //     std::cout << "MOOOODE = " << *it << std::endl;
     if (_modeSet.find(modeLetter) != _modeSet.end())
         return true;
     return (false);

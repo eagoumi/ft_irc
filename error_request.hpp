@@ -64,6 +64,10 @@
 #define RPL_WHOISSERVER(nick1, nick2, ser, infos)      "312 " + nick1 + " " + nick2 + " " + ser + " :" + infos
 #define RPL_WHOISIDLE(nick1, nick2, diff, int)         "317 " + nick1 + " " + nick2 + " " + diff + " " + int + " :seconds idle"
 #define RPL_ENDOFWHOIS(nick1,nick2)                    "318 " + nick1 + " " + nick2 + " :End of /WHOIS list"
+// #define RPL_CHANNELMODEIS(nick, channel, modestring, modearg)   "324 " + nick + " " channel + " " + modestring + " " + modearg
+// #define RPL_CHANNELMODEIS(nick, channel, modestring)   "324 " + nick + " " channel + " " + modestring
+#define RPL_CHANNELMODEIS(nick, channel, modestring)     "318 " + nick + " " + channel + " " + modestring
+#define ERR_SPECIFYPARAM(nick, channel)     "325 " + nick + " " + channel + "o :You must specify a parameter for the op mode. Syntax: <nick>"
 
 
 #endif

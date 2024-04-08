@@ -9,10 +9,10 @@ void Commands::Authentication(std::string const& serverPass) {
         if (currUser->hasInsertedPass() == false)
         {
             std::string pass = getNextParam().first;    
-            if (pass == serverPass) //&& len_param_command == 2)
+            if (pass == serverPass)
             {
                 currUser->insertedPassSuccessfully();
-                // _logger.ServertoClient(ERR_CORRECTPASS(std::string("*")));
+                _logger.ServertoClient(RPL_CORRECTPASS(std::string("*")));
             }
             else if (pass.empty() || _paramCounter == 1)
                 _logger.ServertoClient(ERR_NEEDMOREPARAMS(std::string("*")));
@@ -71,8 +71,6 @@ void Commands::Authentication(std::string const& serverPass) {
         }
         WelcomeClient();
     }
-    // else
-    //     _logger.ServertoClient(ERR_UNKNOWNCOMMAND(std::string("*"), cmd));
 }
 
 void Commands::WelcomeClient() {

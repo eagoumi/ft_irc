@@ -30,13 +30,13 @@ void Server::CheckForConnectionClients()
 		{
 			bzero(buffer, sizeof(buffer));
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
-			std::cout << recive << std::endl;
+			std::cout << "Buffer are: " << recive << std::endl;
 			std::string cmdquit; // PROBLEM HERE
 			std::istringstream QUITCMD(buffer); // PROBLEM HERE
         	User *client = _db->getUser(_Storeusersfd[i].fd);
 			client->appendToCmdLine(buffer);
 			std::string cmdLine = client->getCmdLine();
-			// std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
+			std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
 			if (recive > 0)
 			{
 				if (cmdLine.find('\n') == std::string::npos)
@@ -49,6 +49,7 @@ void Server::CheckForConnectionClients()
 				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
 				{
+        			signal(SIGPIPE, SIG_IGN);
 					std::string reason = buffer;
 					size_t C = reason.find(" ");
 					if (C != std::string::npos)
@@ -155,6 +156,7 @@ void Server::ServerStarting()
 	   else
 			CheckForConnectionClients();
 			//check for if the connection was lost or some error for connection from the clients
+		// std::signal(SIGPIPE, SIG_IGN);
 	   _db->debug();
 	}
 }
@@ -223,19 +225,20 @@ void Server::accept_connection()
 	size_t lensockadd = sizeof(_Sockaddclient);
 	// memset(&_Sockaddclient, 0, lensockadd);
 	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
-	if (newSocketfd >= 0)
+	if (newSocketfd > 0)
 	{
 		//inet_ntoa() only supports IPv4 addresses. 
 		// For software that needs to be compatible with IPv6, inet_ntop() is the preferred alternative.
 		std::string convertlocalhost(inet_ntoa(_Sockaddclient.sin_addr)); //It converts an Internet host address, given in network byte order (which is typically a numeric IP address in binary form), 
 								// into a standard dot-decimal notation string (the familiar IPv4 address format, such as "192.168.1.1").
-
 		_pollfds.fd = newSocketfd; // File descriptor to monitor (fd li ghanra9bo)
 		_pollfds.events = POLLIN; // Events to monitor for this fd (Les events li khasna nra9boha l had fd)
 		// POLLIN = That There's data to read.
 		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
 		_Storeusersfd.push_back(_pollfds);
 		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
+		if(convertlocalhost == "127.0.0.1")
+			convertlocalhost = _IPHostAdress;
 		_User = new User(newSocketfd);
 		_db->addNewUser(_User);
 		// _db->getUser(_pollfds.fd);
@@ -250,5 +253,9 @@ void Server::accept_connection()
 
 Server::~Server()
 {
-
+	// std::map<std::string, Channel *> JoinedCh = _User->getJoinedChannels();
+	// JoinedCh.clear();
+	// std::map<std::string, Channel *>::iterator IT_Clear = JoinedCh.begin();
+	// for (; IT_Clear != JoinedCh.end() ; IT_Clear++)
+		
 }

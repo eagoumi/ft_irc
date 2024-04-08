@@ -145,6 +145,7 @@ void   Commands::tokenize(std::string const& cmdLine) {
                 
                 size_t spacePos = cmdLine.find(' ', i);
                 cmdLine[i] == ':' ? word += cmdLine.substr(i + 1) : word += cmdLine.substr(i, spacePos - i);
+                // std::cout << " Command  : "<< cmdLine[i] << std::endl;
                 tokenNode.data = word;
                 tokenNode.type = tokenType;
                 _tokensList.push_back(tokenNode);

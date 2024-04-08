@@ -19,6 +19,7 @@
 #include <sstream>
 #include <fstream>
 #include <istream>
+#include <csignal>
 #include <map>
 
 

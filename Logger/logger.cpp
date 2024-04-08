@@ -48,7 +48,8 @@ void Logger::IRCPrint(std::string string)
 {
     std::string buffer = string + "\r\n";
     //catch erro
-    send(_currUser->getUserId(), buffer.c_str(), buffer.length(), 0);
+    if (send(_userFd, buffer.c_str(), buffer.length(), 0) < 0)
+        throw std::runtime_error("Error On Sending a Message to the Client.\n");
 }
 
 void Logger::ServertoClient(std::string string) 

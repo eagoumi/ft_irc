@@ -4,7 +4,6 @@ void Commands::invite()
 {
     std::string nickName = getNextParam().first;
     std::string channelName = getNextParam().first;
-    // User *nickUser = db->existUser(nickName);
     currChannel = db->getChannel(channelName);
     if (currChannel == NULL)
     {

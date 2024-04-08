@@ -13,6 +13,7 @@ bool Commands::check_connection(size_t user_fd)
 
 void Commands::sendToClientsExisted(size_t reciver, User *sender, std::string Message)
 {
+    (void)sender;
     std::string msg = ":" + _logger.PrefixLogs() + Message + "\r\n";
     if (check_connection(reciver)) //check if the clients still connected then shend the message
         send(reciver, msg.c_str(), msg.length(), 0);
@@ -31,7 +32,6 @@ std::string eraseOpertorSymbole(std::string Channel_Name)
     return Channel_Name;
 }
 
-//Check with LimeChat
 void Commands::PRIVMSG()
 {
     std::vector<std::string> get_param = getNextParam().second;
@@ -41,23 +41,18 @@ void Commands::PRIVMSG()
     {
         if ((get_param[i][0] == '@' || get_param[i][0] == '%'))
         {
-            puts("ss");
             std::string good_str = eraseOpertorSymbole(get_param[i]);
             std::cout << good_str << std::endl;
             Channel *ch1 = db->getChannel(good_str);
             if(ch1 && good_str[0] == '#' && ch1->getMember(fd))
             {
-            puts("ss");
                 std::map<USER_ID, User *> operators = ch1->getOperators();
                 std::map<USER_ID, User *>::iterator IT_OPER = operators.begin();
                 for (; IT_OPER != operators.end() ; IT_OPER++)
                 {
-                    puts("ss11");
                     std::cout << "Operators = " << IT_OPER->second->getNickName() << std::endl;
-                    _logger.SendJoinedMembers(ch1, "PRIVMSG " + IT_OPER->second->getNickName() + " :" + Message); // check for message syntax
-                    // _logger.CleintToClient(IT_OPER->first, Message); // check for message syntax
+                    _logger.SendJoinedMembers(ch1, "PRIVMSG " + IT_OPER->second->getNickName() + " :" + Message);
                 }
-                puts("ss3");
             }
             else
             {
@@ -71,7 +66,7 @@ void Commands::PRIVMSG()
             if (ch && get_param[i][0] == '#')
             {
                 if (ch->getMember(fd))
-                    _logger.SendJoinedMembers(ch, "PRIVMSG " + ch->getChannelName() + " :" + Message); // check for message syntax
+                    _logger.SendJoinedMembers(ch, "PRIVMSG " + ch->getChannelName() + " :" + Message);
                 else
                 {
                     _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), get_param[i]));
@@ -82,17 +77,9 @@ void Commands::PRIVMSG()
             {
                 User *reciver_msg = db->existUser(get_param[i]);
                 if (reciver_msg)
-                {
-                    // if (Message[0] != ':')
-                    //     Message.insert(0, ":");
-                    // std::cout << " ID = " << reciver_msg->getUserId() << std::endl;
-                    // std::cout << " NICK = " << get_param[i] << std::endl;
                     sendToClientsExisted(reciver_msg->getUserId(), currUser, "PRIVMSG " + reciver_msg->getNickName() + " :" + Message);
-                }
                 else
                 {
-                    // puts("i am here");
-                    // std::cout << get_param[i] << std::endl;
                     _logger.ServertoClient(ERR_NOSUCHNICK(db->getUser(fd)->getNickName(),get_param[i]));
                     return ;
                 }

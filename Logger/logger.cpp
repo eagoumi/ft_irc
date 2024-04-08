@@ -62,20 +62,6 @@ void Logger::CleintToClient(std::string msg)
     IRCPrint(":" + PrefixLogs() + msg);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void Logger::SendJoinedMembers(Channel *Channel_name, std::string command)
 {
     //getNickname() + "!" + getUsername() + "@" + getHostIp() + " "

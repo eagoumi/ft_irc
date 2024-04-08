@@ -67,6 +67,8 @@ class Channel
         bool		isNickExist(std::string nick);
         void		deleteInvited(User *userToDelete);
         void		clearKey();
+        std::string getModes();
+        
 
 
 

@@ -39,10 +39,7 @@ void Commands::invite()
                 /****************************************************************************************/
                 /*			Send To All Members on the Channel that this user are invited				*/
                 /****************************************************************************************/
-            std::map<size_t, User *> ExistedUserCh = db->getUsers();
-            std::map<size_t, User *>::iterator it_ExistedUserCh = ExistedUserCh.begin();
-            for (; it_ExistedUserCh != ExistedUserCh.end(); it_ExistedUserCh++)
-                sendToClientsExisted(invitedUser->getUserId(), it_ExistedUserCh->second, "INVITE " + invitedUser->getNickName() + " :" + currChannel->getChannelName());
+                // sendToClientsExisted(invitedUser->getUserId() , it_ExistedUserCh->second, "INVITE " + invitedUser->getNickName() + " :" + currChannel->getChannelName());
             // sendResponse(invitedUser->getUserId(), ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n"); //LOGS STILL HERE WITH ME
         }
     }

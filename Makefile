@@ -49,16 +49,15 @@ OBJ_FILES	=	$(SRC_FILES:.cpp=.o)
 SRC			=	$(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJ			=	$(addprefix $(OBJ_DIR), $(OBJ_FILES))
 
-
 #all rule
 all: $(NAME)
 	@printf "\n"
-	@printf "$(GREEN)███████╗████████╗     					██╗██████╗  ██████╗\n$(RESET)"
-	@printf "$(GREEN)██╔════╝╚══██╔══╝     					██║██╔══██╗██╔════╝\n$(RESET)"
-	@printf "$(GREEN)█████╗     ██║        					██║██████╔╝██║     \n$(RESET)"
-	@printf "$(GREEN)██╔══╝     ██║        					██║██╔══██╗██║     \n$(RESET)"
-	@printf "$(GREEN)██║        ██║			███████╗		██║██║  ██║╚██████╗\n$(RESET)"
-	@printf "$(GREEN)╚═╝        ╚═╝			╚══════╝		╚═╝╚═╝  ╚═╝ ╚═════╝\n$(RESET)"
+	@printf "$(GREEN)██╗██████╗  █████╗ ███████╗██╗      █████╗ ██╗    ██╗███╗   ██╗    ███╗   ██╗    ██╗██████╗  ██████╗\n$(RESET)"
+	@printf "$(GREEN)██║██╔══██╗██╔══██╗╚════██║██║     ██╔══██╗██║    ██║████╗  ██║    ████╗  ██║    ██║██╔══██╗██╔════╝\n$(RESET)"
+	@printf "$(GREEN)██║██████╔╝███████║    ██╔╝██║     ███████║██║ █╗ ██║██╔██╗ ██║    ██╔██╗ ██║    ██║██████╔╝██║     \n$(RESET)"
+	@printf "$(GREEN)██║██╔══██╗██╔══██║   ██╔╝ ██║     ██╔══██║██║███╗██║██║╚██╗██║    ██║╚██╗██║    ██║██╔══██╗██║     \n$(RESET)"
+	@printf "$(GREEN)██║██████╔╝██║  ██║   ██║  ███████╗██║  ██║╚███╔███╔╝██║ ╚████║    ██║ ╚████║    ██║██║  ██║╚██████╗\n$(RESET)"
+	@printf "$(GREEN)╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝  ╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝    ╚═╝╚═╝  ╚═╝ ╚═════╝\n$(RESET)"
 	@printf "\n"
 
 #compile the executable
@@ -80,16 +79,16 @@ $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC_FILES)
 clean:
 	@if [ -d "$(OBJ_DIR)" ]; then \
 	rm -rf $(OBJ_DIR); \
-	echo "$(BLUE)Deleting all objects from /ex02...$(RESET)"; else \
-	echo "No objects to remove from /ex02."; \
+	echo "$(BLUE)Deleting all objects from /FT_IRC...$(RESET)"; else \
+	echo "No objects to remove from /FT_IRC."; \
 	fi;
 
 #fclean rule
 fclean: clean
 	@if [ -f "$(NAME)" ]; then \
 	rm -f $(NAME); \
-	echo "$(BLUE)Deleting $(NAME) from /ex02...$(RESET)"; else \
-	echo "No Executable to remove from /ex02."; \
+	echo "$(BLUE)Deleting $(NAME) from /FT_IRC...$(RESET)"; else \
+	echo "No Executable to remove from /FT_IRC."; \
 	fi;
 
 #re rule

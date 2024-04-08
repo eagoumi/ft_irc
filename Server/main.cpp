@@ -11,13 +11,13 @@
 int main(int ac, char **av)
 {
     try{
-    if (ac != 3)
-    {
-        std::cout << "Too few Arguments" << std::endl;
-        return 1;
-    }
-    Server sr(std::atoi(av[1]), av[2]);
-    sr.ServerStarting();
+        if (ac != 3)
+        {
+            std::cout << "Too few Arguments" << std::endl;
+            return 1;
+        }
+        Server sr(std::atoi(av[1]), av[2]);
+        sr.ServerStarting();
     }
     catch(std::string err){
         std::cout << err << std::endl;

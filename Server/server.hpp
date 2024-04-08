@@ -8,6 +8,7 @@
 // #include <i386/types.h>
 #include <string>
 #include <iostream>
+#include <iterator>
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -79,7 +80,7 @@ class Server
         // void ServertoClient(std::string string);
 
         //Command Quit 
-        void Quit(size_t i, std::string reason);
+        void Quit(std::string reason);
 };
 
 #endif

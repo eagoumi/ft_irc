@@ -16,7 +16,14 @@ int main(int ac, char **av)
             std::cout << "Too few Arguments" << std::endl;
             return 1;
         }
-        Server sr(std::atoi(av[1]), av[2]);
+        signal(SIGPIPE, SIG_IGN);
+        size_t port = std::atoi(av[1]);
+        if (port < 1024 || port > 65535)
+        {
+            std::cerr << "noooo" << std::endl;
+            return 1;
+        }
+        Server sr(port, av[2]);
         sr.ServerStarting();
     }
     catch(std::string err){

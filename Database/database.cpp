@@ -83,8 +83,11 @@ Channel *Database::getChannel(CHANNEL_NAME nameToFind) {
 void Database::deleteUser(USER_ID Id) {
 
     UserIter it = this->_users.find(Id);
-    delete it->second;
-    this->_users.erase(it);
+    if (it != this->_users.end())
+    {
+        delete it->second;
+        this->_users.erase(it);
+    }
 }
 
 void Database::deleteChannel(CHANNEL_NAME nameToFind) {
@@ -133,6 +136,7 @@ bool Database::isNicknameUsed(NICK_NAME nameToFind) {
 
 User *Database::existUser(std::string nick)
 {
+    puts("12");
     //SGF CHECING FOR !@#!!#$#@$%!$% CHARACTERS
     std::transform(nick.begin(), nick.end(), nick.begin(), ::toupper);
     for (std::map<size_t, User *>::iterator it = _users.begin(); it != _users.end(); it++)
@@ -145,5 +149,6 @@ User *Database::existUser(std::string nick)
             return it->second;
         }
     }
+    puts("13");
     return 0;
 }

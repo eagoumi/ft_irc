@@ -22,7 +22,6 @@ CUT			=	\033[K
 
 #source files
 SRC_FILES	=	Server/server.cpp \
-                Server/main.cpp \
 				Database/database.cpp Database/debug.cpp \
 				Channels/channel.cpp \
 				Users/user.cpp \
@@ -34,7 +33,8 @@ SRC_FILES	=	Server/server.cpp \
 				Commands/PRIVMSG.cpp \
 				Commands/Part.cpp \
 				Commands/authentication.cpp \
-				Logger/logger.cpp
+				Logger/logger.cpp \
+                main.cpp
 
 INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \

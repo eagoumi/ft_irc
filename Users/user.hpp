@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <iostream>
-// #include "../server/server.hpp"
 # include <map>
 #include <sys/socket.h>
 # include <string>
@@ -24,15 +23,13 @@ class   User
 {
     private:
         USER_ID								_Id;
+        std::string                         _cmdLine;
         NICK_NAME							_nickname;
         USER_NAME						    _username;
-        std::map<std::string, Channel *>	_joinedChannels;//srsly I see no need for this, at least for now, :3 well I see now y I need it
-        // bool								_isAuthenticated;
-        bool                                _isPasswordInserted;
         bool                                _isNickInserted;
+        bool                                _isPasswordInserted;
         bool                                _isUserNameInserted;
-        std::string                         _IPServer;//this is will be removed
-        std::string                         _cmdLine;
+        std::map<std::string, Channel *>	_joinedChannels;
 
     public:
         User();
@@ -47,33 +44,14 @@ class   User
         void clearCmdLine();
         bool isStrContains(std::string const& str, std::string const& charSet);
         bool isStrStartWith(std::string const& str, std::string const& charSet);
-        //by agoumi
-        // void SetAuthenticated();
         bool isAuthenticated();
-        //by agoumi checking password authen
-        // void Correct_Password();
         bool hasInsertedPass();
-        // void NickCheck();
         bool hasInsertedNick();
-        // void UserCheck();
         bool hasInsertedUsername();
         void insertedPassSuccessfully();
-        //Print Errors
-        // void setServerIP(std::string const &ServerIP);//this is not called anywhere
-        // std::string const &getServerIP();
-
-        //Send Server To Clients
-        // void IRCPrint(size_t fd, std::string string);
-        // void ServertoClient(std::string string);
-
-        //Send Cleint to Clients
-        // void CleintToClient(int id, std::string msg);
-        // std::string GetIpAddress();
-    
         void joinedChannel(Channel *channel);
         void partedChannel(Channel *channel);
         std::map<std::string, Channel *> & getJoinedChannels();
-        // Channel *createChannel(CHANNEL_NAME name);
         ~User();
 };
 

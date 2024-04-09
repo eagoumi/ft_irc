@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstddef>
+#include <list>
 #include <vector>
 
 Commands::Commands() : _logger(Logger::GetInstance())
@@ -27,7 +28,6 @@ Commands &Commands::operator=(const Commands &obj)
 
 token_type determine_cmd(std::string token)
 {
-
     std::transform(token.begin(), token.end(), token.begin(), ::toupper);
     if (token == "JOIN")
         return JOIN_CMD;
@@ -60,7 +60,6 @@ token_type determine_cmd(std::string token)
 
 token_type Commands::determineToken(char sep, token_type cmdType)
 {
-
     /* Command:             JOIN            Parameters: <channel>{,<channel>}           [<key>{,<key>}]                         */
     /* Command:             MODE            Parameters: <target>                        [<modestring> [<mode arguments>...]]    */
     /* Command:             PART            Parameters: <channel>{,<channel>}           [<reason>]                              */
@@ -118,7 +117,6 @@ token_type Commands::determineToken(char sep, token_type cmdType)
 // call it when you are sure from the command syntax
 std::pair<std::string, std::vector<std::string> > Commands::getNextParam(OPTION option)
 {
-
     static token_type tokenType;
     static bool firstTime = true;
     static std::list<token>::iterator it;
@@ -158,7 +156,6 @@ std::pair<std::string, std::vector<std::string> > Commands::getNextParam(OPTION 
 
 void Commands::tokenize(std::string const &cmdLine)
 {
-
     token tokenNode;
     token_type tokenType(NONE);
     std::string word;
@@ -237,7 +234,6 @@ void Commands::tokenize(std::string const &cmdLine)
 
 bool Commands::isEnoughParam(token_type const &cmd)
 {
-
     if (cmd == JOIN_CMD && _paramCounter < 2)
         return false;
     else if (cmd == MODE_CMD && _paramCounter < 2)
@@ -262,38 +258,47 @@ bool Commands::isEnoughParam(token_type const &cmd)
     return true;
 }
 
-bool Commands::checkTokensListSyntax()
-{
-    token_type cmd = _tokensList.front().type;
-    std::list<token>::iterator ListIt = _tokensList.begin();
+void static printTokensList(std::list<token> const& tokensList) {
 
-    /**************************************************** -DEBUG- THOSE LINES WILL BE REMOVED -DEBUG- ****************************************************/
-    char justFordebug[42][42] = {"NONE", "COMMA", "PASS_CMD", "NICK_CMD", "USER_CMD", "PRIVMSG_CMD", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", "REASON", "MODE_ARG", "LOG_BEG", "LOG_END", "PASS", "USER"};
+    char justFordebug[42][42] = {"NONE", "COMMA", "PASS_CMD", "NICK_CMD", "USER_CMD",
+    "PRIVMSG_CMD", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", 
+    "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", 
+    "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", 
+    "REASON", "MODE_ARG", "LOG_BEG", "LOG_END", "PASS", "USER"};
+
     std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
     std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒CMD TOKEN LIST▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
     std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
-    for (std::list<token>::iterator it = _tokensList.begin(); it != _tokensList.end(); it++)
-        std::cout << "▒ "
-                  << "[" + (*it).data + "]" + " : [" + justFordebug[(*it).type] + "]" << std::endl;
-    std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl
-              << std::endl;
-    /***********************************************************************************************************************************/
+    for (std::list<token>::const_iterator it = tokensList.begin(); it != tokensList.end(); it++)
+        std::cout << "▒ " << "[" + (*it).data + "]" + " : [" + justFordebug[(*it).type] + "]" << std::endl;
+    std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl << std::endl;
+}
+
+bool Commands::checkTokensListSyntax()
+{
+    token_type cmd = _tokensList.front().type;
+
+    if (DEBUG) printTokensList(this->_tokensList);
 
     if (_tokensList.size() == 0)
-    {
         return false;
-    }
     if (cmd == NONE)
     {
-        _logger.ServertoClient(ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()) + "\n");
+        _logger.ServertoClient(ERR_UNKNOWNCOMMAND(currUser->getNickName(), getCommand()));
+        return false;
+    }
+    if ((cmd != PASS_CMD && cmd != NICK_CMD && cmd != USER_CMD) && currUser->isAuthenticated() == false)
+    {
+        _logger.ServertoClient(ERR_NOTREGISTERED(std::string("*")));
         return false;
     }
     if (isEnoughParam(cmd) == false)
     {
-        _logger.ServertoClient(ERR_NEEDMOREPARAMS(currUser->getNickName()) + "\n");
+        _logger.ServertoClient(ERR_NEEDMOREPARAMS(currUser->getNickName()));
         return false;
     }
 
+    std::list<token>::iterator ListIt = _tokensList.begin();
     while (ListIt != _tokensList.end())
     {
         if ((*ListIt).type == CHANNEL)
@@ -315,37 +320,29 @@ void Commands::CommandMapinit(cmdData dataCmd)
         return;
 
     std::string cmd = getCommand();
-    if ((cmd == "PASS" || cmd == "NICK" || cmd == "USER") && currUser->isAuthenticated() == false)
+    if (currUser->isAuthenticated() == false && (cmd == "PASS" || cmd == "NICK" || cmd == "USER"))
         Authentication(dataCmd.serverPass);
-    // else if (cmd == "PASS")
-    // {}
-    // else if (cmd == "USER")
-    // {}
-    // else if (cmd == "PONG")
-    // {}
-    if (currUser->isAuthenticated() == true)
-    {
-        if (cmd == "JOIN")
-            join();
-        else if (cmd == "KICK")
-            kick();
-        else if (cmd == "LOGTIME")
-            logtime();
-        else if (cmd == "INVITE")
-            invite();
-        else if (cmd == "TOPIC")
-            topic();
-        else if (cmd == "MODE")
-            mode();
-        else if (cmd == "LOCATION")
-            location();
-        else if (cmd == "WHOIS")
-            whois();
-        else if (cmd == "PART")
-            part();
-        else if (cmd == "PRIVMSG")
-            PRIVMSG();
-    }
+
+    if (cmd == "JOIN")
+        join();
+    else if (cmd == "KICK")
+        kick();
+    else if (cmd == "LOGTIME")
+        logtime();
+    else if (cmd == "INVITE")
+        invite();
+    else if (cmd == "TOPIC")
+        topic();
+    else if (cmd == "MODE")
+        mode();
+    else if (cmd == "LOCATION")
+        location();
+    else if (cmd == "WHOIS")
+        whois();
+    else if (cmd == "PART")
+        part();
+    else if (cmd == "PRIVMSG")
+        PRIVMSG();
 }
 
 void Commands::sendResponse(int userfd, std::string message)

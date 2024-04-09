@@ -4,6 +4,111 @@
 #include "../Logger/logger.hpp"
 
 
+Server::Server(const int &port, const std::string &password) : _logger(Logger::GetInstance()), _Port(port), _Password(password)
+{
+	_db = Database::GetInstance();
+}
+
+std::string Server::HostIPADress()
+{
+
+	std::string iphost;
+	std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log");
+	std::fstream ipfile;
+	ipfile.open(".log");
+	std::getline(ipfile, iphost);
+	std::system("rm -rf .log");
+
+	return iphost;
+}
+
+void Server::createSockets()
+{
+	// AF_INET/AF_INET6 = Domain = integer type, communication domain, example = AF_INET6/AF_INET (IPv6/IPv4 protocol)
+	// SOCK_STREAM/SOCK_DGRAM: UDP/TCP(unreliable, connectionless) 
+	// 0 = Protocol = Protocol value for Internet Protocol(IP), which is 0. 
+	//          This is the same number which appears on the protocol field in the IP header of a packet. (man protocols for more details)
+	_Socketsfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (_Socketsfd < 0)
+	{
+		std::cerr << "Error: Failed to create Sockets" << std::endl;
+		exit (EXIT_FAILURE);
+	}
+}
+
+
+// int setsockopt(int s, int level, int optname, char *optval, int optlen)
+// s = The socket descriptorIP
+// SOL_SOCKET = it called only for AF_INET IPV4 it manipulate Sockets option 
+// SO_REUSEADDR = bind Ip adress and port just one time if the ip and port are already used bind() will fail and return error EADDRINUSE
+
+void    Server::setSocketsopt()
+{
+	// INADDR_ANY = can take any IP address first was 0.0.0.0 than 127.0.0.1 localhost
+	int enable_SO_REU = 1;
+	if (setsockopt(_Socketsfd, SOL_SOCKET, SO_REUSEADDR, &enable_SO_REU, sizeof(int)) < 0)
+	{
+		std::cerr << "Error: Failed to Set Sockets opt" << std::endl;
+		exit (EXIT_FAILURE);
+	}
+	// to set a socket to non-blocking mode
+	if (fcntl(_Socketsfd, F_SETFL, O_NONBLOCK) < 0) //F_SETFL is used to change flag status to our file descreptor (sockets) to O_NONBLOCK << are Do not Block an Open, read, write on the file <and that mean do not wait for terminal input>
+	{
+		std::cerr << "Error: Failed to  Manipulating File Descriptors." << std::endl;
+		exit (EXIT_FAILURE);
+	}
+	_Sockaddsrv.sin_family = AF_INET;
+	_Sockaddsrv.sin_port = htons(_Port);
+	// htons return a number of 16bits dans l'ordre octet utilise dans les reseau TCP/IP
+	//htons()  s = Short= La fonction htons peut être utilisée pour convertir 
+	_Sockaddsrv.sin_addr.s_addr =  INADDR_ANY; //or htonl(127.0.0.1)
+	// htonl() = convert 32bits dans un ordre utiliser dans le reseau TCP/IP
+	// htonl() = l (long) utiliser pour connetre IP (localhost)
+	if (bind(_Socketsfd, (sockaddr *)&_Sockaddsrv, sizeof(_Sockaddsrv)))
+	{
+		std::cerr << "Error: failed to bind Sockets, Maybe Port was already used" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+void Server::listtenSock()
+{
+	if (listen(_Socketsfd, 32) < 0)
+	{
+		std::cerr << "Error: faild to listen Sockets" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
+void Server::accept_connection()
+{
+	//Accept Request Connection
+	size_t lensockadd = sizeof(_Sockaddclient);
+	// memset(&_Sockaddclient, 0, lensockadd);
+	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
+	if (newSocketfd > 0)
+	{
+		//inet_ntoa() only supports IPv4 addresses. 
+		// For software that needs to be compatible with IPv6, inet_ntop() is the preferred alternative.
+		std::string convertlocalhost(inet_ntoa(_Sockaddclient.sin_addr)); //It converts an Internet host address, given in network byte order (which is typically a numeric IP address in binary form), 
+								// into a standard dot-decimal notation string (the familiar IPv4 address format, such as "192.168.1.1").
+		_pollfds.fd = newSocketfd; // File descriptor to monitor (fd li ghanra9bo)
+		_pollfds.events = POLLIN; // Events to monitor for this fd (Les events li khasna nra9boha l had fd)
+		// POLLIN = That There's data to read.
+		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
+		_Storeusersfd.push_back(_pollfds);
+		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
+		if(convertlocalhost == "127.0.0.1")
+			convertlocalhost = _IPHostAdress;
+		_User = new User(newSocketfd);
+		_db->addNewUser(_User);
+		// _db->getUser(_pollfds.fd);
+	}
+	else if (newSocketfd < 0)
+	{
+		std::cerr << "Error: Failed to Connection Request. " << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
 
 void Server::Quit(std::string reason, int fd)
 {
@@ -25,10 +130,8 @@ void Server::Quit(std::string reason, int fd)
 	}
 	_logger.IRCPrint("ERROR: Quit:" + reason); //whyy ??
 
-	//send Message to all channels
 	std::cout << "Client DISCONNECTED." << std::endl;
 }
-
 
 void Server::CheckForConnectionClients()
 {
@@ -41,13 +144,11 @@ void Server::CheckForConnectionClients()
 		{
 			bzero(buffer, sizeof(buffer));
 			int recive = recv(_Storeusersfd.at(i).fd, buffer, sizeof(buffer), 0);
-			std::cout << "Buffer are: " << recive << std::endl;
 			std::string cmdquit; // PROBLEM HERE
 			std::istringstream QUITCMD(buffer); // PROBLEM HERE
         	User *client = _db->getUser(_Storeusersfd[i].fd);
 			client->appendToCmdLine(buffer);
 			std::string cmdLine = client->getCmdLine();
-			std::cout << "cmdLine (" + client->getNickName() + ") : [\n\t" << cmdLine << "\n]" << std::endl; // PROBLEM HERE
 			if (recive > 0)
 			{
 				if (cmdLine.find('\n') == std::string::npos)
@@ -60,7 +161,7 @@ void Server::CheckForConnectionClients()
 				QUITCMD >> cmdquit; // PROBLEM HERE
 				if (cmdquit == "QUIT" || cmdquit == "quit")
 				{
-        			signal(SIGPIPE, SIG_IGN);
+        			// signal(SIGQUIT, SIG_IGN);
 					std::string reason = buffer;
 					size_t C = reason.find(" ");
 					if (C != std::string::npos)
@@ -117,24 +218,6 @@ void Server::CheckForConnectionClients()
 	}
 }
 
-Server::Server(const int &port, const std::string &password) : _logger(Logger::GetInstance()), _Port(port), _Password(password)
-{
-	_db = Database::GetInstance();
-}
-
-std::string Server::HostIPADress()
-{
-
-	std::string iphost;
-	std::system("ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log");
-	std::fstream ipfile;
-	ipfile.open(".log");
-	std::getline(ipfile, iphost);
-	std::system("rm -rf .log");
-
-	return iphost;
-}
-
 void Server::ServerStarting()
 {
 	struct pollfd srvpollfd;
@@ -153,7 +236,7 @@ void Server::ServerStarting()
 	while(1)
 	{
 		// Wait indefinitely for an event
-		int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), -1);
+		int ret = poll(&_Storeusersfd[0], _Storeusersfd.size(), 0);
 	   if (ret < 0)
 	   {
 			std::cerr << "Error: Poll() Failed to Call System!!!!!!!!" << std::endl;
@@ -171,96 +254,6 @@ void Server::ServerStarting()
 	   _db->debug();
 	}
 }
-
-void Server::createSockets()
-{
-	// AF_INET/AF_INET6 = Domain = integer type, communication domain, example = AF_INET6/AF_INET (IPv6/IPv4 protocol)
-	// SOCK_STREAM/SOCK_DGRAM: UDP/TCP(unreliable, connectionless) 
-	// 0 = Protocol = Protocol value for Internet Protocol(IP), which is 0. 
-	//          This is the same number which appears on the protocol field in the IP header of a packet. (man protocols for more details)
-	_Socketsfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_Socketsfd < 0)
-	{
-		std::cerr << "Error: Failed to create Sockets" << std::endl;
-		exit (EXIT_FAILURE);
-	}
-}
-
-
-// int setsockopt(int s, int level, int optname, char *optval, int optlen)
-// s = The socket descriptor
-// level = The level for which the option is being set <we use SOL_SOCKET>
-
-void    Server::setSocketsopt()
-{
-	// INADDR_ANY = can take any IP address first was 0.0.0.0 than 127.0.0.1 localhost
-	int enable_SO_REU = 1;
-	if (setsockopt(_Socketsfd, SOL_SOCKET, SO_REUSEADDR, &enable_SO_REU, sizeof(int)) < 0)
-	{
-		std::cerr << "Error: Failed to Set Sockets opt" << std::endl;
-		exit (EXIT_FAILURE);
-	}
-	// to set a socket to non-blocking mode
-	if (fcntl(_Socketsfd, F_SETFL, O_NONBLOCK) < 0)
-	{
-		std::cerr << "Error: Failed to  Manipulating File Descriptors." << std::endl;
-		exit (EXIT_FAILURE);
-	}
-	_Sockaddsrv.sin_family = AF_INET;
-	_Sockaddsrv.sin_port = htons(_Port);
-	//need for connaitre le du serveur port
-	// htons return a number of 16bits dans l'ordre octet utilise dans les reseau TCP/IP
-	//htons()  s = Short= La fonction htons peut être utilisée pour convertir 
-		// un numéro de port IP dans l’ordre d’octet hôte en numéro de port IP dans l’ordre d’octet réseau.
-	_Sockaddsrv.sin_addr.s_addr =  INADDR_ANY; //or htonl(127.0.0.1)
-	// htonl() = convert 32bits dans un ordre utiliser dans le reseau TCP/IP
-	// htonl() = l (long) utiliser pour connetre IP (localhost)
-	if (bind(_Socketsfd, (sockaddr *)&_Sockaddsrv, sizeof(_Sockaddsrv)))
-	{
-		std::cerr << "Error: failed to bind Sockets, Maybe Port was already used" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-}
-
-void Server::listtenSock()
-{
-	if (listen(_Socketsfd, 32) < 0)
-	{
-		std::cerr << "Error: faild to listen Sockets" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-}
-void Server::accept_connection()
-{
-	//Accept Request Connection
-	size_t lensockadd = sizeof(_Sockaddclient);
-	// memset(&_Sockaddclient, 0, lensockadd);
-	int newSocketfd = accept(_Socketsfd, (sockaddr *)&_Sockaddclient, (socklen_t *)&lensockadd);
-	if (newSocketfd > 0)
-	{
-		//inet_ntoa() only supports IPv4 addresses. 
-		// For software that needs to be compatible with IPv6, inet_ntop() is the preferred alternative.
-		std::string convertlocalhost(inet_ntoa(_Sockaddclient.sin_addr)); //It converts an Internet host address, given in network byte order (which is typically a numeric IP address in binary form), 
-								// into a standard dot-decimal notation string (the familiar IPv4 address format, such as "192.168.1.1").
-		_pollfds.fd = newSocketfd; // File descriptor to monitor (fd li ghanra9bo)
-		_pollfds.events = POLLIN; // Events to monitor for this fd (Les events li khasna nra9boha l had fd)
-		// POLLIN = That There's data to read.
-		_pollfds.revents = 0; // Events that occurred on this fd (Les events li traw fe had fd)
-		_Storeusersfd.push_back(_pollfds);
-		// _ConnectedUser.insert(std::pair<newSocketfd, (Name)>);
-		if(convertlocalhost == "127.0.0.1")
-			convertlocalhost = _IPHostAdress;
-		_User = new User(newSocketfd);
-		_db->addNewUser(_User);
-		// _db->getUser(_pollfds.fd);
-	}
-	else if (newSocketfd < 0)
-	{
-		std::cerr << "Error: Failed to Connection Request. " << std::endl;
-		exit(EXIT_FAILURE);
-	}
-}
-
 
 Server::~Server()
 {

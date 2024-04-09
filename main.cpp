@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "Server/server.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,16 +17,19 @@ int main(int ac, char **av)
             return 1;
         }
         signal(SIGPIPE, SIG_IGN);
+        // signal(SIGINT, SIG_IGN);
+        signal(SIGQUIT, SIG_IGN);
         size_t port = std::atoi(av[1]);
         if (port < 1024 || port > 65535)
         {
-            std::cerr << "noooo" << std::endl;
+            std::cerr << "You are Not On the Right RAnge Of Allowed Port" << std::endl;
             return 1;
         }
         Server sr(port, av[2]);
         sr.ServerStarting();
     }
-    catch(std::string err){
-        std::cout << err << std::endl;
+    catch(...)
+    {
+        std::cout << "Error" << std::endl;
     }
 }

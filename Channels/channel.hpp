@@ -6,9 +6,6 @@
 #include <set>
 #include <string>
 #include <vector>
-// #include "../Commands/Commands.hpp"
-// #include "../Database/database.hpp"
-// #include "../Users/user.hpp"
 
 # define USER_ID size_t
 # define CHANNEL_NAME std::string
@@ -18,22 +15,16 @@ class User;
 class Channel
 {
     private:
-        // Database *db;
         Channel();
         CHANNEL_NAME					_name;
         std::map<USER_ID, User *>		_members;
         std::map<USER_ID, User *>		_operators;
         std::map<USER_ID, User *>		_invited;
-        std::pair<bool, size_t>			_limit; //hmmm not sure if we have to implement another limit for how much channel a user could join to
-        std::pair<bool, std::string>	_topic;
-        std::string _key;
-
-        //added
-        std::map<char, bool> modeSeted;
-        // std::vector<std::string> invitedList;
-        std::string newTopic;
-        std::set<char> _modeSet;
-        size_t limitMembers;
+        std::string                     _key;
+        std::map<char, bool>            modeSeted;
+        std::string                     newTopic;
+        std::set<char>                  _modeSet;
+        size_t                          limitMembers;
 
     public:
         Channel(CHANNEL_NAME, User *);
@@ -47,14 +38,10 @@ class Channel
         void removeMode(const char& modeLetter);
         bool getMode(const char& modeLetter);
         std::string getModeStr();
-
-        //added
         std::map<USER_ID, User *> const& getMembers();
         std::map<USER_ID, User *> const& getOperators();
-        // std::map<std::string, bool> 	 gettingModes(std::string toFind);
         std::string	getTopic();
         void		setTopic(std::string nTopic);
-        // void                        	 initializeModes(std::string modeStr);
         void		setLimit(size_t limitMembers);
         void		addOperator(size_t fdo);
         void		deleteMember(User* userToDelete);
@@ -68,15 +55,6 @@ class Channel
         void		deleteInvited(User *userToDelete);
         void		clearKey();
         std::string getModes();
-        
-
-
-
-        // std::string                 channelTopic(int fd);
-
-
-
-        //getChannelUsers operators etc ..
         ~Channel();
 };
 

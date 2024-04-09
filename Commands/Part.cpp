@@ -21,20 +21,22 @@ void Commands::part()
     for (size_t i = 0; i < All_channels.size() ; i++)
     {
         User *userParted = db->existUser(db->getUser(fd)->getNickName());
-        Channel *Store_channel = db->getChannel(All_channels[i]);
-        if (Store_channel == NULL)
+        currChannel = db->getChannel(All_channels[i]);
+        if (currChannel == NULL)
         {
             _logger.ServertoClient(ERR_NOSUCHCHANNEL(db->getUser(fd)->getNickName(), "PART"));
             return ;
         }
-        else if (Store_channel->getMember(fd) == NULL)
+        else if (currChannel->getMember(fd) == NULL)
         {
             _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), "PART"));
             return ;
         }
-        SendMessageToMembers(Store_channel, currUser, "PART " + All_channels[i]);
-        Store_channel->deleteMember(userParted);
-        if(Store_channel->getMembers().size() == 0)
+        SendMessageToMembers(currChannel, currUser, "PART " + All_channels[i]);
+        currChannel->deleteMember(userParted);
+        if(currChannel->isUserOperator(userParted->getUserId()) == true)
+            currChannel->deleteOperator(userParted);
+        if(currChannel->getMembers().size() == 0)
         {
             db->deleteChannel(All_channels[i]);
         }

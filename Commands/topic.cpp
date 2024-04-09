@@ -1,53 +1,47 @@
 #include "Commands.hpp"
 
-
-
-
 void Commands::topic()
 {
     std::string channelName = getNextParam().first;
-    currChannel = db->getChannel(channelName);
     std::string theTopic = getNextParam().first;
     currChannel = db->getChannel(channelName);
 
-
-    if (db->getChannel(channelName) == NULL)
+    if (currChannel == NULL)
         _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
-    else if (currChannel->isUserMember(currUser->getUserId()) == false) //checking if the member are on the channel use this "currChannel->getMember(currUser->getUserId())"
-        _logger.ServertoClient(ERR_NOTONCHANNEL(db->getUser(fd)->getNickName(), channelName));
+    else if (currChannel->isUserMember(currUser->getUserId()) == false)
+        _logger.ServertoClient(ERR_NOTONCHANNEL(currUser->getNickName(), channelName));
     else if (_paramCounter == 2)
     {
-        if(db->getChannel(channelName)->getTopic() != "")
+        if (currChannel->getTopic() != "")
         {
-            _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic())); // Problem Here A Yousra
+            _logger.ServertoClient(RPL_TOPIC(currUser->getNickName(), channelName, currChannel->getTopic()));
         }
-        else if (db->getChannel(channelName)->getTopic() == "")
-            _logger.ServertoClient(RPL_NOTOPIC(db->getUser(fd)->getNickName(), channelName)); // Problem Here A Yousra
+        else if (currChannel->getTopic() == "")
+            _logger.ServertoClient(RPL_NOTOPIC(currUser->getNickName(), channelName));
     }
     else if (theTopic == "" && _paramCounter == 3)
     {
         if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
-            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
-        }   
-        else{
-            db->getChannel(channelName)->setTopic("");
+            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+        }
+        else
+        {
+            currChannel->setTopic("");
             SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " :");
-            // sendResponse(fd, ":" + db->getUser(fd)->getNickName() + " " + channelName + " " + "topic cleared successfully\n");
         }
     }
-    else// if (theTopic[0] == ':')
+    else
     {
         if (currChannel->isUserOperator(currUser->getUserId()) == false && currChannel->getMode('t') == true)
         {
-            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
-        }   
+            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
+        }
         else
         {
-            db->getChannel(channelName)->setTopic(theTopic);
-            SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " " + db->getChannel(channelName)->getTopic());
-            _logger.ServertoClient(RPL_TOPIC(db->getUser(fd)->getNickName(), channelName, db->getChannel(channelName)->getTopic()));
-            // _logger.IRCPrint(fd, ":" + db->getUser(fd)->getNickName() + "!~" + db->getUser(fd)->getUserName() + "@" + _logger.getServerIP() + " TOPIC " + channelName + " :" + db->getChannel(channelName)->getTopic());
+            currChannel->setTopic(theTopic);
+            SendMessageToMembers(currChannel, currUser, "TOPIC " + channelName + " " + currChannel->getTopic());
+            _logger.ServertoClient(RPL_TOPIC(currUser->getNickName(), channelName, currChannel->getTopic()));
         }
     }
 }

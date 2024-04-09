@@ -1,4 +1,5 @@
 #include "Commands.hpp"
+
 bool Commands::check_connection(size_t user_fd)
 {
     std::map<size_t, User *> user = db->getUsers();

@@ -35,11 +35,6 @@ void Commands::invite()
             currChannel->inviteUser(invitedUser);
             _logger.ServertoClient(RPL_INVITING(db->getUser(fd)->getNickName(), invitedUser->getNickName(), currChannel->getChannelName()));
             _logger.ServertoClient("NOTICE @"+currChannel->getChannelName() + " :" + db->getUser(fd)->getNickName() + " invited " + invitedUser->getNickName() + " into channel " + currChannel->getChannelName());
-                /****************************************************************************************/
-                /*			Send To All Members on the Channel that this user are invited				*/
-                /****************************************************************************************/
-                // sendToClientsExisted(invitedUser->getUserId() , it_ExistedUserCh->second, "INVITE " + invitedUser->getNickName() + " :" + currChannel->getChannelName());
-            // sendResponse(invitedUser->getUserId(), ":" + db->getUser(fd)->getNickName() + " " + nickName + " " + channelName + "\n"); //LOGS STILL HERE WITH ME
         }
     }
 }

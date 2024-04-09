@@ -1,44 +1,27 @@
 #include "Commands.hpp"
 #include <cstddef>
 
-//+t not seted at the begining of join
-// user does not exist in -o
 
 void Commands::mode()
 {
     std::string channelName = getNextParam().first;
     std::string modesStr = getNextParam().first;
     std::string modeArg;
-
     currChannel = db->getChannel(channelName);
-
     if (currChannel == NULL)
     {
         _logger.ServertoClient(ERR_NOSUCHCHANNEL(currUser->getNickName(), channelName));
         return;
     }
-    // else if (currChannel->isUserOperator(currUser->getUserId()) == false)
-    // {
-    //     //The Problem Was Here for that message "you are not the operator"
-    //     _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
-    //     return;
-    // }
     else if (_paramCounter == 2)
     {
-        // i need to get args
-        //  _logger.ServertoClient(RPL_CHANNELMODEIS(db->getUser(fd)->getNickName(), channelName, currChannel->getModes(), modearg))
-        _logger.ServertoClient(RPL_CHANNELMODEIS(db->getUser(fd)->getNickName(), channelName, currChannel->getModes()));
+        _logger.ServertoClient(RPL_CHANNELMODEIS(currUser->getNickName(), channelName, currChannel->getModes()));
     }
     else
     {
-        // currChannel->setModes(modesStr);
-        char sign = '+'; // by default if no sign is specified within given modeStr
+        char sign = '+';
         if (currChannel->isUserOperator(currUser->getUserId()) == false)
-        {
-            // The Problem Was Here for that message "you are not the operator"
-            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(db->getUser(fd)->getNickName(), channelName));
-            return;
-        }
+            _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
         else
         {
             for (size_t i = 0; i < modesStr.length(); i++)
@@ -63,7 +46,7 @@ void Commands::mode()
                         }
                         else if (currModeLetter == 'o' && _paramCounter == 3)
                         {
-                            _logger.ServertoClient(ERR_SPECIFYPARAM(db->getUser(fd)->getNickName(), channelName));
+                            _logger.ServertoClient(ERR_SPECIFYPARAM(currUser->getNickName(), channelName));
                             continue;
                         }
 
@@ -73,7 +56,7 @@ void Commands::mode()
                             User *Operator = db->existUser(modeArg);
                             if (!Operator)
                             {
-                                _logger.ServertoClient(ERR_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                                _logger.ServertoClient(ERR_NOUSERS(currUser->getNickName(), channelName));
                                 continue;
                             }
                             else if (currChannel->isNickExist(modeArg) == false)
@@ -98,7 +81,7 @@ void Commands::mode()
                         }
                         else if (currModeLetter == 'o' && _paramCounter == 3)
                         {
-                            _logger.ServertoClient(ERR_SPECIFYPARAM(db->getUser(fd)->getNickName(), channelName));
+                            _logger.ServertoClient(ERR_SPECIFYPARAM(currUser->getNickName(), channelName));
                             continue;
                         }
 
@@ -106,14 +89,14 @@ void Commands::mode()
                         {
                             modeArg = getNextParam().first;
                             User *Operator = db->existUser(modeArg);
-                            if (currChannel->isNickExist(modeArg) == false)
+                            if (!Operator)
                             {
-                                _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
+                                _logger.ServertoClient(ERR_NOUSERS(currUser->getNickName(), channelName));
                                 continue;
                             }
-                            else if (!Operator)
+                            else if (currChannel->isNickExist(modeArg) == false)
                             {
-                                _logger.ServertoClient(ERR_NOUSERS(db->getUser(fd)->getNickName(), channelName));
+                                _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
                                 continue;
                             }
                             else

@@ -111,7 +111,7 @@ void User::partedChannel(Channel* channel) {
         _joinedChannels.erase(it);
 }
 
-std::map<std::string, Channel *> const& User::getJoinedChannels() {
+std::map<std::string, Channel *>& User::getJoinedChannels() {
     return this->_joinedChannels;
 }
 

@@ -4,16 +4,27 @@
 #include "../Logger/logger.hpp"
 
 
-void Server::Quit(std::string reason)
+
+void Server::Quit(std::string reason, int fd)
 {
-	std::cout << "Nick : " << _User->getNickName() << std::endl;
+	Database *db;
+    db = Database::GetInstance();
+	std::cout << "data base = " << db->getUser(fd)->getNickName();
+	// std::cout << "Nick : " << _User->getNickName() << std::endl;
 	if (_User->getNickName().empty())
+	{	
 		_logger.IRCPrint(":*@localhost.IRC QUIT :Quit:" + reason);
+	}
 	else if (reason.at(0) == ':')
+	{
 		_logger.IRCPrint(":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit" + reason);
+	}
 	else
+	{
 		_logger.IRCPrint(":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
-	_logger.IRCPrint("ERROR: Quit:" + reason);
+	}
+	_logger.IRCPrint("ERROR: Quit:" + reason); //whyy ??
+
 	//send Message to all channels
 	std::cout << "Client DISCONNECTED." << std::endl;
 }
@@ -55,7 +66,7 @@ void Server::CheckForConnectionClients()
 					if (C != std::string::npos)
 						reason = reason.substr(C + 1, reason.length());
 					QUITCMD >> reason;
-					Quit(reason);
+					Quit(reason,  _Storeusersfd[i].fd);
 					//================================Send Notice To All Channel Joined =========//
 					std::map<std::string, Channel *> JoinedCh = client->getJoinedChannels();
 					if (!JoinedCh.empty())

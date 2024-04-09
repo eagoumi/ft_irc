@@ -72,7 +72,7 @@ class   User
     
         void joinedChannel(Channel *channel);
         void partedChannel(Channel *channel);
-        std::map<std::string, Channel *> const& getJoinedChannels();
+        std::map<std::string, Channel *> & getJoinedChannels();
         // Channel *createChannel(CHANNEL_NAME name);
         ~User();
 };

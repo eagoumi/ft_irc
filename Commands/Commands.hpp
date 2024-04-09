@@ -31,19 +31,12 @@ struct token
     std::string data;
 };
 
-// :yousra!~a@127.0.0.1 JOIN #HD
-// :Pentagone.chat MODE #HD +t
-// :Pentagone.chat 353 yousra @ #HD : @yousra
-// :Pentagone.chat 366 yousra #HD :End of /NAMES list.
-// :Pentagone.chat 332 yousra #HD :TOPIC Not set
-
 class Database;
 
 typedef struct s_comData
 {
+    int         fd;
     std::string line;
-    // std::string nick;
-    int fd;
     std::string serverPass;
 
 } cmdData;
@@ -51,95 +44,54 @@ typedef struct s_comData
 class Commands
 {
 private:
-    Channel *currChannel;
-    // std::map<std::string, bool> modes;
-    static std::string newTopic;
-    static std::string invitedNick;
-    // std::string modeStr;
-    Database *db;
-    Logger& _logger;
-    // std::string channelName;
-    // std::string nickName;
-    // std::vector<std::string> channelNamesList;
+    Database            *db;
+    User                *currUser;
+    Channel             *currChannel;
+    std::string         newTopic;
+    std::string         invitedNick;
+    Logger&             _logger;
+    std::list<token>    _tokensList;
+    size_t              _paramCounter;
+    unsigned long       fd;
+    std::string         topicMsg;
+    std::string         line;
 
-    int flag;
-    std::list<token> _tokensList;
-    size_t _paramCounter;
-    void tokenize(std::string const&);
-    std::pair<std::string, std::vector<std::string> > getNextParam(OPTION option = NADA);
-    bool checkTokensListSyntax();
-    token_type  determineToken(char sep, token_type cmdType);
-    bool isEnoughParam(token_type const& cmd);
-    std::string get42Token();
-    // std::string command;
-    // std::vector<std::string> command;
-    std::vector<std::string>::iterator itV;
-    unsigned long fd;
-    User *currUser;
-    std::string owner;
-    std::string topicMsg;
-    std::string line;
+    void                                                tokenize(std::string const&);
+    bool                                                isEnoughParam(token_type const& cmd);
+    bool                                                checkTokensListSyntax();
+    token_type                                          determineToken(char sep, token_type cmdType);
+    std::string                                         get42Token();
+    std::pair<std::string, std::vector<std::string> >   getNextParam(OPTION option = NADA);
 
 public:
     Commands();
     ~Commands();
     Commands(const Commands &obj);
-    Commands &operator=(const Commands &obj);
+    Commands&           operator=(const Commands &obj);
 
-    void CommandMapinit(cmdData dataCmd);
+    void                CommandMapinit(cmdData dataCmd);
+    void                join();
+    void                kick();
+    void                invite();
+    void                topic();
+    void                mode();
+    void                part();
+    void                logtime();
+    void                location();
+    void                whois();
+    void                PRIVMSG();
+    void                Authentication(std::string const& serverPass);
+    void                WelcomeClient();
+    void                sendResponse(int userfd, std::string msg);
+    void                SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
+    void                sendToClientsExisted(size_t reciver, User *sender, std::string Message);
+    bool                check_connection(size_t user_fd);
+    void                PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel);
+    const std::string   getCommand() const;
 
-    void kick();
-    void invite();
-    void topic();
-    void mode();
-    void join();
-    void logtime();
-    void location();
-    void whois();
-
-    void part();
-    void PRIVMSG();
-    void Authentication(std::string const& serverPass);
-    void WelcomeClient();
-
-    std::map<std::string, std::string> splitInput(std::string input);
-    // bool existMemberChannel(std::string member, std::string channelName);
-    // bool existOperatorChannel(std::string nick, std::string channelName);
-    // size_t existUser(std::string nick);
-
-
-    std::string const getCommand() const;
-    std::string const getHostName();
-    // std::string getNick();
-    // std::string getChannel();
-    // std::string getTopic();
-    // std::string getComment();
-    // std::string getModeString();
-
-    // bool gettingModes(char toFind, std::string mode, std::map<std::string, bool> &modSeted);
-    // void seTopic(std::string newTopic);
-    void    sendResponse(int userfd, std::string msg);
-    void    displayMember(std::string channelName);
-    // bool    getMode(std::string letter, std::string channelName);
-    void SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
-    void sendToClientsExisted(size_t reciver, User *sender, std::string Message);
-    bool check_connection(size_t user_fd);
-    void PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel);
-    // void PrintLogsAfterJoined(std::string ClientChannel, User *Client, Channel *Channel);
-
+    
+ 
 
 };
 
 #endif
-
-
-// JOIN <channel>{,<channel>} [<key>{,<key>}]
-// part
-
-// INVITE <nickname> <channel>
-// KICK <channel> <user> *( "," <user> ) [<comment>]
-
-// TOPIC <channel> [<topic>]
-// MODE <channel> [<modestring> [<mode arguments>...]]
-
-

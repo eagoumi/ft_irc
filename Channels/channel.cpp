@@ -20,13 +20,6 @@ static bool isStrContains(std::string const &str, std::string const &charSet) {
     return false;
 }
 
-// static bool isStrStartWith(std::string const& str, std::string const& charSet) {
-
-//     for (int i = 0; charSet[i]; i++)
-//         if (str.at(0) == charSet[i]) return true;
-//     return false;
-// }
-
 Channel::Channel(CHANNEL_NAME channelName, User *creator) : _name(channelName) {
 
     // db = Database::GetInstance();

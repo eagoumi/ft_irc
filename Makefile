@@ -2,7 +2,7 @@ NAME		=	ircserv
 
 CC			=	c++
 
-CFLAGS		=	-Wall -Wextra -std=c++98 -Wshadow
+CFLAGS		=	-Wall -Wextra -std=c++98 -Wshadow -fsanitize=address -g
 
 # directories
 SRC_DIR		=	./

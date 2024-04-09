@@ -4,6 +4,8 @@ CC			=	c++
 
 CFLAGS		=	-Wall -Wextra -std=c++98 -Wshadow -fsanitize=address -g
 
+DEBUG		=	DEBUG=true
+
 # directories
 SRC_DIR		=	./
 OBJ_DIR		=	obj/
@@ -70,7 +72,7 @@ $(NAME): $(OBJ) $(INC_FILES)
 $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC_FILES)
 	@mkdir -p $(dir $@)
 	@echo "$(YELLOW)Compiling [$@]...$(RESET)"
-	@$(CC) $(CFLAGS) -I $(INC_DIR) -o $@ -c $<
+	@$(CC) $(CFLAGS) -I $(INC_DIR) -o $@ -c $< -D$(DEBUG)
 	@printf "$(UP)$(CUT)"
 	@echo "$(GREEN)Finished [$@]$(RESET)"
 	@printf "$(UP)$(CUT)"

@@ -251,7 +251,7 @@ void Server::ServerStarting()
 			CheckForConnectionClients();
 			//check for if the connection was lost or some error for connection from the clients
 		// std::signal(SIGPIPE, SIG_IGN);
-	   _db->debug();
+	   if (DEBUG) _db->debug();
 	}
 }
 

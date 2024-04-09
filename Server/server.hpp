@@ -81,7 +81,7 @@ class Server
         // void ServertoClient(std::string string);
 
         //Command Quit 
-        void Quit(std::string reason, int fd);
+        void Quit(std::string reason);
 
 };
 

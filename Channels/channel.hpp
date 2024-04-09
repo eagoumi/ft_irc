@@ -18,13 +18,9 @@ class Channel
         Channel();
         
         size_t                          limitMembers;
-        size_t                          limitMembers;
         std::string                     newTopic;
         std::string                     _key;
-        std::string                     _key;
-        std::string                     newTopic;
         CHANNEL_NAME                    _name;
-        std::set<char>                  _modeSet;
         std::set<char>                  _modeSet;
         std::map<char, bool>            modeSeted;
         std::map<USER_ID, User *>		_members;
@@ -57,6 +53,7 @@ class Channel
         std::string                         getModeStr();
         std::string	                        getTopic();
         std::string                         getModes();
+        std::string                         getKey();
         CHANNEL_NAME const&                 getChannelName();
         std::map<USER_ID, User *> const&    getMembers();
         std::map<USER_ID, User *> const&    getOperators();

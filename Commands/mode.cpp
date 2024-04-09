@@ -3,6 +3,7 @@
 
 void Commands::mode()
 {
+    size_t i;
     std::string channelName = getNextParam().first;
     std::string modesStr = getNextParam().first;
     std::vector<std::string> modeArg = getNextParam().second;
@@ -37,7 +38,7 @@ void Commands::mode()
             _logger.ServertoClient(ERR_CHANOPRIVSNEEDED(currUser->getNickName(), channelName));
         else
         {
-            for (size_t i = 0; i < modesStr.length(); i++)
+            for (i = 0; i < modesStr.length(); i++)
             {
                 modesStr[i] == '+' ? sign = '+' : (modesStr[i] == '-' ? sign = '-' : sign);
 
@@ -49,7 +50,7 @@ void Commands::mode()
                         if (currModeLetter == 'k')
                         {
                             currChannel->setKey(modeArg.front());
-                            for (int i = 0; i < modeArg.size(); i++)
+                            for (i = 0; i < modeArg.size(); i++)
                             {
                                 modeArg[i] = modeArg[i + 1];
                             }
@@ -58,7 +59,7 @@ void Commands::mode()
                         {
                             size_t limit = static_cast<size_t>(atoi(modeArg.front().c_str()));
                             currChannel->setLimit(limit > 0 ? limit : 1);
-                            for (int i = 0; i < modeArg.size(); i++)
+                            for (i = 0; i < modeArg.size(); i++)
                             {
                                 modeArg[i] = modeArg[i + 1];
                             }
@@ -86,7 +87,7 @@ void Commands::mode()
                             {
                                 currChannel->addOperator(Operator->getUserId());
                                 SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg.front());
-                                for (int i = 0; i < modeArg.size(); i++)
+                                for (i = 0; i < modeArg.size(); i++)
                                 {
                                     modeArg[i] = modeArg[i + 1];
                                 }
@@ -126,7 +127,7 @@ void Commands::mode()
                                 {
                                     currChannel->deleteOperator(Operator);
                                     SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg.front());
-                                    for (int i = 0; i < modeArg.size(); i++)
+                                    for (i = 0; i < modeArg.size(); i++)
                                     {
                                         modeArg[i] = modeArg[i + 1];
                                     }

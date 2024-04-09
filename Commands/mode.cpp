@@ -1,12 +1,11 @@
 #include "Commands.hpp"
 #include <cstddef>
 
-
 void Commands::mode()
 {
     std::string channelName = getNextParam().first;
     std::string modesStr = getNextParam().first;
-    std::string modeArg;
+    std::vector<std::string> modeArg = getNextParam().second;
     currChannel = db->getChannel(channelName);
     if (currChannel == NULL)
     {
@@ -15,7 +14,21 @@ void Commands::mode()
     }
     else if (_paramCounter == 2)
     {
-        _logger.ServertoClient(RPL_CHANNELMODEIS(currUser->getNickName(), channelName, currChannel->getModes()));
+        std::stringstream ss;
+        std::string args = " ";
+        std::string currModes = currChannel->getModes();
+        size_t itKey = currChannel->getModes().find('k');
+        size_t itLimit = currChannel->getModes().find('l');
+
+        if (itKey != std::string::npos)
+            args += (currChannel->getKey() + " ");
+
+        if (itLimit != std::string::npos)
+        {
+            ss << currChannel->getLimit();
+            args += (ss.str() + " ");
+        }
+        _logger.ServertoClient(RPL_CHANNELMODEIS(currUser->getNickName(), channelName, currChannel->getModes(), args));
     }
     else
     {
@@ -31,18 +44,24 @@ void Commands::mode()
                 char currModeLetter = modesStr[i];
                 if (currModeLetter == 'i' || currModeLetter == 'k' || currModeLetter == 'l' || currModeLetter == 'o' || currModeLetter == 't')
                 {
-                    if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k' || currModeLetter == 'o'))
+                    if (sign == '+' && (currChannel->getMode(currModeLetter) == false || currModeLetter == 'k' || currModeLetter == 'o' || currModeLetter == 'l'))
                     {
                         if (currModeLetter == 'k')
                         {
-                            modeArg = getNextParam().first;
-                            currChannel->setKey(modeArg);
+                            currChannel->setKey(modeArg.front());
+                            for (int i = 0; i < modeArg.size(); i++)
+                            {
+                                modeArg[i] = modeArg[i + 1];
+                            }
                         }
                         else if (currModeLetter == 'l')
                         {
-                            modeArg = getNextParam().first;
-                            size_t limit = static_cast<size_t>(atoi(modeArg.c_str()));
+                            size_t limit = static_cast<size_t>(atoi(modeArg.front().c_str()));
                             currChannel->setLimit(limit > 0 ? limit : 1);
+                            for (int i = 0; i < modeArg.size(); i++)
+                            {
+                                modeArg[i] = modeArg[i + 1];
+                            }
                         }
                         else if (currModeLetter == 'o' && _paramCounter == 3)
                         {
@@ -52,22 +71,25 @@ void Commands::mode()
 
                         else if (currModeLetter == 'o' && _paramCounter == 4)
                         {
-                            modeArg = getNextParam().first;
-                            User *Operator = db->existUser(modeArg);
+                            User *Operator = db->existUser(modeArg.front());
                             if (!Operator)
                             {
                                 _logger.ServertoClient(ERR_NOUSERS(currUser->getNickName(), channelName));
                                 continue;
                             }
-                            else if (currChannel->isNickExist(modeArg) == false)
+                            else if (currChannel->isNickExist(modeArg.front()) == false)
                             {
-                                _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
+                                _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg.front(), channelName));
                                 continue;
                             }
                             else
                             {
                                 currChannel->addOperator(Operator->getUserId());
-                                SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg);
+                                SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg.front());
+                                for (int i = 0; i < modeArg.size(); i++)
+                                {
+                                    modeArg[i] = modeArg[i + 1];
+                                }
                             }
                         }
 
@@ -87,16 +109,15 @@ void Commands::mode()
 
                         else if (currModeLetter == 'o' && _paramCounter == 4)
                         {
-                            modeArg = getNextParam().first;
-                            User *Operator = db->existUser(modeArg);
+                            User *Operator = db->existUser(modeArg.front());
                             if (!Operator)
                             {
                                 _logger.ServertoClient(ERR_NOUSERS(currUser->getNickName(), channelName));
                                 continue;
                             }
-                            else if (currChannel->isNickExist(modeArg) == false)
+                            else if (currChannel->isNickExist(modeArg.front()) == false)
                             {
-                                _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg, channelName));
+                                _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg.front(), channelName));
                                 continue;
                             }
                             else
@@ -104,7 +125,11 @@ void Commands::mode()
                                 if (currChannel->isUserOperator(Operator->getUserId()) == true && currChannel->isUserOperator(currUser->getUserId()) == true)
                                 {
                                     currChannel->deleteOperator(Operator);
-                                    SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg);
+                                    SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg.front());
+                                    for (int i = 0; i < modeArg.size(); i++)
+                                    {
+                                        modeArg[i] = modeArg[i + 1];
+                                    }
                                 }
                             }
                         }

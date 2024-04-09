@@ -151,6 +151,10 @@ bool Channel::isKeyMatch(std::string const& givenKey) {
     return false;
 }
 
+std::string Channel::getKey(){
+    return _key;
+}
+
 void Channel::addOperator(size_t fdo){
     
     this->_operators[fdo] = getMember(fdo);

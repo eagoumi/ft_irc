@@ -114,8 +114,6 @@ void Server::Quit(std::string reason, int fd)
 {
 	Database *db;
     db = Database::GetInstance();
-	std::cout << "data base = " << db->getUser(fd)->getNickName();
-	// std::cout << "Nick : " << _User->getNickName() << std::endl;
 	if (_User->getNickName().empty())
 	{	
 		_logger.IRCPrint(":*@localhost.IRC QUIT :Quit:" + reason);
@@ -192,7 +190,6 @@ void Server::CheckForConnectionClients()
 						if ((pos = line.find('\r')) != std::string::npos)
 							line.erase(pos);
 						data.line = line;
-						std::cout << data.line << std::endl;
 						cmdObj.CommandMapinit(data);
 						line.clear();
 					}
@@ -224,7 +221,7 @@ void Server::ServerStarting()
 
 	_IPHostAdress = HostIPADress(); // take IP Host of Machine
 	_logger.setServerIp(_IPHostAdress);
-	std::cout << "dd: " << _IPHostAdress << std::endl;
+	std::cout << "Server IP Are : " << _IPHostAdress << std::endl;
 	createSockets();
 	setSocketsopt();
 	listtenSock();

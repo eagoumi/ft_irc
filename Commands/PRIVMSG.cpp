@@ -35,23 +35,18 @@ void Commands::PRIVMSG()
 {
     std::vector<std::string> get_param = getNextParam().second;
     std::string Message = getNextParam().first;
-    // std::cout << Message << std::endl;
     for(size_t i = 0; i < get_param.size(); i++)
     {
         if ((get_param[i][0] == '@' || get_param[i][0] == '%'))
         {
             std::string good_str = eraseOpertorSymbole(get_param[i]);
-            // std::cout <<  "Good are: " << good_str << std::endl;
             Channel *ch1 = db->getChannel(good_str);
             if(ch1 && good_str[0] == '#' && ch1->getMember(fd))
             {
                 std::map<USER_ID, User *> operators = ch1->getOperators();
                 std::map<USER_ID, User *>::iterator IT_OPER = operators.begin();
                 for (; IT_OPER != operators.end() ; IT_OPER++)
-                {
-                    std::cout << "Operators = " << IT_OPER->second->getNickName() << std::endl;
                     _logger.SendJoinedMembers(ch1, "PRIVMSG " + IT_OPER->second->getNickName() + " :" + Message);
-                }
             }
             else
             {
@@ -75,7 +70,6 @@ void Commands::PRIVMSG()
             else
             {
                 User *reciver_msg = db->existUser(get_param[i]);
-                // std::cout << "User Are: " << reciver_msg->getNickName() << std::endl;
                 if (reciver_msg)
                     sendToClientsExisted(reciver_msg->getUserId(), currUser, "PRIVMSG " + reciver_msg->getNickName() + " :" + Message);
                 else

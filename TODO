@@ -1,46 +1,3 @@
-Problem line 166
-
-<!-- while infinit loop server (check for each connection not just for server fd) -->
-
-
-
-
-<!-- Enjoy Dear New Client You just Now Connected, Welcome aboard!
-4
-4
-0
-Client DISCONNECTED.
-jj
-Enjoy Dear New Client You just Now Connected, Welcome aboard!
-4 -->
-
-
-
-SEARCH FO "PROBLEM HERE"
-
-<!-- Quit
-Part
-
-PASS meow
-NICK tofa7a
-USER uwu -->
-
-call Invate too many time even if they joined channel ///!\\\
-
-Buffer : PART ss
-
-[PART] : [PART_CMD]
-[#SS] : [CHANNEL]
-[:] : [REASON]
-9 
-Buffer : MODE +i
-
-[MODE] : [MODE_CMD]
-[#+I] : [CHANNEL]
-[1]    71819 segmentation fault  ./ircserv 9090 p
-USER uwu
-
-
  :yousra!~0@78E36C86.143D983D.EE43E20F.IP JOIN :#a
 <-  :irc2.unrealircd.org MODE #a +nt 
 <-  :irc2.unrealircd.org 353 yousra = #a :@yousra
@@ -55,35 +12,8 @@ USER uwu
 # TOFA7A: getInvitedNick() Which is see if the nickname associated with a user, is invited or not, has to add an alphabet case validation
 # TOFA7A: I mean it will be better if we user isUserInvited(fd) instead of getInvitedNick(Nickname) since no validation is required 
 
-Empty channel from members
-
-# TOFA7A: A NEW ERROR DETECTED "when user quit the server " and rejoin again he satys within the channel
-# TOFA7A: I think getServerIp should be moved to Database
+Empty channel from members !!!! : for remembring
 
 
-//LOGS STILL HERE WITH ME
+-> FOR TOFA7A: Problem when we invite user twice : check the throw in database function.
 
-
-///!/\/\/\/\
-//Pass Nick User args rechecking
-
-
-
-/////Problem when we invite user twice
-void Channel::inviteUser(User *user) {
-
-    USER_ID userId = user->getUserId();
-
-    user == NULL ? throw std::string("Channel::inviteUser() -> user cannot be NULL") : NULL;
-    isUserInvited(userId) == true ? throw std::string("Channel::inviteUser() -> user already invited") : NULL;
-
-    this->_invited[userId] = user;
-}
-
-
-Join With Key Problem
-
-
-Find // Problem Here A Yousra
-
-For Yousra Find this Message using search =======>    //The Problem Was Here for that message "you are not the operator"

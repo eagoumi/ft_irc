@@ -110,10 +110,8 @@ void Server::accept_connection()
 	}
 }
 
-void Server::Quit(std::string reason, int fd)
+void Server::Quit(std::string reason)
 {
-	Database *db;
-    db = Database::GetInstance();
 	if (_User->getNickName().empty())
 	{	
 		_logger.IRCPrint(":*@localhost.IRC QUIT :Quit:" + reason);
@@ -126,7 +124,7 @@ void Server::Quit(std::string reason, int fd)
 	{
 		_logger.IRCPrint(":" + _User->getNickName() + "@" + "localhost.IRC " + "QUIT :Quit:" + reason);
 	}
-	_logger.IRCPrint("ERROR: Quit:" + reason); //whyy ??
+	_logger.IRCPrint("ERROR: Quit:" + reason);
 
 	std::cout << "Client DISCONNECTED." << std::endl;
 }
@@ -165,7 +163,7 @@ void Server::CheckForConnectionClients()
 					if (C != std::string::npos)
 						reason = reason.substr(C + 1, reason.length());
 					QUITCMD >> reason;
-					Quit(reason,  _Storeusersfd[i].fd);
+					Quit(reason);
 					//================================Send Notice To All Channel Joined =========//
 					std::map<std::string, Channel *> JoinedCh = client->getJoinedChannels();
 					if (!JoinedCh.empty())

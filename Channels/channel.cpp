@@ -174,6 +174,10 @@ bool Channel::isKeyMatch(std::string const& givenKey) {
     return false;
 }
 
+std::string Channel::getKey(){
+    return _key;
+}
+
 void Channel::addOperator(size_t fdo){
     
     this->_operators[fdo] = getMember(fdo);
@@ -193,9 +197,7 @@ std::string Channel::getModes(){
     std::string _modes;
     for (std::set<char>::iterator it = _modeSet.begin(); it != _modeSet.end(); it++ ) 
      {  
-        std::cout << "MOODE IN GETMODES = " << *it << std::endl; 
         _modes += *it;
-        std::cout << "STRING IN GETMODES = " << _modes << std::endl; 
      }
     return _modes;
 }

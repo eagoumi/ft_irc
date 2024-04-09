@@ -4,6 +4,8 @@ CC			=	c++
 
 CFLAGS		=	-Wall -Wextra -std=c++98 -Wshadow -fsanitize=address -g
 
+DEBUG		=	DEBUG=true
+
 # directories
 SRC_DIR		=	./
 OBJ_DIR		=	obj/
@@ -20,7 +22,6 @@ CUT			=	\033[K
 
 #source files
 SRC_FILES	=	Server/server.cpp \
-                Server/main.cpp \
 				Database/database.cpp Database/debug.cpp \
 				Channels/channel.cpp \
 				Users/user.cpp \
@@ -32,7 +33,8 @@ SRC_FILES	=	Server/server.cpp \
 				Commands/PRIVMSG.cpp \
 				Commands/Part.cpp \
 				Commands/authentication.cpp \
-				Logger/logger.cpp
+				Logger/logger.cpp \
+                main.cpp
 
 INC_FILES	=	Server/server.hpp \
 				Database/database.hpp \
@@ -70,7 +72,7 @@ $(NAME): $(OBJ) $(INC_FILES)
 $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC_FILES)
 	@mkdir -p $(dir $@)
 	@echo "$(YELLOW)Compiling [$@]...$(RESET)"
-	@$(CC) $(CFLAGS) -I $(INC_DIR) -o $@ -c $<
+	@$(CC) $(CFLAGS) -I $(INC_DIR) -o $@ -c $< -D$(DEBUG)
 	@printf "$(UP)$(CUT)"
 	@echo "$(GREEN)Finished [$@]$(RESET)"
 	@printf "$(UP)$(CUT)"

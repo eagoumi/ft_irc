@@ -10,8 +10,9 @@
 #include <istream>
 #include <sys/socket.h>
 
-# define DEBUG false
-
+# ifndef DEBUG
+#  define DEBUG true
+# endif
 class Database
 {
     private:
@@ -33,16 +34,11 @@ class Database
         void deleteChannel(CHANNEL_NAME);
         bool isNicknameUsed(NICK_NAME);
 
-
-        // void sendResponse(int fd, std::string massage);
         User  *existUser(std::string nick);
         std::map<size_t, User *> const& getUsers();
 
-        // ~Database();
         void    debug();
 
 };
 
 #endif
-
-//add to server `Command` Class with `execute` method

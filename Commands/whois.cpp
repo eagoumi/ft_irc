@@ -145,7 +145,7 @@ void Commands::whois() {
         
         size_t width = 25;
         std::ostringstream os;
-        os << std::setw(width) << std::left << "Name"             << "▒ " << displayName     << " 🧑🏻👩🏻\n";
+        os << std::setw(width) << std::left << "Name"             << "▒ " << displayName     << " 🤓\n";
         os << std::setw(width) << std::left << "Email"            << "▒ " << email           << " 📨\n";
         os << std::setw(width) << std::left << "Correction Points"<< "▒ " << correctionPoints<< " 🟡\n";
         os << std::setw(width) << std::left << "Campus City"      << "▒ " << campusCity      << " 🏫\n";

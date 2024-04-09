@@ -16,8 +16,6 @@ std::string Logger::getServerIP() {
 }
 
 void Logger::setCurrUser(User* currUser) {
-    // if (!_currUser)
-    //     return ;
     _currUser = currUser;
     _userFd = _currUser->getUserId();
     _nickname = _currUser->getNickName();

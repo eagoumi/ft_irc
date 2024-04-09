@@ -22,20 +22,11 @@ static bool isStrContains(std::string const &str, std::string const &charSet) {
 
 Channel::Channel(CHANNEL_NAME channelName, User *creator) : _name(channelName) {
 
-    // db = Database::GetInstance();
-    // creator == NULL ? throw std::string("Channel::Channel() -> creator cannot be NULL") : NULL;
-    // welp I think I'll add some extra work for checking name syntax
     isStrContains(channelName, " ,\a");
-    // here I'll have to assign the creator to this channel
     USER_ID creatorId = creator->getUserId();
-    // I think it is better to add the creator to both of them
     this->_members[creatorId] = creator;
     this->_operators[creatorId] = creator;
 
-    /**************************/
-    /* MODIFIED BY TOFA7A SRY */
-    /**************************/
-    // modeSeted['i']; modeSeted['t']; modeSeted['k']; modeSeted['o']; modeSeted['l'];
     _modeSet.insert('+'); _modeSet.insert('t');
 }
 
@@ -43,24 +34,15 @@ void Channel::addMember(User *member) {
 
     USER_ID memberId = member->getUserId();
 
-    // member == NULL ? throw std::string("Channel::addMember() -> member cannot be NULL") : NULL;
-    // getMember(memberId) != NOT_FOUND ? throw std::string("Channel::addMember() -> member already exist") : NULL;
-
     this->_members[memberId] = member;
     member->joinedChannel(this);
 }
 
-//Problem when we invite user twice
 void Channel::inviteUser(User *user) {
 
     USER_ID userId = user->getUserId();
 
-    // user == NULL ? throw std::string("Channel::inviteUser() -> user cannot be NULL") : NULL;
-    // isUserInvited(userId) == true ? throw std::string("Channel::inviteUser() -> user already invited") : NULL;
-
     this->_invited[userId] = user;
-    for(std::map<size_t, User *>::iterator it = _invited.begin(); it != _invited.end(); it++)
-        std::cout << "INVITED = " << it->second->getNickName() << std::endl;
 }
 
 bool Channel::isUserInvited(USER_ID Id) {
@@ -83,9 +65,7 @@ bool Channel::isUserOperator(USER_ID Id) {
 
     UserIter it = this->_operators.find(Id);
     if (it != this->_operators.end())
-    {
         return true;
-    }   
     return false;
 }
 
@@ -103,9 +83,7 @@ bool Channel::isUserMember(USER_ID Id)
 {
     UserIter it = this->_members.find(Id);
     if (it != this->_members.end())
-    {
       return true;
-    }
     return false;
 }
 
@@ -169,7 +147,6 @@ void Channel::setKey(std::string const& givenKey) {
 }
 
 bool Channel::isKeyMatch(std::string const& givenKey) {
-    std::cout << "givenkey = " << givenKey << " key = " << _key << std::endl;
     if (givenKey == _key) return true;
     return false;
 }
@@ -181,8 +158,6 @@ std::string Channel::getKey(){
 void Channel::addOperator(size_t fdo){
     
     this->_operators[fdo] = getMember(fdo);
-    for(std::__1::map<size_t, User *>::iterator it = _operators.begin(); it != _operators.end(); it++)
-        std::cout << "operator fd  = " << it->first << " nickname =  " << it->second->getNickName() << std::endl;
 }
 
 void Channel::deleteOperator(User *operatorToDelete) {
@@ -190,21 +165,16 @@ void Channel::deleteOperator(User *operatorToDelete) {
 
     if(it != _operators.end())
         _operators.erase(it);
-    
 }
 
 std::string Channel::getModes(){
     std::string _modes;
     for (std::set<char>::iterator it = _modeSet.begin(); it != _modeSet.end(); it++ ) 
-     {  
-        _modes += *it;
-     }
+       _modes += *it;
     return _modes;
 }
 
 bool Channel::getMode(const char& modeLetter) {
-    // for(std::set<char>::iterator it = _modeSet.begin(); it != _modeSet.end(); it++)
-    //     std::cout << "MOOOODE = " << *it << std::endl;
     if (_modeSet.find(modeLetter) != _modeSet.end())
         return true;
     return (false);

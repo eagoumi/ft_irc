@@ -72,13 +72,13 @@ token_type Commands::determineToken(char sep, token_type cmdType)
     if (sep == ',')
     {
         if (cmdType == JOIN_CMD)
-            _paramCounter == 1 ? tokenType = CHANNEL : tokenType = NONE;
-        else if (cmdType == PART_CMD)
             _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY : tokenType = NONE);
+        else if (cmdType == PART_CMD)
+            _paramCounter == 1 ? tokenType = CHANNEL : tokenType = NONE;
         else if (cmdType == KICK_CMD)
             _paramCounter == 1 ? tokenType = NONE : (_paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
         else if (cmdType == PRIVMSG_CMD)
-            _paramCounter == 1 ? tokenType = CHANNEL : (_paramCounter == 2 ? tokenType = KEY : tokenType = NONE);
+            _paramCounter == 1 ? tokenType = TARGET : tokenType = NONE;
         else if (cmdType == MODE_CMD)
             tokenType = NONE;
         else if (cmdType == TOPIC_CMD)
@@ -103,7 +103,7 @@ token_type Commands::determineToken(char sep, token_type cmdType)
         else if (cmdType == INVITE_CMD)
             _paramCounter == 1 ? tokenType = NICK : (_paramCounter == 2 ? tokenType = CHANNEL : tokenType = NONE);
         else if (cmdType == PRIVMSG_CMD)
-            _paramCounter == 1 ? tokenType = NICK : (_paramCounter == 2 ? tokenType = MSG : tokenType = NONE);
+            _paramCounter == 1 ? tokenType = TARGET : (_paramCounter == 2 ? tokenType = MSG : tokenType = NONE);
         else if (cmdType == LOGTIME_CMD)
             _paramCounter == 1 ? tokenType = NICK : (_paramCounter == 2 ? tokenType = LOG_BEG : (_paramCounter == 3 ? tokenType = LOG_END : tokenType = NONE));
         else if (cmdType == WHOIS_CMD)
@@ -114,7 +114,6 @@ token_type Commands::determineToken(char sep, token_type cmdType)
     return (tokenType);
 }
 
-// call it when you are sure from the command syntax
 std::pair<std::string, std::vector<std::string> > Commands::getNextParam(OPTION option)
 {
     static token_type tokenType;
@@ -199,8 +198,6 @@ void Commands::tokenize(std::string const &cmdLine)
                 /*********************************************************************************/
                 if (!(word.empty()))
                 {
-                    // if (tokenType != MODE_STR)
-                    //     std::transform(word.begin(), word.end(), word.begin(), ::toupper);
                     tokenCounter == 0 ? tokenType = determine_cmd(word) : 0;
                     tokenNode.data = word;
                     tokenNode.type = tokenType;
@@ -220,7 +217,6 @@ void Commands::tokenize(std::string const &cmdLine)
                 else if (isspace(cmdLine[i]) || cmdLine[i] == '\0')
                     _paramCounter++;
 
-                // determine next token type
                 if (isspace(cmdLine[i]) || cmdLine[i] == ',')
                     tokenType = determineToken(cmdLine[i], _tokensList.front().type);
 
@@ -259,11 +255,11 @@ bool Commands::isEnoughParam(token_type const &cmd)
 
 void static printTokensList(std::list<token> const& tokensList) {
 
-    char justFordebug[42][42] = {"NONE", "COMMA", "PASS_CMD", "NICK_CMD", "USER_CMD",
-    "PRIVMSG_CMD", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", "INVITE_CMD", 
-    "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", "CHANNEL", 
-    "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", 
-    "REASON", "MODE_ARG", "LOG_BEG", "LOG_END", "PASS", "USER"};
+    char justFordebug[42][42] = {"NONE", "COMMA", "PASS_CMD", "NICK_CMD", 
+    "USER_CMD","PRIVMSG_CMD", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", 
+    "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", 
+    "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", 
+    "REASON", "MODE_ARG", "LOG_BEG", "LOG_END", "PASS", "USER", "TARGET"};
 
     std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;
     std::cout << "▒▒▒▒▒▒▒▒▒▒▒▒▒▒CMD TOKEN LIST▒▒▒▒▒▒▒▒▒▒▒▒▒▒" << std::endl;

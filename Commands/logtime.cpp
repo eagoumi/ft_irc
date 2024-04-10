@@ -33,11 +33,12 @@ static bool checkDateOrder(const std::string& begin_at, const std::string& end_a
     struct tm beginDate = getTimeStruct(begin_at);
     struct tm endDate = getTimeStruct(end_at);
 
-    mktime(&beginDate); mktime(&endDate);
+    time_t beginUnixTime = mktime(&beginDate); time_t endUnixTime = mktime(&endDate);
     if (
-        beginDate.tm_year <= endDate.tm_year &&
-        beginDate.tm_mon <= endDate.tm_mon   &&
-        beginDate.tm_mday <= endDate.tm_mday
+        beginUnixTime <= endUnixTime
+        // beginDate.tm_year <= endDate.tm_year &&
+        // beginDate.tm_mon <= endDate.tm_mon   &&
+        // beginDate.tm_mday <= endDate.tm_mday
     )
         return true;
     return false;

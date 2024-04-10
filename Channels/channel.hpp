@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <iterator>
 
 # define USER_ID size_t
 # define CHANNEL_NAME std::string

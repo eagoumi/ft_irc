@@ -9,6 +9,7 @@
 #include <fstream>
 #include <istream>
 #include <sys/socket.h>
+#include <algorithm>
 
 # ifndef DEBUG
 #  define DEBUG true

@@ -106,10 +106,14 @@ std::map<USER_ID, User *> const& Channel::getMembers() {
 }
 
 void Channel::deleteMember(User *userToDelete) {
-    std::map<USER_ID, User *>::iterator it = _members.find(userToDelete->getUserId());
 
-    if(it != _members.end())
-        _members.erase(it);
+    if (userToDelete) {
+
+        std::map<USER_ID, User *>::iterator it = _members.find(userToDelete->getUserId());
+        userToDelete->partedChannel(this);
+        if(it != _members.end())
+            _members.erase(it);
+    }
 }
 
 std::map<USER_ID, User *> const& Channel::getOperators()

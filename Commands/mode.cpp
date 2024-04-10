@@ -50,19 +50,21 @@ void Commands::mode()
                         if (currModeLetter == 'k')
                         {
                             currChannel->setKey(modeArg.front());
-                            for (i = 0; i < modeArg.size(); i++)
-                            {
-                                modeArg[i] = modeArg[i + 1];
-                            }
+                            modeArg.erase(modeArg.begin());
+                            // for (i = 0; i < modeArg.size(); i++)
+                            // {
+                            //     modeArg[i] = modeArg[i + 1];
+                            // }
                         }
                         else if (currModeLetter == 'l')
                         {
                             size_t limit = static_cast<size_t>(atoi(modeArg.front().c_str()));
                             currChannel->setLimit(limit > 0 ? limit : 1);
-                            for (i = 0; i < modeArg.size(); i++)
-                            {
-                                modeArg[i] = modeArg[i + 1];
-                            }
+                            modeArg.erase(modeArg.begin());
+                            // for (i = 0; i < modeArg.size(); i++)
+                            // {
+                            //     modeArg[i] = modeArg[i + 1];
+                            // }
                         }
                         else if (currModeLetter == 'o' && _paramCounter == 3)
                         {
@@ -87,10 +89,11 @@ void Commands::mode()
                             {
                                 currChannel->addOperator(Operator->getUserId());
                                 SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg.front());
-                                for (i = 0; i < modeArg.size(); i++)
-                                {
-                                    modeArg[i] = modeArg[i + 1];
-                                }
+                            modeArg.erase(modeArg.begin());
+                                // for (i = 0; i < modeArg.size(); i++)
+                                // {
+                                //     modeArg[i] = modeArg[i + 1];
+                                // }
                             }
                         }
 
@@ -119,7 +122,8 @@ void Commands::mode()
                             else if (currChannel->isNickExist(modeArg.front()) == false)
                             {
                                 _logger.ServertoClient(ERR_USERNOTINCHANNEL(currUser->getNickName(), modeArg.front(), channelName));
-                                continue;
+                                // modeArg.erase(modeArg.begin());
+                                continue; 
                             }
                             else
                             {
@@ -127,10 +131,11 @@ void Commands::mode()
                                 {
                                     currChannel->deleteOperator(Operator);
                                     SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg.front());
-                                    for (i = 0; i < modeArg.size(); i++)
-                                    {
-                                        modeArg[i] = modeArg[i + 1];
-                                    }
+                                    modeArg.erase(modeArg.begin());
+                                    // for (i = 0; i < modeArg.size(); i++)
+                                    // {
+                                    //     modeArg[i] = modeArg[i + 1];
+                                    // }
                                 }
                             }
                         }

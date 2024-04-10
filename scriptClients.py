@@ -42,8 +42,8 @@ import irc.events
 import threading
 import time
 
-SERVER = '192.168.1.108'#'10.13.4.6'
-PORT = 9090
+SERVER = '10.13.4.6' #'192.168.1.108'
+PORT = 8080
 PASSWORD = 'pp'
 CHANNELS = ['#channel1', '#channel2', '#channel11', '#channel22','#channel111', '#channel222','#channel1111', '#channel2222']  # Channels to join
 NICKNAME_BASE = 'Bot'  # Base nickname; will append numbers to this

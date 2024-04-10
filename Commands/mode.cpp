@@ -51,20 +51,12 @@ void Commands::mode()
                         {
                             currChannel->setKey(modeArg.front());
                             modeArg.erase(modeArg.begin());
-                            // for (i = 0; i < modeArg.size(); i++)
-                            // {
-                            //     modeArg[i] = modeArg[i + 1];
-                            // }
                         }
                         else if (currModeLetter == 'l')
                         {
                             size_t limit = static_cast<size_t>(atoi(modeArg.front().c_str()));
                             currChannel->setLimit(limit > 0 ? limit : 1);
                             modeArg.erase(modeArg.begin());
-                            // for (i = 0; i < modeArg.size(); i++)
-                            // {
-                            //     modeArg[i] = modeArg[i + 1];
-                            // }
                         }
                         else if (currModeLetter == 'o' && _paramCounter == 3)
                         {
@@ -89,11 +81,7 @@ void Commands::mode()
                             {
                                 currChannel->addOperator(Operator->getUserId());
                                 SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " +o " + modeArg.front());
-                            modeArg.erase(modeArg.begin());
-                                // for (i = 0; i < modeArg.size(); i++)
-                                // {
-                                //     modeArg[i] = modeArg[i + 1];
-                                // }
+                                modeArg.erase(modeArg.begin());
                             }
                         }
 
@@ -132,10 +120,6 @@ void Commands::mode()
                                     currChannel->deleteOperator(Operator);
                                     SendMessageToMembers(currChannel, currUser, "MODE " + channelName + " -o " + modeArg.front());
                                     modeArg.erase(modeArg.begin());
-                                    // for (i = 0; i < modeArg.size(); i++)
-                                    // {
-                                    //     modeArg[i] = modeArg[i + 1];
-                                    // }
                                 }
                             }
                         }

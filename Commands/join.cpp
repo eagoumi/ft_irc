@@ -59,7 +59,7 @@ void Commands::join()
             {
                 if (currChannel->getMode('k') == true)
                 {
-                    if(channelkeysList.empty() || (!channelkeysList.empty() && channelIndex < channelkeysList.size() && !currChannel->isKeyMatch(channelkeysList[channelIndex])))
+                    if(channelkeysList.empty() || channelIndex > channelkeysList.size() - 1 || currChannel->isKeyMatch(channelkeysList[channelIndex]) == false)
                     {
                         _logger.ServertoClient(ERR_BADCHANNELKEY(currUserNickname, channelNamesList[channelIndex]));
                         continue;

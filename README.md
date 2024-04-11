@@ -104,6 +104,12 @@ https://github.com/eagoumi/ft_irc/assets/56886719/b65a2217-94fd-42a0-80b1-3af5b1
 https://github.com/eagoumi/ft_irc/assets/56886719/10941bcf-7c1c-47e1-afc9-319359c7ff2d
 
 
+In order to enable The BOT commands, get your UID and SECRET from your 42Intra Profile settings then export them (You have to be a 42 network member) :
+
+`export UID42="u-s************************"`
+
+`export SECRET42="s-s************************"`
+
 ## Acknowledgments
 
 - Special thanks to the 42 School for providing the guidelines and specifications for this project.

@@ -110,6 +110,11 @@ In order to enable The BOT commands, get your UID and SECRET from your 42Intra P
 
 `export SECRET42="s-s************************"`
 
+## Resources
+
+The IRC reference used in this project: https://modern.ircdocs.horse/
+We tried to simulate as much as we can do the behavior of this server https://ircdocs.horse/tools/wstester
+
 ## Acknowledgments
 
 - Special thanks to the 42 School for providing the guidelines and specifications for this project.

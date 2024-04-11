@@ -69,7 +69,7 @@ static std::string incrementDate(const std::string& dateString, size_t daysToAdd
     struct tm date;
     ss >> date.tm_year >> dash >> date.tm_mon >> dash >> date.tm_mday;
     date.tm_year -= 1900; date.tm_mon -= 1;
-    date.tm_hour = 1;            // Hour
+    date.tm_hour = 2;            // Hour
     date.tm_min = 0;             // Minute
     date.tm_sec = 0;             // Second
 

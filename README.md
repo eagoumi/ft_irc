@@ -110,7 +110,7 @@ In order to enable The BOT commands, get your UID and SECRET from your 42Intra P
 
 `export SECRET42="s-s************************"`
 
-Hint: The image only displays within iTerm terminal, which is available on MacOS.
+`Hint`: The image only displays within iTerm terminal, which is available on MacOS.
 
 ## Resources
 

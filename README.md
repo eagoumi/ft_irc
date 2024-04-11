@@ -1,4 +1,3 @@
-<!-- ```Given the specifics of your `ft_irc` project, let's draft a more detailed README with sections that highlight its architecture, detailed build instructions, usage examples, and more. This template can be adapted as your project evolves. -->
 
 ---
 
@@ -14,7 +13,7 @@ This IRC server implementation supports multiple client connections, enabling us
 
 - **Multi-client Management**: Handles multiple client connections simultaneously without blocking.
 - **Channel Operations**: Supports creating and joining channels, messaging within channels, and managing channel topics and modes.
-- **User Commands**: Implements a subset of IRC commands including NICK, USER, JOIN, PRIVMSG, NOTICE, PART, QUIT, and MODE.
+- **User Commands**: Implements a subset of IRC commands including NICK, USER, JOIN, PRIVMSG, PART, QUIT, and MODE.
 - **Operator Privileges**: Special privileges for channel operators like KICK, INVITE, and managing channel modes.
 - **Authentication**: Requires a password for client connections to ensure controlled access.
 
@@ -57,24 +56,32 @@ To start the IRC server, run:
 ### Connecting to the Server
 
 Clients can connect to the server using any standard IRC client by specifying the server's IP address and the port number. The connection password must be provided upon connection.
+In MacOS you can user LimeChat IRC Client, or you could just connet to the server using the following command `NetCat` with specifing where your server is running and its port :
 
-## Configuration (Optional)
+```bash
+nc localhost 8080
+```
 
-An optional configuration file can be used to specify server settings such as default channels, operator passwords, and server modes. Refer to `server.config.example` for a template.
+You are now connected as a client to the IRC server, you should authenticate first to start using the other commands, hint: execute the following commands in order within your terminal that you have run your client on
+
+```bash
+pass your_server_password
+nick your_nickname
+user any_username
+```
 
 ## Supported Commands
 
 This server supports a variety of IRC commands essential for channel management and communication. Here is a list of some supported commands:
 
-- `NICK`: Set a nickname.
-- `USER`: Specify username, hostname, servername, and realname.
 - `JOIN`: Join a channel.
 - `PART`: Leave a channel.
-- `MODE`: Set or unset user or channel modes.
+- `KICK`: Kick a user from a specified channel.
+- `INVITE`: Invite a user to your channel.
+- `MODE`: Set or unset channel modes (-+iklot).
+- `TOPIC`: Set or unset channel topic.
 - `PRIVMSG`: Send private messages to a user or channel.
 - `QUIT`: Disconnect from the server.
-
-For a full list of commands and their syntax, refer to the IRC protocol documentation.
 
 ## Acknowledgments
 

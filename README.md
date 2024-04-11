@@ -70,6 +70,10 @@ nick your_nickname
 user any_username
 ```
 
+https://github.com/eagoumi/ft_irc/assets/56886719/b49f7555-b07b-46bf-a6f6-10c037a35703
+
+
+
 ## Supported Commands
 
 This server supports a variety of IRC commands essential for channel management and communication. Here is a list of some supported commands:

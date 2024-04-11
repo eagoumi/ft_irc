@@ -87,6 +87,20 @@ This server supports a variety of IRC commands essential for channel management 
 - `PRIVMSG`: Send private messages to a user or channel.
 - `QUIT`: Disconnect from the server.
 
+## IRC Bot
+
+There is an embeded bot within the IRC server, each client can use it by running one of the following commands:
+
+- `LOGTIME`: Shows how many hours a user has logged in his 42 campus within a specified period of time.
+
+
+https://github.com/eagoumi/ft_irc/assets/56886719/a739aba2-2819-4141-90ef-5e38667fca19
+
+
+- `LOCATION`: Shows the location of a certain user within his 42 campus.
+
+- `WHOIS`: Shows the 42 profile of a certain user within the 42 network.
+
 ## Acknowledgments
 
 - Special thanks to the 42 School for providing the guidelines and specifications for this project.

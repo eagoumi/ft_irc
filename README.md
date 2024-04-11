@@ -93,13 +93,14 @@ There is an embeded bot within the IRC server, each client can use it by running
 
 - `LOGTIME`: Shows how many hours a user has logged in his 42 campus within a specified period of time.
 
-
 https://github.com/eagoumi/ft_irc/assets/56886719/a739aba2-2819-4141-90ef-5e38667fca19
-
 
 - `LOCATION`: Shows the location of a certain user within his 42 campus.
 
 - `WHOIS`: Shows the 42 profile of a certain user within the 42 network.
+
+https://github.com/eagoumi/ft_irc/assets/56886719/10941bcf-7c1c-47e1-afc9-319359c7ff2d
+
 
 ## Acknowledgments
 

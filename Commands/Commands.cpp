@@ -304,7 +304,7 @@ bool Commands::checkTokensListSyntax()
     return true;
 }
 
-void Commands::CommandMapinit(cmdData dataCmd)
+void Commands::executeCommand(cmdData dataCmd)
 {
     fd = dataCmd.fd;
     currUser = db->getUser(fd);

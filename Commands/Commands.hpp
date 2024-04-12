@@ -69,7 +69,7 @@ public:
     Commands(const Commands &obj);
     Commands&           operator=(const Commands &obj);
 
-    void                CommandMapinit(cmdData dataCmd);
+    void                executeCommand(cmdData dataCmd);
     void                join();
     void                kick();
     void                invite();

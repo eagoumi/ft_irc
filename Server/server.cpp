@@ -188,7 +188,7 @@ void Server::CheckForConnectionClients()
 						if ((pos = line.find('\r')) != std::string::npos)
 							line.erase(pos);
 						data.line = line;
-						cmdObj.CommandMapinit(data);
+						cmdObj.executeCommand(data);
 						line.clear();
 					}
 					client->clearCmdLine();

@@ -55,6 +55,8 @@ token_type determine_cmd(std::string token)
         return WHOIS_CMD;
     else if (token == "LOCATION")
         return LOCATION_CMD;
+    else if (token == "PONG")
+        return PONG_CMD;
     return NONE;
 }
 
@@ -79,14 +81,6 @@ token_type Commands::determineToken(char sep, token_type cmdType)
             _paramCounter == 1 ? tokenType = NONE : (_paramCounter == 2 ? tokenType = NICK : tokenType = NONE);
         else if (cmdType == PRIVMSG_CMD)
             _paramCounter == 1 ? tokenType = TARGET : tokenType = NONE;
-        else if (cmdType == MODE_CMD)
-            tokenType = NONE;
-        else if (cmdType == TOPIC_CMD)
-            tokenType = NONE;
-        else if (cmdType == INVITE_CMD)
-            tokenType = NONE;
-        else if (cmdType == LOGTIME_CMD)
-            tokenType = NONE;
     }
     else if (isspace(sep))
     {
@@ -110,6 +104,12 @@ token_type Commands::determineToken(char sep, token_type cmdType)
             _paramCounter == 1 ? tokenType = NICK : tokenType = NONE;
         else if (cmdType == LOCATION_CMD)
             _paramCounter == 1 ? tokenType = NICK : tokenType = NONE;
+        else if (cmdType == PASS_CMD)
+            _paramCounter == 1 ? tokenType = KEY : tokenType = NONE;
+        else if (cmdType == NICK_CMD)
+            _paramCounter == 1 ? tokenType = NICK : tokenType = NONE;
+        else if (cmdType == USER_CMD)
+            _paramCounter == 1 ? tokenType = USER : tokenType = NONE;
     }
     return (tokenType);
 }
@@ -255,7 +255,7 @@ bool Commands::isEnoughParam(token_type const &cmd)
 
 void static printTokensList(std::list<token> const& tokensList) {
 
-    char justFordebug[42][42] = {"NONE", "COMMA", "PASS_CMD", "NICK_CMD", 
+    char justFordebug[42][42] = {"NONE", "COMMA", "PONG_CMD", "PASS_CMD", "NICK_CMD", 
     "USER_CMD","PRIVMSG_CMD", "JOIN_CMD", "KICK_CMD", "PART_CMD", "TOPIC_CMD", 
     "INVITE_CMD", "MODE_CMD", "LOGTIME_CMD", "WHOIS_CMD", "LOCATION_CMD", 
     "CHANNEL", "KEY", "NICK", "MSG", "TOPIC_MSG", "COMMENT", "MODE_STR", 

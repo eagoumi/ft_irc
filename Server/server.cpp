@@ -209,6 +209,7 @@ void Server::CheckForConnectionClients()
 				_Storeusersfd.erase(_Storeusersfd.begin() + i); // Remove Poll Set on Vector
 				i--; //Cerrection index ater Removal
 			}
+			if (DEBUG) _db->debug();
 		}
 	}
 }
@@ -246,7 +247,6 @@ void Server::ServerStarting()
 			CheckForConnectionClients();
 			//check for if the connection was lost or some error for connection from the clients
 		// std::signal(SIGPIPE, SIG_IGN);
-	   if (DEBUG) _db->debug();
 	}
 }
 

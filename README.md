@@ -72,6 +72,10 @@ user any_username
 
 https://github.com/eagoumi/ft_irc/assets/56886719/c128270b-4e35-4236-b122-dd08d3fff658
 
+If DEBUG mode is enabled from Makefile, you should find `DATABASE_DEBUG.csv` file, to track clients and channels.
+
+https://github.com/eagoumi/ft_irc/assets/56886719/f535ccc2-16fc-418e-904d-9a5e7061d746
+
 
 ## Supported Commands
 

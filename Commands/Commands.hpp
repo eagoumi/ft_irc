@@ -18,6 +18,8 @@
 #include "../Logger/logger.hpp"
 #include "../error_request.hpp"
 
+typedef std::pair<std::string, std::vector<std::string> > PARAM_PAIR;
+
 enum OPTION
 {
     NADA,
@@ -52,54 +54,49 @@ typedef struct s_comData
 class Commands
 {
 private:
-    Database            *db;
-    User                *currUser;
-    Channel             *currChannel;
-    std::string         newTopic;
-    std::string         invitedNick;
-    Logger&             _logger;
-    std::list<token>    _tokensList;
-    size_t              _paramCounter;
-    unsigned long       fd;
-    std::string         topicMsg;
-    std::string         line;
+    unsigned long		fd;
+    Database			*db;
+    Logger&				_logger;
+    std::string			newTopic;
+    std::string			topicMsg;
+    User*				currUser;
+    std::string			invitedNick;
+    std::list<token>	_tokensList;
+    Channel				*currChannel;
+    size_t				_paramCounter;
 
-    void                                                tokenize(std::string const&);
-    bool                                                isEnoughParam(token_type const& cmd);
-    bool                                                checkTokensListSyntax();
-    token_type                                          determineToken(char sep, token_type cmdType);
-    std::string                                         get42Token();
-    std::pair<std::string, std::vector<std::string> >   getNextParam(OPTION option = NADA);
+    void				join();
+    void				kick();
+    void				mode();
+    void				part();
+    void				topic();
+    void				whois();
+    void				invite();
+    void				logtime();
+    void				PRIVMSG();
+    void				location();
+    std::string			get42Token();
+    void				WelcomeClient();
+    const std::string	getCommand() const;
+    bool				checkTokensListSyntax();
+    void				tokenize(std::string const&);
+    bool				check_connection(size_t user_fd);
+    PARAM_PAIR       	getNextParam(OPTION option = NADA);
+    bool				isEnoughParam(token_type const& cmd);
+    void				sendResponse(int userfd, std::string msg);
+    token_type			determineToken(char sep, token_type cmdType);
+    void				Authentication(std::string const& serverPass);
+    void				sendToClientsExisted(size_t reciver, User *sender, std::string Message);
+    void				SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
+    void				PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel);
 
 public:
     Commands();
     ~Commands();
     Commands(const Commands &obj);
-    Commands&           operator=(const Commands &obj);
+    Commands& operator=(const Commands &obj);
 
-    void                executeCommand(cmdData dataCmd);
-    void                join();
-    void                kick();
-    void                invite();
-    void                topic();
-    void                mode();
-    void                part();
-    void                logtime();
-    void                location();
-    void                whois();
-    void                PRIVMSG();
-    void                Authentication(std::string const& serverPass);
-    void                WelcomeClient();
-    void                sendResponse(int userfd, std::string msg);
-    void                SendMessageToMembers(Channel *Channel_name, User *user_fds, std::string command);
-    void                sendToClientsExisted(size_t reciver, User *sender, std::string Message);
-    bool                check_connection(size_t user_fd);
-    void                PrintLogsAfterJoined(std::string ClientChannel, User& Client, Channel& Channel);
-    const std::string   getCommand() const;
-
-    
- 
-
+    void	executeCommand(cmdData dataCmd);
 };
 
 #endif

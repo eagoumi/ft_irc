@@ -308,7 +308,6 @@ void Commands::executeCommand(cmdData dataCmd)
 {
     fd = dataCmd.fd;
     currUser = db->getUser(fd);
-    line = dataCmd.line;
 
     tokenize(dataCmd.line);
     if (checkTokensListSyntax() == false)

@@ -70,8 +70,7 @@ nick your_nickname
 user any_username
 ```
 
-https://github.com/eagoumi/ft_irc/assets/56886719/b49f7555-b07b-46bf-a6f6-10c037a35703
-
+https://github.com/eagoumi/ft_irc/assets/56886719/c128270b-4e35-4236-b122-dd08d3fff658
 
 
 ## Supported Commands

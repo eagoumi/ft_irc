@@ -43,7 +43,7 @@ static std::string executeCmd(std::string const& cmd) {
 
 void Commands::location() {
 
-    std::string token42 = get42Token(); if (token42.empty()) return ;
+    std::string token42 = get42Token(); if (token42.empty()) { sendResponse(fd, "$UID42 or $SECRET42 are invalid\n"); return ; } ;
 
     std::string login = getNextParam().first; std::transform(login.begin(), login.end(), login.begin(), ::tolower);
     
